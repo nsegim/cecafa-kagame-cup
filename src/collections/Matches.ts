@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
 import { GROUPS } from './Teams'
 
 export const VENUES = [
@@ -139,6 +140,32 @@ export const Matches: CollectionConfig = {
       admin: { condition: (_, s) => s?.status === 'live' || s?.status === 'final' },
     },
     {
+      name: 'commentary',
+      type: 'array',
+      label: 'Live Commentary',
+      labels: { singular: 'Entry', plural: 'Entries' },
+      admin: {
+        description:
+          'Manual updates for the Live Expressions feed — post these as the match happens (chances, saves, substitutions, general commentary). Goals and cards recorded in Player Match Stats are added to the feed automatically; you don\'t need to repeat those here.',
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'minute',
+          type: 'number',
+          min: 0,
+          max: 120,
+          admin: { description: 'Match minute, e.g. 62.' },
+        },
+        {
+          name: 'text',
+          type: 'text',
+          required: true,
+          admin: { description: 'e.g. "Good save from the keeper, corner to APR."' },
+        },
+      ],
+    },
+    {
       name: 'highlightUrl',
       type: 'text',
       admin: { description: 'YouTube link for the highlights section.' },
@@ -180,6 +207,15 @@ export const Matches: CollectionConfig = {
           }
         }
         return data
+      },
+    ],
+    afterChange: [
+      ({ doc }) => {
+        // Live commentary, scores and status need to appear immediately during a
+        // live match — don't make an editor wait out the page's ISR window.
+        revalidatePath(`/matches/${doc.id}`)
+        revalidatePath('/matches')
+        revalidatePath('/')
       },
     ],
   },

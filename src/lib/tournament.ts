@@ -176,7 +176,7 @@ function matchPhotoUrls(match: Match): string[] {
     .filter((url): url is string => Boolean(url))
 }
 
-export type MatchEventType = 'goal' | 'yellow' | 'red' | 'kickoff' | 'halftime' | 'fulltime'
+export type MatchEventType = 'goal' | 'yellow' | 'red' | 'kickoff' | 'halftime' | 'fulltime' | 'note'
 
 export interface MatchEvent {
   minute: number | null
@@ -184,6 +184,8 @@ export interface MatchEvent {
   playerName?: string
   teamId?: number | null
   side?: 'home' | 'away' | null
+  /** Free text for a manually-posted 'note' entry — everything that isn't a goal or a card. */
+  text?: string
 }
 
 export interface MatchDetail {
@@ -248,13 +250,22 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
     for (let i = 0; i < (s.yellowCards ?? 0); i++) scored.push({ ...base, type: 'yellow' })
     for (let i = 0; i < (s.redCards ?? 0); i++) scored.push({ ...base, type: 'red' })
   }
-  scored.sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
+
+  // Manual live updates an editor posts as the match happens — saves, chances,
+  // substitutions, general commentary. Goals/cards above are automatic.
+  const notes: MatchEvent[] = (match.commentary ?? []).map((c) => ({
+    minute: c.minute ?? null,
+    type: 'note',
+    text: c.text,
+  }))
+
+  const feed = [...scored, ...notes].sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
 
   // Frame the recorded events with kick-off / half-time / full-time markers so
   // the feed reads like live commentary even before editors add prose.
   const events: MatchEvent[] = []
   if (match.status === 'final') events.push({ minute: 90, type: 'fulltime' })
-  events.push(...scored)
+  events.push(...feed)
   if (match.status !== 'scheduled') events.push({ minute: 0, type: 'kickoff' })
 
   const otherMatches = (allMatchesRes.docs as Match[])

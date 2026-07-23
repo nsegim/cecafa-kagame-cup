@@ -299,6 +299,22 @@ export interface Match {
   homeScore?: number | null;
   awayScore?: number | null;
   /**
+   * Manual updates for the Live Expressions feed — post these as the match happens (chances, saves, substitutions, general commentary). Goals and cards recorded in Player Match Stats are added to the feed automatically; you don't need to repeat those here.
+   */
+  commentary?:
+    | {
+        /**
+         * Match minute, e.g. 62.
+         */
+        minute?: number | null;
+        /**
+         * e.g. "Good save from the keeper, corner to APR."
+         */
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * YouTube link for the highlights section.
    */
   highlightUrl?: string | null;
@@ -667,6 +683,13 @@ export interface MatchesSelect<T extends boolean = true> {
   status?: T;
   homeScore?: T;
   awayScore?: T;
+  commentary?:
+    | T
+    | {
+        minute?: T;
+        text?: T;
+        id?: T;
+      };
   highlightUrl?: T;
   highlightThumb?: T;
   photos?:

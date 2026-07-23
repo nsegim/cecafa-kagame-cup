@@ -60,6 +60,8 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
           <strong>Full-time.</strong> The referee brings the match to a close.
         </>
       )
+    case 'note':
+      return e.text
     default:
       return null
   }
