@@ -252,12 +252,15 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
   }
 
   // Manual live updates an editor posts as the match happens — saves, chances,
-  // substitutions, general commentary. Goals/cards above are automatic.
-  const notes: MatchEvent[] = (match.commentary ?? []).map((c) => ({
-    minute: c.minute ?? null,
-    type: 'note',
-    text: c.text,
-  }))
+  // substitutions, general commentary. Goals/cards above are automatic. Entries
+  // marked `hidden` stay in the admin for reference but drop out of the feed.
+  const notes: MatchEvent[] = (match.commentary ?? [])
+    .filter((c) => !c.hidden)
+    .map((c) => ({
+      minute: c.minute ?? null,
+      type: 'note',
+      text: c.text,
+    }))
 
   const feed = [...scored, ...notes].sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
 

@@ -155,13 +155,21 @@ export const Matches: CollectionConfig = {
           type: 'number',
           min: 0,
           max: 120,
-          admin: { description: 'Match minute, e.g. 62.' },
+          admin: { description: 'Match minute, e.g. 62. Entries are shown in minute order on the feed.' },
         },
         {
           name: 'text',
           type: 'text',
           required: true,
           admin: { description: 'e.g. "Good save from the keeper, corner to APR."' },
+        },
+        {
+          name: 'hidden',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Hide this entry from the public Live Expressions feed without deleting it.',
+          },
         },
       ],
     },

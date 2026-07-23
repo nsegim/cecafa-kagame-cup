@@ -128,7 +128,7 @@ body > main {
 }
 
 .site-nav__link:nth-child(1) {
-  flex: 0 0 75px;
+  /* flex: 0 0 75px; */
 }
 
 .site-nav__link:nth-child(2) {

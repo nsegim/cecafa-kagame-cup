@@ -304,13 +304,17 @@ export interface Match {
   commentary?:
     | {
         /**
-         * Match minute, e.g. 62.
+         * Match minute, e.g. 62. Entries are shown in minute order on the feed.
          */
         minute?: number | null;
         /**
          * e.g. "Good save from the keeper, corner to APR."
          */
         text: string;
+        /**
+         * Hide this entry from the public Live Expressions feed without deleting it.
+         */
+        hidden?: boolean | null;
         id?: string | null;
       }[]
     | null;
@@ -700,6 +704,7 @@ export interface MatchesSelect<T extends boolean = true> {
     | {
         minute?: T;
         text?: T;
+        hidden?: T;
         id?: T;
       };
   highlightUrl?: T;
