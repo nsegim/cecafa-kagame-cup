@@ -12,7 +12,10 @@ export function StadiumHero({
   height?: number
 }) {
   return (
-    <section className="stadium-hero" style={{ height }}>
+    <section
+      className={`stadium-hero ${height === 490 ? 'stadium-hero--results' : ''}`}
+      style={{ height }}
+    >
       <div className="stadium-hero__overlay" />
       <div className="stadium-hero__content">
         {kicker && <span className="stadium-hero__kicker">{kicker}</span>}

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getMatchDetail } from '@/lib/tournament'
@@ -16,12 +17,33 @@ const STAGE_LABEL: Record<string, string> = {
   final: 'Final',
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const detail = await getMatchDetail(Number(id))
+  if (!detail) return {}
+
+  const { match } = detail
+  const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
+  const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
+  const title = `${home.label} vs ${away.label} — CECAFA Kagame Cup 2026 | IGIHE`
+  const played = match.status === 'final' || match.status === 'live'
+  const description = played
+    ? `${home.label} ${match.homeScore ?? 0}-${match.awayScore ?? 0} ${away.label} — ${VENUE_LABEL[match.venue] ?? match.venue}, ${matchDate(match.kickoff)}.`
+    : `${home.label} vs ${away.label} — ${matchDate(match.kickoff)} at ${VENUE_LABEL[match.venue] ?? match.venue}, Kigali.`
+
+  return { title, description }
+}
+
 export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const detail = await getMatchDetail(Number(id))
   if (!detail) notFound()
 
-  const { match, homePlayers, awayPlayers, events, otherMatches } = detail
+  const { match, homePlayers, awayPlayers, events, otherMatches, photos } = detail
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
   const played = match.status === 'final' || match.status === 'live'
@@ -35,7 +57,6 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
     events.filter((e) => e.side === side && e.type === type).length
   const homeStats = { goals: homeScore, yellows: count('home', 'yellow'), reds: count('home', 'red') }
   const awayStats = { goals: awayScore, yellows: count('away', 'yellow'), reds: count('away', 'red') }
-  const photos = ['/assets/hero-stadium.jpg', '/assets/team-card.jpg']
 
   return (
     <>

@@ -1,6 +1,5 @@
-import type { Match, Player, Team } from '@/payload-types'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import type { Homepage, Match, Player, Team } from '@/payload-types'
+import { getPayloadClient } from '@/lib/payload'
 import { getTournamentData, getLeaderboards, type LeaderboardRow } from '@/lib/tournament'
 import { fetchLatestNews } from '@/lib/news'
 import { matchDayLabel } from '@/lib/datetime'
@@ -9,7 +8,9 @@ import { FeaturedGrid, type UpcomingGroup } from '@/components/FeaturedGrid'
 import { Highlights, type HighlightCard } from '@/components/Highlights'
 import { StandingsTable } from '@/components/StandingsTable'
 import { PlayersPerformance, type PerfRow } from '@/components/PlayersPerformance'
+import { HomeGallery } from '@/components/HomeGallery'
 import { LatestNews } from '@/components/LatestNews'
+import { getHomeGalleryTiles } from '@/lib/gallery'
 import type { GroupId } from '@/lib/standings'
 
 export const revalidate = 300
@@ -33,10 +34,7 @@ const POSITION_LABEL: Record<string, string> = {
  * attached, then to a preview of the next few fixtures — so the section is
  * never empty before an editor curates it.
  */
-async function getHighlightCards(matches: Match[]): Promise<HighlightCard[]> {
-  const payload = await getPayload({ config: await config })
-  const home = await payload.findGlobal({ slug: 'homepage', depth: 1 })
-
+function getHighlightCards(matches: Match[], home: Homepage | null): HighlightCard[] {
   const editorCards = (home?.matchHighlights ?? [])
     .filter((c) => c.homeTeam && c.awayTeam)
     .map((c, i) => ({
@@ -122,15 +120,22 @@ function toPerfRow(rows: LeaderboardRow[]): PerfRow[] {
   })
 }
 
+async function getHomepageGlobal(): Promise<Homepage | null> {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'homepage', depth: 1 })
+}
+
 export default async function HomePage() {
-  const [data, leaderboards, news] = await Promise.all([
+  const [data, leaderboards, news, homeGalleryTiles, homepageGlobal] = await Promise.all([
     getTournamentData(),
     getLeaderboards(),
     fetchLatestNews({ limit: 11 }),
+    getHomeGalleryTiles(),
+    getHomepageGlobal(),
   ])
 
   const teamsById = new Map<number, Team>(data.teams.map((t) => [t.id, t]))
-  const highlightCards = await getHighlightCards(data.matches)
+  const highlightCards = getHighlightCards(data.matches, homepageGlobal)
   const upcomingGroups = groupUpcoming(data.matches)
   const topNews = news.slice(0, 6)
   const bottomNews = news.slice(6, 11)
@@ -165,6 +170,8 @@ export default async function HomePage() {
         assists={toPerfRow(leaderboards.assists)}
         cleanSheets={toPerfRow(leaderboards.cleanSheets)}
       />
+
+      <HomeGallery tiles={homeGalleryTiles} />
 
       <LatestNews articles={bottomNews} />
     </>

@@ -6,9 +6,9 @@
  * flows through here, so a scoreline entered in the admin appears everywhere at
  * once and can never disagree with itself.
  */
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import type { Match, Team, Player, PlayerMatchStat } from '@/payload-types'
+import { cache } from 'react'
+import { getPayloadClient } from '@/lib/payload'
+import type { Match, Media, Team, Player, PlayerMatchStat } from '@/payload-types'
 import {
   computeAllGroups,
   fairPlayFromCards,
@@ -20,10 +20,6 @@ import {
 import { computeBracket, type Bracket } from './bracket'
 
 export type { StandingRow } from './standings'
-
-async function getClient() {
-  return getPayload({ config: await config })
-}
 
 function relId(rel: number | { id: number } | null | undefined): number | null {
   if (rel == null) return null
@@ -55,7 +51,7 @@ export interface TournamentData {
  * Payload afterChange hook can revalidate it the instant a result is saved.
  */
 export async function getTournamentData(): Promise<TournamentData> {
-  const payload = await getClient()
+  const payload = await getPayloadClient()
 
   const [teamsRes, matchesRes, cardsRes] = await Promise.all([
     payload.find({ collection: 'teams', limit: 100, sort: 'name' }),
@@ -112,7 +108,7 @@ export interface LeaderboardRow {
 export type LeaderboardMetric = 'goals' | 'assists' | 'cleanSheets'
 
 export async function getLeaderboards(): Promise<Record<LeaderboardMetric, LeaderboardRow[]>> {
-  const payload = await getClient()
+  const payload = await getPayloadClient()
 
   const statsRes = await payload.find({
     collection: 'player-match-stats',
@@ -169,6 +165,17 @@ function relTeam(rel: number | Team | null | undefined): Team | null {
   return rel && typeof rel !== 'number' ? rel : null
 }
 
+function matchPhotoUrls(match: Match): string[] {
+  return (match.photos ?? [])
+    .map((p) => {
+      const img = p.image
+      if (!img || typeof img === 'number') return null
+      const media = img as Media
+      return media.sizes?.hero?.url || media.url || null
+    })
+    .filter((url): url is string => Boolean(url))
+}
+
 export type MatchEventType = 'goal' | 'yellow' | 'red' | 'kickoff' | 'halftime' | 'fulltime'
 
 export interface MatchEvent {
@@ -187,14 +194,18 @@ export interface MatchDetail {
   awayPlayers: Player[]
   events: MatchEvent[]
   otherMatches: Match[]
+  photos: string[]
 }
 
 /**
  * Everything the single-match page shows: the fixture, both squads, a
  * commentary feed derived from recorded goals and cards, and other results.
+ *
+ * Wrapped in `cache()` because both `generateMetadata` and the page body need
+ * it for the same request — this de-dupes the Payload round-trip.
  */
-export async function getMatchDetail(id: number): Promise<MatchDetail | null> {
-  const payload = await getClient()
+export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | null> => {
+  const payload = await getPayloadClient()
 
   const match = await payload.findByID({ collection: 'matches', id, depth: 2 }).catch(() => null)
   if (!match) return null
@@ -250,5 +261,7 @@ export async function getMatchDetail(id: number): Promise<MatchDetail | null> {
     .filter((m) => m.id !== id && (m.status === 'final' || m.status === 'live'))
     .slice(0, 4)
 
-  return { match, homeTeam, awayTeam, homePlayers, awayPlayers, events, otherMatches }
-}
+  const photos = matchPhotoUrls(match)
+
+  return { match, homeTeam, awayTeam, homePlayers, awayPlayers, events, otherMatches, photos }
+})

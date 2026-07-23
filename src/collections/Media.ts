@@ -17,6 +17,13 @@ export const Media: CollectionConfig = {
         description: 'Describe the image for screen readers, e.g. "APR FC club crest".',
       },
     },
+    {
+      name: 'caption',
+      type: 'text',
+      admin: {
+        description: 'Optional caption for galleries and articles.',
+      },
+    },
   ],
   upload: {
     imageSizes: [

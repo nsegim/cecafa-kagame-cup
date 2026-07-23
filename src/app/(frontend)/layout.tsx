@@ -5,6 +5,7 @@ import { SiteFooter } from '@/components/SiteFooter'
 import './fonts.css'
 import './globals.css'
 import './components.css'
+import './design-fidelity.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 // Condensed display face used for button labels in the design.

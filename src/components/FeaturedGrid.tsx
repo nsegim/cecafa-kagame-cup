@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Article } from '@/lib/news'
 import type { Match, Team } from '@/payload-types'
 import { TeamCrest } from './TeamCrest'
@@ -29,10 +30,17 @@ function ChevronIcon() {
 function FeaturedMain({ article }: { article: Article }) {
   return (
     <Link href={`/news/${article.slug}`} className="featured-main">
-      <div
-        className="featured-main__img"
-        style={article.imageUrl ? { backgroundImage: `url(${article.imageUrl})` } : undefined}
-      >
+      <div className="featured-main__img">
+        {article.imageUrl && (
+          <Image
+            src={article.imageUrl}
+            alt=""
+            fill
+            priority
+            sizes="(max-width: 900px) 100vw, 46vw"
+            style={{ objectFit: 'cover' }}
+          />
+        )}
         {article.category && <span className="featured-main__tag">{article.category}</span>}
       </div>
       <h2 className="featured-main__title">{article.title}</h2>
@@ -45,10 +53,11 @@ function FeaturedListItem({ article }: { article: Article }) {
   return (
     <Link href={`/news/${article.slug}`} className="featured-list__item">
       <h3 className="featured-list__title">{article.title}</h3>
-      <div
-        className="featured-list__img"
-        style={article.imageUrl ? { backgroundImage: `url(${article.imageUrl})` } : undefined}
-      />
+      <div className="featured-list__img" style={{ position: 'relative' }}>
+        {article.imageUrl && (
+          <Image src={article.imageUrl} alt="" fill sizes="120px" style={{ objectFit: 'cover' }} />
+        )}
+      </div>
     </Link>
   )
 }

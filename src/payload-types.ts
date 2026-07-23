@@ -73,6 +73,8 @@ export interface Config {
     matches: Match;
     players: Player;
     'player-match-stats': PlayerMatchStat;
+    articles: Article;
+    'gallery-images': GalleryImage;
     subscribers: Subscriber;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +89,8 @@ export interface Config {
     matches: MatchesSelect<false> | MatchesSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     'player-match-stats': PlayerMatchStatsSelect<false> | PlayerMatchStatsSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    'gallery-images': GalleryImagesSelect<false> | GalleryImagesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -99,9 +103,11 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
   globals: {
     homepage: Homepage;
+    gallery: Gallery;
   };
   globalsSelect: {
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    gallery: GallerySelect<false> | GallerySelect<true>;
   };
   locale: 'en';
   widgets: {
@@ -166,6 +172,10 @@ export interface Media {
    * Describe the image for screen readers, e.g. "APR FC club crest".
    */
   alt: string;
+  /**
+   * Optional caption for galleries and articles.
+   */
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -293,6 +303,15 @@ export interface Match {
    */
   highlightUrl?: string | null;
   highlightThumb?: (number | null) | Media;
+  /**
+   * Shown in the Match Photos tab and interspersed through the live commentary feed on the match page.
+   */
+  photos?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -332,6 +351,88 @@ export interface PlayerMatchStat {
    */
   yellowCards: number;
   redCards: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * External news links shown on the site. Editors control the image, headline, blurb, destination URL, ordering and visibility — clicking a card opens the external story.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  /**
+   * The headline shown on the news card.
+   */
+  title: string;
+  /**
+   * Auto-generated from the title. Used only for the internal link that redirects to the external URL.
+   */
+  slug?: string | null;
+  /**
+   * Card image (16:9 works best).
+   */
+  featuredImage: number | Media;
+  /**
+   * One or two sentences — the excerpt shown under the headline.
+   */
+  shortDescription: string;
+  /**
+   * Where the reader is taken when they click the article.
+   */
+  externalUrl: string;
+  /**
+   * Optional tag shown on the card, e.g. "Analysis", "Interview".
+   */
+  category?: string | null;
+  /**
+   * Approximate read time shown as "X min read".
+   */
+  readingMinutes?: number | null;
+  /**
+   * Featured articles lead the news sections.
+   */
+  featured?: boolean | null;
+  /**
+   * Lower numbers appear first (within the same featured group).
+   */
+  displayOrder?: number | null;
+  /**
+   * Hide an article without deleting it.
+   */
+  visibility: 'visible' | 'hidden';
+  /**
+   * Shown as the article date and used for ordering.
+   */
+  publishDate?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Photos shown in the gallery. Tag each with a category so it lands in the right folder.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery-images".
+ */
+export interface GalleryImage {
+  id: number;
+  /**
+   * Short label for this photo (shown here in the admin list only).
+   */
+  title?: string | null;
+  /**
+   * The photo. Its alt text comes from the uploaded image.
+   */
+  image: number | Media;
+  /**
+   * Which gallery folder this photo belongs to.
+   */
+  category: 'Action' | 'Match Day' | 'Trophy' | 'Fans' | 'Stadium' | 'APR FC';
+  /**
+   * Lower numbers appear first in the gallery grid.
+   */
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -393,6 +494,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'player-match-stats';
         value: number | PlayerMatchStat;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'gallery-images';
+        value: number | GalleryImage;
       } | null)
     | ({
         relationTo: 'subscribers';
@@ -468,6 +577,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -559,6 +669,12 @@ export interface MatchesSelect<T extends boolean = true> {
   awayScore?: T;
   highlightUrl?: T;
   highlightThumb?: T;
+  photos?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -588,6 +704,37 @@ export interface PlayerMatchStatsSelect<T extends boolean = true> {
   minutes?: T;
   yellowCards?: T;
   redCards?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  featuredImage?: T;
+  shortDescription?: T;
+  externalUrl?: T;
+  category?: T;
+  readingMinutes?: T;
+  featured?: T;
+  displayOrder?: T;
+  visibility?: T;
+  publishDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery-images_select".
+ */
+export interface GalleryImagesSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  category?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -679,6 +826,30 @@ export interface Homepage {
   createdAt?: string | null;
 }
 /**
+ * The gallery hero banner and the home-page photo mosaic.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery".
+ */
+export interface Gallery {
+  id: number;
+  /**
+   * Banner image across the top of the /gallery page.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * The nine photos in the home-page "Photo Gallery" mosaic, in order. The same photo may be used in more than one tile.
+   */
+  homeTiles?:
+    | {
+        image: number | GalleryImage;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage_select".
  */
@@ -691,6 +862,22 @@ export interface HomepageSelect<T extends boolean = true> {
         dateLabel?: T;
         thumbnail?: T;
         videoUrl?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery_select".
+ */
+export interface GallerySelect<T extends boolean = true> {
+  heroImage?: T;
+  homeTiles?:
+    | T
+    | {
+        image?: T;
         id?: T;
       };
   updatedAt?: T;

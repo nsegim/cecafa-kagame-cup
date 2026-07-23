@@ -10,6 +10,7 @@ import 'dotenv/config'
 import { getPayload } from 'payload'
 import config from '../payload.config'
 import { FIXTURE_SEED, TEAM_SEED } from './data'
+import { seedContent } from './content'
 
 const payload = await getPayload({ config })
 
@@ -92,6 +93,9 @@ for (const f of FIXTURE_SEED) {
 }
 
 console.log(`  matches: ${created} created, ${updated} updated (22 total)`)
+
+// --- Editorial content (gallery + articles) ---------------------------------
+await seedContent(payload)
 
 // --- Summary ----------------------------------------------------------------
 const groups = await Promise.all(

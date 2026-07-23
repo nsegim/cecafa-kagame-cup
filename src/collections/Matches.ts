@@ -148,6 +148,25 @@ export const Matches: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
     },
+    {
+      name: 'photos',
+      type: 'array',
+      label: 'Match Photos',
+      labels: { singular: 'Photo', plural: 'Photos' },
+      admin: {
+        description:
+          'Shown in the Match Photos tab and interspersed through the live commentary feed on the match page.',
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
+    },
   ],
   hooks: {
     beforeValidate: [

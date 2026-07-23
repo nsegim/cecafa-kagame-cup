@@ -58,51 +58,57 @@ export function Highlights({ cards }: { cards: HighlightCard[] }) {
           <h2>Match Highlights</h2>
         </div>
 
-        <div className="highlights-carousel">
-          {pageCount > 1 && (
-            <button
-              type="button"
-              className="highlights-arrow highlights-arrow--prev"
-              aria-label="Previous highlights"
-              onClick={() => go(-1)}
-            >
-              ←
-            </button>
-          )}
+        {cards.length === 0 ? (
+          <p className="perf__empty">Highlights will appear here once matches are played.</p>
+        ) : (
+          <>
+            <div className="highlights-carousel">
+              {pageCount > 1 && (
+                <button
+                  type="button"
+                  className="highlights-arrow highlights-arrow--prev"
+                  aria-label="Previous highlights"
+                  onClick={() => go(-1)}
+                >
+                  ←
+                </button>
+              )}
 
-          <div className="highlights-viewport">
-            <div className="highlights" key={page}>
-              {visible.map((c) => (
-                <Card key={c.id} card={c} onPlay={() => c.videoUrl && setPlaying(c.videoUrl)} />
-              ))}
+              <div className="highlights-viewport">
+                <div className="highlights" key={page}>
+                  {visible.map((c) => (
+                    <Card key={c.id} card={c} onPlay={() => c.videoUrl && setPlaying(c.videoUrl)} />
+                  ))}
+                </div>
+              </div>
+
+              {pageCount > 1 && (
+                <button
+                  type="button"
+                  className="highlights-arrow highlights-arrow--next"
+                  aria-label="Next highlights"
+                  onClick={() => go(1)}
+                >
+                  →
+                </button>
+              )}
             </div>
-          </div>
 
-          {pageCount > 1 && (
-            <button
-              type="button"
-              className="highlights-arrow highlights-arrow--next"
-              aria-label="Next highlights"
-              onClick={() => go(1)}
-            >
-              →
-            </button>
-          )}
-        </div>
-
-        {pageCount > 1 && (
-          <div className="highlights-dots" role="tablist" aria-label="Highlight pages">
-            {Array.from({ length: pageCount }).map((_, idx) => (
-              <button
-                key={idx}
-                role="tab"
-                aria-selected={idx === page}
-                aria-label={`Page ${idx + 1}`}
-                className={`highlights-dot ${idx === page ? 'is-active' : ''}`}
-                onClick={() => setPage(idx)}
-              />
-            ))}
-          </div>
+            {pageCount > 1 && (
+              <div className="highlights-dots" role="tablist" aria-label="Highlight pages">
+                {Array.from({ length: pageCount }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    role="tab"
+                    aria-selected={idx === page}
+                    aria-label={`Page ${idx + 1}`}
+                    className={`highlights-dot ${idx === page ? 'is-active' : ''}`}
+                    onClick={() => setPage(idx)}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 

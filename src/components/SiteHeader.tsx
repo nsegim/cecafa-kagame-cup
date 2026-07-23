@@ -16,25 +16,35 @@ export function SiteHeader() {
           <Image
             src="/assets/cecafa-logo.png"
             alt="CECAFA Kagame Cup"
-            width={48}
+            width={56}
             height={48}
+            priority
             className="brand__cecafa"
           />
           <span className="brand__divider" aria-hidden="true" />
-          <Image src="/assets/IGIHE-logo.svg" alt="IGIHE" width={132} height={17} className="brand__igihe" />
+          <Image
+            src="/assets/IGIHE-logo.svg"
+            alt="IGIHE"
+            width={160}
+            height={20}
+            priority
+            className="brand__igihe"
+          />
         </Link>
 
-        <nav className="site-nav" aria-label="Primary">
-          {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="site-nav__link">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="site-header__navigation">
+          <nav className="site-nav" aria-label="Primary">
+            {NAV.map((item) => (
+              <Link key={item.href} href={item.href} className="site-nav__link">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
-        <Link href="/news" className="btn btn--red site-header__cta">
-          LIVE NEWS
-        </Link>
+          <Link href="/news" className="site-header__cta">
+            {'LIVE  NEWS'}
+          </Link>
+        </div>
       </div>
     </header>
   )

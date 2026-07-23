@@ -1,5 +1,4 @@
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { getPayloadClient } from '@/lib/payload'
 import { NextResponse } from 'next/server'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -17,7 +16,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 })
   }
 
-  const payload = await getPayload({ config: await config })
+  const payload = await getPayloadClient()
 
   // Quietly succeed if already subscribed — no need to leak who is on the list.
   const existing = await payload.find({

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 export interface PerfRow {
   name: string
@@ -87,8 +88,7 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
                     <td className="perf__player">
                       <span className="perf__avatar" aria-hidden="true">
                         {r.photoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={r.photoUrl} alt="" />
+                          <Image src={r.photoUrl} alt="" width={60} height={80} />
                         ) : (
                           r.name.slice(0, 1)
                         )}

@@ -145,7 +145,7 @@ export function MatchesTabs({
   featuredUpcoming: FeaturedMatch | null
   featuredPrevious: FeaturedMatch | null
 }) {
-  const [tab, setTab] = useState<'upcoming' | 'previous'>('upcoming')
+  const [tab, setTab] = useState<'upcoming' | 'previous'>('previous')
   const rows = tab === 'upcoming' ? upcoming : previous
   const featured = tab === 'upcoming' ? featuredUpcoming : featuredPrevious
 
