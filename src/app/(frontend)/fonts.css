@@ -1,0 +1,39 @@
+/* Display font — ITC Avant Garde Gothic ("Vogue Avant Garde").
+   Drop the licensed files into /public/fonts (see README there). Until they
+   exist these @font-face rules resolve to nothing and the stack falls back to
+   a geometric substitute, so the site never breaks. font-display: swap means
+   the real font appears the instant the files are added. */
+
+@font-face {
+  font-family: 'Avant Garde Gothic';
+  src:
+    url('/fonts/avant-garde.woff2') format('woff2'),
+    url('/fonts/avant-garde.otf') format('opentype'),
+    url('/fonts/avant-garde.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avant Garde Gothic';
+  src:
+    url('/fonts/avant-garde-medium.woff2') format('woff2'),
+    url('/fonts/avant-garde-medium.otf') format('opentype');
+  /* The design uses both Medium (500) and DemiBold (600); the licensed
+     package ships one intermediate weight, so it covers the 500–600 range. */
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avant Garde Gothic';
+  src:
+    url('/fonts/avant-garde-bold.woff2') format('woff2'),
+    url('/fonts/avant-garde-bold.otf') format('opentype'),
+    url('/fonts/avant-garde-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
