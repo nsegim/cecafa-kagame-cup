@@ -54,8 +54,8 @@ export function Highlights({ cards }: { cards: HighlightCard[] }) {
     <section className="section">
       <div className="container">
         <div className="section-head">
-          <span className="kicker">Review</span>
-          <h2>Match Highlights</h2>
+          <span className="kicker">AMASHUSHO</span>
+          <h2>IMIKINO IKURIKIRA</h2>
         </div>
 
         {cards.length === 0 ? (

@@ -24,6 +24,8 @@ export interface GalleryImage {
   src: string
   alt: string
   category: GalleryCategory
+  /** Flickr album this cover photo links to. Absent means the tile isn't clickable. */
+  flickrAlbumUrl?: string
 }
 
 export function isGalleryFilter(value: string | undefined): value is GalleryFilter {

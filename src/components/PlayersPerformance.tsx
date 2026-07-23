@@ -18,9 +18,9 @@ export interface PerfRow {
 type Tab = 'goals' | 'assists' | 'cleanSheets'
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'goals', label: 'Top Scorer' },
-  { id: 'assists', label: 'Top Assists' },
-  { id: 'cleanSheets', label: 'Most Clean Sheets' },
+  { id: 'goals', label: 'UWATSINZE BYINSHI' },
+  { id: 'assists', label: 'UWATANZE ‘ASSISTS’ NYINSHI' },
+  { id: 'cleanSheets', label: 'UTARINJIJWE IGITEGO' },
 ]
 
 export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, PerfRow[]>) {
@@ -42,8 +42,8 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
     <section className="section" id="players">
       <div className="container">
         <div className="section-head">
-          <span className="kicker">Stats</span>
-          <h2>Players Performance</h2>
+          <span className="kicker">IMIBARE</span>
+          <h2>Uko abakinnyi bahagaze</h2>
         </div>
 
         <div className="perf__tabs" role="tablist" aria-label="Performance metric">
@@ -64,9 +64,9 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
           <table className="perf__table">
             <thead>
               <tr>
-                <th className="perf__th-player">Player</th>
-                <th>Position</th>
-                <th className="perf__num">Played</th>
+                <th className="perf__th-player">UMUKINNYI</th>
+                <th>UMWANYA</th>
+                <th className="perf__num">IMIKINO</th>
                 {statCols.map((c) => (
                   <th key={c.key} className="perf__num">
                     {c.label}
@@ -101,10 +101,7 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
                     <td className="perf__pos">{r.position}</td>
                     <td className="perf__num">{r.played}</td>
                     {statCols.map((c) => (
-                      <td
-                        key={c.key}
-                        className={`perf__num ${c.key === tab ? 'perf__stat' : ''}`}
-                      >
+                      <td key={c.key} className={`perf__num ${c.key === tab ? 'perf__stat' : ''}`}>
                         {r[c.key]}
                       </td>
                     ))}

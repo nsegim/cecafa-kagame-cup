@@ -154,8 +154,8 @@ export default async function HomePage() {
       <section className="section section--band" id="standings">
         <div className="container">
           <div className="section-head">
-            <span className="kicker">The Groups</span>
-            <h2>Full Standings</h2>
+            <span className="kicker">AMATSINDA</span>
+            <h2>Urutonde</h2>
           </div>
           <div className="standings-grid">
             {(['A', 'B', 'C'] as GroupId[]).map((g) => (

@@ -3,7 +3,7 @@ import type { GlobalConfig } from 'payload'
 /** Editor-controlled homepage content. */
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
-  label: 'Homepage',
+  label: 'Match Highlights',
   admin: {
     group: 'Content',
   },

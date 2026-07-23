@@ -12,9 +12,9 @@ export const COUNTRIES = [
 ] as const
 
 export const GROUPS = [
-  { label: 'Group A', value: 'A' },
-  { label: 'Group B', value: 'B' },
-  { label: 'Group C', value: 'C' },
+  { label: 'ITSINDA A', value: 'A' },
+  { label: 'ITSINDA B', value: 'B' },
+  { label: 'ITSINDA C', value: 'C' },
 ] as const
 
 export const Teams: CollectionConfig = {

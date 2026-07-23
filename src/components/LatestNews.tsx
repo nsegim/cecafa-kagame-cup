@@ -4,7 +4,10 @@ import { shortDate } from '@/lib/datetime'
 
 function Card({ article, featured = false }: { article: Article; featured?: boolean }) {
   return (
-    <Link href={`/news/${article.slug}`} className={`news-card ${featured ? 'news-card--featured' : ''}`}>
+    <Link
+      href={`/news/${article.slug}`}
+      className={`news-card ${featured ? 'news-card--featured' : ''}`}
+    >
       <div
         className="news-card__img"
         style={article.imageUrl ? { backgroundImage: `url(${article.imageUrl})` } : undefined}
@@ -32,9 +35,7 @@ export function LatestNews({ articles }: { articles: Article[] }) {
             <span className="kicker">Blog</span>
             <h2>The Latest News</h2>
           </div>
-          <p className="news-empty">
-            Live news from IGIHE will appear here during the tournament.
-          </p>
+          <p className="news-empty">Live news from IGIHE will appear here during the tournament.</p>
         </div>
       </section>
     )
@@ -46,8 +47,8 @@ export function LatestNews({ articles }: { articles: Article[] }) {
     <section className="section" id="news">
       <div className="container">
         <div className="section-head">
-          <span className="kicker">Blog</span>
-          <h2>The Latest News</h2>
+          <span className="kicker">INKURU</span>
+          <h2>Amakuru Aheruka</h2>
         </div>
 
         <div className="news-grid">
@@ -61,12 +62,12 @@ export function LatestNews({ articles }: { articles: Article[] }) {
 
         <div className="news-more">
           <a
-            href="https://old.igihe.com/imikino/football/"
+            href="https://igihe.com"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn--red"
           >
-            Load more stories
+            Andi makuru
           </a>
         </div>
       </div>

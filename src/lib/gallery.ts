@@ -40,15 +40,17 @@ function toView(doc: GalleryImageDoc, id: string): GalleryImage | null {
     src,
     alt: imageAlt(doc.image),
     category: doc.category as GalleryCategory,
+    flickrAlbumUrl: doc.flickrAlbumUrl ?? undefined,
   }
 }
 
-/** Every gallery photo, ordered, for the /gallery filterable grid. */
+/** Every visible gallery album, ordered, for the /gallery filterable grid. */
 export async function getGalleryImages(): Promise<GalleryImage[]> {
   try {
     const payload = await getPayloadClient()
     const res = await payload.find({
       collection: 'gallery-images',
+      where: { visible: { not_equals: false } },
       sort: 'order',
       limit: 200,
       depth: 1,

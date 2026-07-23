@@ -426,7 +426,7 @@ export interface Article {
   createdAt: string;
 }
 /**
- * Photos shown in the gallery. Tag each with a category so it lands in the right folder.
+ * Gallery albums shown on /gallery. Each entry is a cover photo that redirects to its Flickr album when clicked.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery-images".
@@ -434,17 +434,29 @@ export interface Article {
 export interface GalleryImage {
   id: number;
   /**
-   * Short label for this photo (shown here in the admin list only).
+   * Album title (shown here in the admin list only — not displayed on the public site).
    */
-  title?: string | null;
+  title: string;
   /**
-   * The photo. Its alt text comes from the uploaded image.
+   * The preview photo shown on the /gallery grid. Its alt text comes from the uploaded image.
    */
   image: number | Media;
   /**
-   * Which gallery folder this photo belongs to.
+   * Which gallery folder this album belongs to.
    */
   category: 'Action' | 'Match Day' | 'Trophy' | 'Fans' | 'Stadium' | 'APR FC';
+  /**
+   * The Flickr album this cover photo links to. Visitors are redirected here when they click the gallery item. Leave blank to keep the cover photo on the grid but not clickable.
+   */
+  flickrAlbumUrl?: string | null;
+  /**
+   * Optional internal note about this album (not shown on the public site).
+   */
+  description?: string | null;
+  /**
+   * Show this album on the public /gallery page. Uncheck to hide it without deleting it.
+   */
+  visible?: boolean | null;
   /**
    * Lower numbers appear first in the gallery grid.
    */
@@ -757,6 +769,9 @@ export interface GalleryImagesSelect<T extends boolean = true> {
   title?: T;
   image?: T;
   category?: T;
+  flickrAlbumUrl?: T;
+  description?: T;
+  visible?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;

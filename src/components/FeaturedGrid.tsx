@@ -22,7 +22,13 @@ function sideLabel(rel: Match['homeTeam'], placeholder?: string | null): string 
 function ChevronIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M9 5l7 7-7 7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
@@ -65,11 +71,15 @@ function FeaturedListItem({ article }: { article: Article }) {
 function UpcomingRow({ match }: { match: Match }) {
   return (
     <div className="upcoming-row">
-      <span className="upcoming-row__team">{sideLabel(match.homeTeam, match.homeTeamPlaceholder)}</span>
+      <span className="upcoming-row__team">
+        {sideLabel(match.homeTeam, match.homeTeamPlaceholder)}
+      </span>
       <TeamCrest team={sideTeam(match.homeTeam)} size={32} />
       <span className="upcoming-row__time">{matchTime(match.kickoff)}</span>
       <TeamCrest team={sideTeam(match.awayTeam)} size={32} />
-      <span className="upcoming-row__team">{sideLabel(match.awayTeam, match.awayTeamPlaceholder)}</span>
+      <span className="upcoming-row__team">
+        {sideLabel(match.awayTeam, match.awayTeamPlaceholder)}
+      </span>
     </div>
   )
 }
@@ -95,7 +105,7 @@ export function FeaturedGrid({
         </div>
 
         <div className="upcoming-panel">
-          <div className="upcoming-panel__head">Upcoming Games</div>
+          <div className="upcoming-panel__head">IMIKINO IKURIKIRA</div>
           <div className="upcoming-panel__body">
             {upcoming.length === 0 ? (
               <p className="upcoming-panel__empty">No upcoming fixtures yet.</p>
@@ -111,7 +121,8 @@ export function FeaturedGrid({
             )}
           </div>
           <Link href="/matches" className="upcoming-panel__cta">
-            View all matches <ChevronIcon />
+            Reba imikino yose
+            <ChevronIcon />
           </Link>
         </div>
       </div>

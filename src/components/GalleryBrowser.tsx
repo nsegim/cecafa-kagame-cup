@@ -67,11 +67,8 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
         aria-label={`${selectedCategory} photos`}
       >
         <div className="gallery-detail__grid">
-          {images.map((image, index) => (
-            <figure
-              key={image.id}
-              className={`gallery-detail__item gallery-detail__item--${index + 1}`}
-            >
+          {images.map((image, index) => {
+            const photo = (
               <Image
                 src={image.src}
                 alt={image.alt}
@@ -79,9 +76,30 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
                 sizes="(max-width: 900px) 50vw, 33vw"
                 style={{ objectFit: 'cover' }}
               />
-              <figcaption>{image.category}</figcaption>
-            </figure>
-          ))}
+            )
+
+            return (
+              <figure
+                key={image.id}
+                className={`gallery-detail__item gallery-detail__item--${index + 1}`}
+              >
+                {image.flickrAlbumUrl ? (
+                  <a
+                    className="gallery-detail__trigger"
+                    href={image.flickrAlbumUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`View ${image.alt || image.category} album on Flickr`}
+                  >
+                    {photo}
+                  </a>
+                ) : (
+                  photo
+                )}
+                <figcaption>{image.category}</figcaption>
+              </figure>
+            )
+          })}
         </div>
 
         <button type="button" className="gallery-cta gallery-cta--load">
