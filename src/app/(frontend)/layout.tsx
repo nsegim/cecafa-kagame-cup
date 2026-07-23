@@ -1,15 +1,24 @@
 import React from 'react'
-import { Inter, Bebas_Neue } from 'next/font/google'
+import { Raleway } from 'next/font/google'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
-import './fonts.css'
 import './globals.css'
 import './components.css'
 import './design-fidelity.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-// Condensed display face used for button labels in the design.
-const bebas = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--font-bebas' })
+/**
+ * Raleway — the single typeface for the entire site. Self-hosted at build
+ * time by next/font/google (no runtime request to Google, no layout shift).
+ * One CSS variable; `--font-display`/`--font-condensed` in globals.css both
+ * resolve to it, so no component-level CSS had to change.
+ */
+const raleway = Raleway({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-raleway',
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+})
 
 export const metadata = {
   title: 'CECAFA Kagame Cup 2026 — Rwanda | IGIHE',
@@ -19,7 +28,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebas.variable}`}>
+    <html lang="en" className={raleway.variable}>
       <body>
         <SiteHeader />
         <main>{children}</main>

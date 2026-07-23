@@ -299,6 +299,14 @@ export interface Match {
   homeScore?: number | null;
   awayScore?: number | null;
   /**
+   * Where the header's LIVE button sends visitors while this match is live — this match's own page (e.g. /matches/5) or an external stream link. Required while the Live button is shown below.
+   */
+  liveMatchUrl?: string | null;
+  /**
+   * Show the site-wide header LIVE button while this match is live. Turn off to track the match live internally without surfacing the public button yet.
+   */
+  showLiveButton?: boolean | null;
+  /**
    * Manual updates for the Live Expressions feed — post these as the match happens (chances, saves, substitutions, general commentary). Goals and cards recorded in Player Match Stats are added to the feed automatically; you don't need to repeat those here.
    */
   commentary?:
@@ -332,6 +340,64 @@ export interface Match {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Starting XI, substitutes and coach for the home team.
+   */
+  homeLineup?: {
+    /**
+     * This team's head coach for the match (optional).
+     */
+    coach?: string | null;
+    /**
+     * Up to 11 players. Drag to reorder; the order shown here is the display order.
+     */
+    startingXI?:
+      | {
+          player: number | Player;
+          isCaptain?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Bench players for this match. Drag a row here from Starting XI (or back) to move it.
+     */
+    substitutes?:
+      | {
+          player: number | Player;
+          isCaptain?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Starting XI, substitutes and coach for the away team.
+   */
+  awayLineup?: {
+    /**
+     * This team's head coach for the match (optional).
+     */
+    coach?: string | null;
+    /**
+     * Up to 11 players. Drag to reorder; the order shown here is the display order.
+     */
+    startingXI?:
+      | {
+          player: number | Player;
+          isCaptain?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Bench players for this match. Drag a row here from Starting XI (or back) to move it.
+     */
+    substitutes?:
+      | {
+          player: number | Player;
+          isCaptain?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -699,6 +765,8 @@ export interface MatchesSelect<T extends boolean = true> {
   status?: T;
   homeScore?: T;
   awayScore?: T;
+  liveMatchUrl?: T;
+  showLiveButton?: T;
   commentary?:
     | T
     | {
@@ -714,6 +782,44 @@ export interface MatchesSelect<T extends boolean = true> {
     | {
         image?: T;
         id?: T;
+      };
+  homeLineup?:
+    | T
+    | {
+        coach?: T;
+        startingXI?:
+          | T
+          | {
+              player?: T;
+              isCaptain?: T;
+              id?: T;
+            };
+        substitutes?:
+          | T
+          | {
+              player?: T;
+              isCaptain?: T;
+              id?: T;
+            };
+      };
+  awayLineup?:
+    | T
+    | {
+        coach?: T;
+        startingXI?:
+          | T
+          | {
+              player?: T;
+              isCaptain?: T;
+              id?: T;
+            };
+        substitutes?:
+          | T
+          | {
+              player?: T;
+              isCaptain?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -869,7 +975,7 @@ export interface Homepage {
   createdAt?: string | null;
 }
 /**
- * The gallery hero banner and the home-page photo mosaic.
+ * The banner image at the top of the /gallery page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery".
@@ -880,15 +986,6 @@ export interface Gallery {
    * Banner image across the top of the /gallery page.
    */
   heroImage?: (number | null) | Media;
-  /**
-   * The nine photos in the home-page "Photo Gallery" mosaic, in order. The same photo may be used in more than one tile.
-   */
-  homeTiles?:
-    | {
-        image: number | GalleryImage;
-        id?: string | null;
-      }[]
-    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -917,12 +1014,6 @@ export interface HomepageSelect<T extends boolean = true> {
  */
 export interface GallerySelect<T extends boolean = true> {
   heroImage?: T;
-  homeTiles?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

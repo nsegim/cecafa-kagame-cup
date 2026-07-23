@@ -188,15 +188,48 @@ export interface MatchEvent {
   text?: string
 }
 
+export interface LineupPlayerEntry {
+  player: Player
+  isCaptain: boolean
+}
+
+export interface TeamLineup {
+  coach: string | null
+  startingXI: LineupPlayerEntry[]
+  substitutes: LineupPlayerEntry[]
+}
+
 export interface MatchDetail {
   match: Match
   homeTeam: Team | null
   awayTeam: Team | null
-  homePlayers: Player[]
-  awayPlayers: Player[]
+  homeLineup: TeamLineup | null
+  awayLineup: TeamLineup | null
   events: MatchEvent[]
   otherMatches: Match[]
   photos: string[]
+}
+
+type RawLineupRow = { player: number | Player; isCaptain?: boolean | null }
+type RawLineup = { coach?: string | null; startingXI?: RawLineupRow[] | null; substitutes?: RawLineupRow[] | null }
+
+/**
+ * Resolves a match's stored lineup (player relationships + captain flags)
+ * into the shape the Match Details page renders. Returns `null` when nothing
+ * has been entered for this side yet, so the frontend can hide the section
+ * entirely rather than show an empty one.
+ */
+function resolveLineup(raw: RawLineup | null | undefined): TeamLineup | null {
+  if (!raw) return null
+  const toEntries = (rows: RawLineupRow[] | null | undefined): LineupPlayerEntry[] =>
+    (rows ?? [])
+      .filter((row): row is { player: Player; isCaptain?: boolean | null } => typeof row.player === 'object')
+      .map((row) => ({ player: row.player, isCaptain: Boolean(row.isCaptain) }))
+
+  const startingXI = toEntries(raw.startingXI)
+  const substitutes = toEntries(raw.substitutes)
+  if (!raw.coach && startingXI.length === 0 && substitutes.length === 0) return null
+  return { coach: raw.coach ?? null, startingXI, substitutes }
 }
 
 /**
@@ -214,18 +247,8 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
 
   const homeTeam = relTeam(match.homeTeam)
   const awayTeam = relTeam(match.awayTeam)
-  const teamIds = [homeTeam?.id, awayTeam?.id].filter((v): v is number => typeof v === 'number')
 
-  const [playersRes, statsRes, allMatchesRes] = await Promise.all([
-    teamIds.length
-      ? payload.find({
-          collection: 'players',
-          where: { team: { in: teamIds } },
-          sort: 'shirtNumber',
-          limit: 100,
-          depth: 0,
-        })
-      : Promise.resolve({ docs: [] as Player[] }),
+  const [statsRes, allMatchesRes] = await Promise.all([
     payload.find({
       collection: 'player-match-stats',
       where: { match: { equals: id } },
@@ -235,8 +258,8 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
     payload.find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 }),
   ])
 
-  const homePlayers = (playersRes.docs as Player[]).filter((p) => relId(p.team) === homeTeam?.id)
-  const awayPlayers = (playersRes.docs as Player[]).filter((p) => relId(p.team) === awayTeam?.id)
+  const homeLineup = resolveLineup(match.homeLineup)
+  const awayLineup = resolveLineup(match.awayLineup)
 
   const scored: MatchEvent[] = []
   for (const s of statsRes.docs as PlayerMatchStat[]) {
@@ -277,5 +300,32 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
 
   const photos = matchPhotoUrls(match)
 
-  return { match, homeTeam, awayTeam, homePlayers, awayPlayers, events, otherMatches, photos }
+  return { match, homeTeam, awayTeam, homeLineup, awayLineup, events, otherMatches, photos }
+})
+
+/**
+ * The one match, if any, the site-wide header's LIVE button should point at.
+ *
+ * A match is eligible once an editor sets its status to Live, sets a
+ * destination, and hasn't hidden the button. If several are live at once —
+ * two group matches kicking off together — the earliest fixture (lowest
+ * `matchNumber`) wins, so only one button is ever shown.
+ */
+export const getActiveLiveMatch = cache(async (): Promise<{ id: number; liveMatchUrl: string } | null> => {
+  try {
+    const payload = await getPayloadClient()
+    const res = await payload.find({
+      collection: 'matches',
+      where: { status: { equals: 'live' } },
+      sort: 'matchNumber',
+      limit: 25,
+      depth: 0,
+    })
+    const match = (res.docs as Match[]).find((m) => m.showLiveButton !== false && m.liveMatchUrl)
+    if (!match?.liveMatchUrl) return null
+    return { id: match.id, liveMatchUrl: match.liveMatchUrl }
+  } catch (err) {
+    console.error('[live-match] failed to read active live match:', err)
+    return null
+  }
 })

@@ -30,19 +30,6 @@ const GALLERY_SEED: GallerySeed[] = [
   { key: 'match-action', file: 'gallery-action.jpg', alt: 'A player in orange controlling the ball', category: 'Action' },
 ]
 
-/** The approved home mosaic order (trophy intentionally repeats three times). */
-const HOME_TILE_ORDER = [
-  'match-day-stadium',
-  'match-ball',
-  'trophy-celebration',
-  'goalkeeper-kick',
-  'apr-forward',
-  'trophy',
-  'trophy',
-  'trophy',
-  'stadium-pitch',
-]
-
 interface ArticleSeed {
   slug: string
   title: string
@@ -181,23 +168,20 @@ async function upsertArticle(payload: Payload, seed: ArticleSeed, imageId: numbe
 }
 
 export async function seedContent(payload: Payload): Promise<void> {
-  // --- Gallery images -------------------------------------------------------
-  const galleryIdByKey = new Map<string, number>()
+  // --- Gallery images ---------------------------------------------------------
+  // The home-page mosaic is just the first nine of this same list (by `order`)
+  // — no separate curation step, so nothing else to seed for it here.
   for (let i = 0; i < GALLERY_SEED.length; i++) {
     const seed = GALLERY_SEED[i]
     const mediaId = await upsertMedia(payload, seed.file, seed.alt)
-    const galleryId = await upsertGalleryImage(payload, seed, mediaId, i)
-    galleryIdByKey.set(seed.key, galleryId)
+    await upsertGalleryImage(payload, seed, mediaId, i)
   }
-  console.log(`  gallery: ${galleryIdByKey.size} photos`)
+  console.log(`  gallery: ${GALLERY_SEED.length} photos`)
 
-  // --- Gallery global (hero + home mosaic) ----------------------------------
+  // --- Gallery global (hero banner only) ---------------------------------------
   const heroId = await upsertMedia(payload, 'gallery-hero.jpg', 'CECAFA Kagame Cup gallery')
-  const homeTiles = HOME_TILE_ORDER.map((key) => galleryIdByKey.get(key))
-    .filter((id): id is number => typeof id === 'number')
-    .map((image) => ({ image }))
-  await payload.updateGlobal({ slug: 'gallery', data: { heroImage: heroId, homeTiles } })
-  console.log(`  gallery global: hero + ${homeTiles.length} mosaic tiles`)
+  await payload.updateGlobal({ slug: 'gallery', data: { heroImage: heroId } })
+  console.log('  gallery global: hero banner')
 
   // --- Articles -------------------------------------------------------------
   for (const seed of ARTICLE_SEED) {

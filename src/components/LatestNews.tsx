@@ -61,12 +61,7 @@ export function LatestNews({ articles }: { articles: Article[] }) {
         </div>
 
         <div className="news-more">
-          <a
-            href="https://igihe.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn--red"
-          >
+          <a href="/news" target="_blank" rel="noopener noreferrer" className="btn btn--red">
             Andi makuru
           </a>
         </div>

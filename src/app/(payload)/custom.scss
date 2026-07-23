@@ -1,0 +1,15 @@
+/* Raleway for the admin UI, matching the public site. Payload's own
+   stylesheets key every font-family declaration off `--font-body` (see
+   @payloadcms/ui/dist/scss/{app,type,resets,vars}.scss), so overriding that
+   one variable here is enough to cover the whole admin — nav, tables,
+   forms, modals — with no per-component overrides needed.
+
+   The public site self-hosts Raleway via next/font/google (see
+   layout.tsx); this admin panel isn't part of that component tree, so it
+   loads the same weights from Google Fonts here instead. */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --font-body: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+}

@@ -43,7 +43,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
   const detail = await getMatchDetail(Number(id))
   if (!detail) notFound()
 
-  const { match, homePlayers, awayPlayers, events, otherMatches, photos } = detail
+  const { match, homeLineup, awayLineup, events, otherMatches, photos } = detail
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
   const played = match.status === 'final' || match.status === 'live'
@@ -128,8 +128,8 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
             <Lineups
               homeName={home.label}
               awayName={away.label}
-              homePlayers={homePlayers}
-              awayPlayers={awayPlayers}
+              homeLineup={homeLineup}
+              awayLineup={awayLineup}
             />
 
             {otherMatches.length > 0 && (

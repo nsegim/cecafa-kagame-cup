@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { getActiveLiveMatch } from '@/lib/tournament'
 
 const NAV = [
   { label: 'AMAKURU', href: '/news' },
@@ -8,7 +9,9 @@ const NAV = [
   { label: 'URUTONDE', href: '/#standings' },
 ]
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const liveMatch = await getActiveLiveMatch()
+
   return (
     <header className="site-header">
       <div className="container site-header__inner">
@@ -45,9 +48,11 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          <Link href="/news" className="site-header__cta">
-            {'AMAKURU Y’AKO KANYA'}
-          </Link>
+          {liveMatch && (
+            <a href={liveMatch.liveMatchUrl} className="site-header__cta">
+              {'LIVE'}
+            </a>
+          )}
         </div>
       </div>
     </header>

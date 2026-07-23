@@ -1,10 +1,11 @@
 /**
  * Server-side data layer for the gallery.
  *
- * Reads the photo pool (`gallery-images`) and the presentation settings
- * (`gallery` global) from Payload and maps them to the `GalleryImage` view
- * shape the components already expect, so GalleryBrowser and HomeGallery render
- * unchanged.
+ * `gallery-images` is the single source of truth for every gallery section —
+ * the /gallery grid and the home-page mosaic both read the same ordered,
+ * visible list; the mosaic is simply its first nine items. Adding, editing,
+ * deleting, reordering, or hiding an item there updates both places
+ * automatically, with no separate curation step.
  */
 import { getPayloadClient } from '@/lib/payload'
 import type {
@@ -75,24 +76,8 @@ export async function getGalleryHero(): Promise<string> {
   }
 }
 
-/**
- * The nine tiles of the home-page mosaic, in editor order. The same photo may
- * legitimately appear more than once, so tiles are keyed by position.
- */
+/** The nine-tile home-page mosaic — the first nine items of the same list `getGalleryImages` returns. */
 export async function getHomeGalleryTiles(): Promise<GalleryImage[]> {
-  try {
-    const payload = await getPayloadClient()
-    const settings = (await payload.findGlobal({ slug: 'gallery', depth: 2 })) as GalleryGlobal
-    const tiles = settings.homeTiles ?? []
-    return tiles
-      .map((tile, index) => {
-        const ref = tile.image
-        if (!ref || typeof ref === 'number') return null
-        return toView(ref as GalleryImageDoc, `home-${index}`)
-      })
-      .filter((v): v is GalleryImage => v !== null)
-  } catch (err) {
-    console.error('[gallery] failed to read home mosaic:', err)
-    return []
-  }
+  const images = await getGalleryImages()
+  return images.slice(0, 9)
 }
