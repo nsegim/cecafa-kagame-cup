@@ -1027,6 +1027,9 @@ body > main {
 .commentary__text {
   font-size: 13px;
   line-height: 17px;
+  /* Preserve the line breaks and blank-line paragraph gaps an editor types in
+     the (multi-line) commentary text, instead of collapsing them to one space. */
+  white-space: pre-line;
 }
 
 .commentary__photo {

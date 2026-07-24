@@ -484,11 +484,12 @@ export const Matches: CollectionConfig = {
         },
         {
           name: 'text',
-          type: 'text',
+          type: 'textarea',
           validate: validateCommentaryText,
           admin: {
+            rows: 5,
             description:
-              'e.g. "Good save from the keeper, corner to APR." Optional extra detail for a goal/card/substitution — those already get an automatic caption from the fields above.',
+              'The update text — write as many lines and paragraphs as you need (press Enter for a new line; leave a blank line between paragraphs). For a goal/card/substitution this is optional extra detail on top of the automatic caption.',
           },
         },
         {
