@@ -124,7 +124,7 @@ body > main {
 }
 
 .site-nav__link:last-child {
-  padding-right: 0;
+  /* padding-right: 0; */
 }
 
 .site-nav__link:nth-child(1) {
@@ -132,15 +132,15 @@ body > main {
 }
 
 .site-nav__link:nth-child(2) {
-  flex: 0 0 97px;
+  /* flex: 0 0 97px; */
 }
 
 .site-nav__link:nth-child(3) {
-  flex: 0 0 82px;
+  /* flex: 0 0 82px; */
 }
 
 .site-nav__link:nth-child(4) {
-  flex: 0 0 77px;
+  /* flex: 0 0 77px; */
 }
 
 .site-nav__link:hover,
@@ -1656,6 +1656,10 @@ body > main {
   min-height: 0;
   overflow: hidden;
   border-radius: 3px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
 }
 
 .home-gallery__tile img {
@@ -2735,4 +2739,23 @@ body > main {
     grid-column: auto;
     aspect-ratio: 4 / 3;
   }
+}
+
+
+
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  /* number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

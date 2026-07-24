@@ -19,7 +19,7 @@ export function SiteFooter() {
           <Newsletter />
         </div>
         <div className="site-footer__bottom">
-          <p className="site-footer__copy">Copyright © IGIHE 2025</p>
+          <p className="site-footer__copy">Copyright © IGIHE 2026</p>
         </div>
       </div>
     </footer>

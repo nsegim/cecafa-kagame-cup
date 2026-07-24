@@ -1203,6 +1203,31 @@
 .commentary__icon--whistle {
   background: var(--ink-300);
 }
+.commentary__icon--substitution {
+  position: relative;
+  width: 16px;
+  height: 22px;
+  border-radius: 0;
+  background: none;
+}
+.commentary__icon--substitution::before,
+.commentary__icon--substitution::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.commentary__icon--substitution::before {
+  top: 0;
+  border-bottom: 9px solid var(--red-600);
+}
+.commentary__icon--substitution::after {
+  bottom: 0;
+  border-top: 9px solid var(--green-pitch);
+}
 .commentary__text {
   font-size: 15px;
   color: var(--ink-700);
@@ -1909,6 +1934,103 @@
 }
 .lightbox__close:hover {
   color: var(--red-600);
+}
+
+/* ============ Gallery photo lightbox ============ */
+.gallery-lightbox__frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  max-width: 900px;
+  max-height: 90vh;
+  aspect-ratio: auto;
+  background: #000;
+  box-shadow: var(--shadow-lg);
+}
+.gallery-lightbox__frame img {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  background: #000;
+}
+.gallery-lightbox__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: #111;
+  color: #fff;
+}
+.gallery-lightbox__caption {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+.gallery-lightbox__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 2px;
+  background: var(--red-600);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.gallery-lightbox__link:hover {
+  opacity: 0.9;
+}
+.gallery-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gallery-lightbox__nav:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.gallery-lightbox__nav--prev {
+  left: 20px;
+}
+.gallery-lightbox__nav--next {
+  right: 20px;
+}
+@media (max-width: 640px) {
+  .gallery-lightbox__nav {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+  .gallery-lightbox__nav--prev {
+    left: 8px;
+  }
+  .gallery-lightbox__nav--next {
+    right: 8px;
+  }
+  .gallery-lightbox__footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* ============ Footer + Newsletter (one black block, 324px) ============ */

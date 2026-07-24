@@ -240,7 +240,7 @@ export interface Team {
    * Abbreviation for tight layouts, e.g. "GOR"
    */
   shortName: string;
-  country: 'RW' | 'UG' | 'KE' | 'TZ' | 'ZNZ' | 'SO' | 'SS' | 'SD';
+  country: 'RW' | 'UG' | 'KE' | 'TZ' | 'ZNZ' | 'SO' | 'SS' | 'SD' | 'DJ';
   group: 'A' | 'B' | 'C';
   /**
    * Club badge — square PNG with transparency preferred.
@@ -307,7 +307,7 @@ export interface Match {
    */
   showLiveButton?: boolean | null;
   /**
-   * Manual updates for the Live Expressions feed — post these as the match happens (chances, saves, substitutions, general commentary). Goals and cards recorded in Player Match Stats are added to the feed automatically; you don't need to repeat those here.
+   * Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry.
    */
   commentary?:
     | {
@@ -316,9 +316,33 @@ export interface Match {
          */
         minute?: number | null;
         /**
-         * e.g. "Good save from the keeper, corner to APR."
+         * Determines which icon/graphic this entry shows with on the feed.
          */
-        text: string;
+        type?: ('note' | 'goal' | 'yellow' | 'red' | 'substitution') | null;
+        /**
+         * Which side this happened for.
+         */
+        team?: ('home' | 'away') | null;
+        /**
+         * Who scored or was booked.
+         */
+        player?: (number | null) | Player;
+        /**
+         * Player being substituted off.
+         */
+        playerOff?: (number | null) | Player;
+        /**
+         * Player coming on.
+         */
+        playerOn?: (number | null) | Player;
+        /**
+         * e.g. "Good save from the keeper, corner to APR." Optional extra detail for a goal/card/substitution — those already get an automatic caption from the fields above.
+         */
+        text?: string | null;
+        /**
+         * Optional photo shown with this update.
+         */
+        image?: (number | null) | Media;
         /**
          * Hide this entry from the public Live Expressions feed without deleting it.
          */
@@ -771,7 +795,13 @@ export interface MatchesSelect<T extends boolean = true> {
     | T
     | {
         minute?: T;
+        type?: T;
+        team?: T;
+        player?: T;
+        playerOff?: T;
+        playerOn?: T;
         text?: T;
+        image?: T;
         hidden?: T;
         id?: T;
       };

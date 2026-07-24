@@ -37,7 +37,7 @@ export default async function MatchesPage() {
 
   return (
     <>
-      <StadiumHero title="Games Results" height={490} />
+      <StadiumHero title="UKO IMIKINO YARANGIYE" height={490} />
       <MatchesTabs
         upcoming={upcoming}
         previous={previous}

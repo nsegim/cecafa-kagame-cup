@@ -78,8 +78,7 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={3 + statCols.length} className="perf__empty">
-                    No player data yet — the leaderboard fills in once matches are played from 24
-                    July.
+                    Nta makuru y'abakinnyi araboneka. Imikino iratangira kuri uyu wa 24 Nyakanga.
                   </td>
                 </tr>
               ) : (

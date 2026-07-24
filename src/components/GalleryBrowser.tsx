@@ -2,11 +2,8 @@
 
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import {
-  GALLERY_CATEGORIES,
-  type GalleryFilter,
-  type GalleryImage,
-} from '@/data/gallery'
+import { GALLERY_CATEGORIES, type GalleryFilter, type GalleryImage } from '@/data/gallery'
+import { GalleryLightbox } from '@/components/GalleryLightbox'
 
 interface GalleryBrowserProps {
   initialCategory: GalleryFilter
@@ -15,6 +12,7 @@ interface GalleryBrowserProps {
 
 export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserProps) {
   const [selectedCategory, setSelectedCategory] = useState<GalleryFilter>(initialCategory)
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const images = useMemo(
     () =>
@@ -26,6 +24,7 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
 
   function selectCategory(category: GalleryFilter) {
     setSelectedCategory(category)
+    setOpenIndex(null)
 
     const url = new URL(window.location.href)
     if (category === 'All') url.searchParams.delete('category')
@@ -61,51 +60,47 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
       </nav>
 
       <section
-        className={`gallery-detail ${
-          selectedCategory === 'All' ? '' : 'gallery-detail--filtered'
-        }`}
+        className={`gallery-detail ${selectedCategory === 'All' ? '' : 'gallery-detail--filtered'}`}
         aria-label={`${selectedCategory} photos`}
       >
         <div className="gallery-detail__grid">
-          {images.map((image, index) => {
-            const photo = (
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(max-width: 900px) 50vw, 33vw"
-                style={{ objectFit: 'cover' }}
-              />
-            )
-
-            return (
-              <figure
-                key={image.id}
-                className={`gallery-detail__item gallery-detail__item--${index + 1}`}
+          {images.map((image, index) => (
+            <figure
+              key={image.id}
+              className={`gallery-detail__item gallery-detail__item--${index + 1}`}
+            >
+              <button
+                type="button"
+                className="gallery-detail__trigger"
+                onClick={() => setOpenIndex(index)}
+                aria-label={`View photo: ${image.alt || image.category}`}
               >
-                {image.flickrAlbumUrl ? (
-                  <a
-                    className="gallery-detail__trigger"
-                    href={image.flickrAlbumUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`View ${image.alt || image.category} album on Flickr`}
-                  >
-                    {photo}
-                  </a>
-                ) : (
-                  photo
-                )}
-                <figcaption>{image.category}</figcaption>
-              </figure>
-            )
-          })}
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(max-width: 900px) 50vw, 33vw"
+                  style={{ objectFit: 'cover' }}
+                />
+              </button>
+              <figcaption>{image.category}</figcaption>
+            </figure>
+          ))}
         </div>
 
         <button type="button" className="gallery-cta gallery-cta--load">
-          Load More
+          Reba izindi
         </button>
       </section>
+
+      {openIndex !== null && (
+        <GalleryLightbox
+          images={images}
+          index={openIndex}
+          onClose={() => setOpenIndex(null)}
+          onNavigate={setOpenIndex}
+        />
+      )}
     </>
   )
 }

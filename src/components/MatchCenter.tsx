@@ -21,31 +21,42 @@ function EventIcon({ type }: { type: MatchEvent['type'] }) {
   if (type === 'goal') return <span className="commentary__icon commentary__icon--goal" aria-hidden="true" />
   if (type === 'yellow') return <span className="commentary__icon commentary__icon--yellow" aria-hidden="true" />
   if (type === 'red') return <span className="commentary__icon commentary__icon--red" aria-hidden="true" />
+  if (type === 'substitution')
+    return <span className="commentary__icon commentary__icon--substitution" aria-hidden="true" />
   return <span className="commentary__icon commentary__icon--whistle" aria-hidden="true" />
 }
 
 function eventText(e: MatchEvent, homeName: string, awayName: string): React.ReactNode {
   const team = e.side === 'home' ? homeName : e.side === 'away' ? awayName : ''
+  // Optional extra detail an editor added on top of the auto-generated caption.
+  const extra = e.type !== 'note' && e.text ? ` ${e.text}` : ''
   switch (e.type) {
     case 'goal':
       return (
         <>
           <strong>GOAL!</strong> {e.playerName}
-          {team ? ` — ${team}` : ''}. A goal is on the board.
+          {team ? ` — ${team}` : ''}. A goal is on the board.{extra}
         </>
       )
     case 'yellow':
       return (
         <>
           {e.playerName}
-          {team ? ` (${team})` : ''} is shown a yellow card for a late challenge.
+          {team ? ` (${team})` : ''} is shown a yellow card for a late challenge.{extra}
         </>
       )
     case 'red':
       return (
         <>
           <strong>Red card.</strong> {e.playerName}
-          {team ? ` (${team})` : ''} is sent off.
+          {team ? ` (${team})` : ''} is sent off.{extra}
+        </>
+      )
+    case 'substitution':
+      return (
+        <>
+          <strong>Substitution{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'} off,{' '}
+          {e.playerInName ?? 'Player'} on.{extra}
         </>
       )
     case 'kickoff':
@@ -135,8 +146,10 @@ export function MatchCenter({
             <p className="perf__empty">Commentary will appear once the match kicks off.</p>
           ) : (
             events.map((e, i) => {
+              // An image an editor attached directly to this entry takes priority
+              // over the general Match Photos pool interspersed by position.
               const photoIndex = photoAtIndex.get(i)
-              const photoSrc = photoIndex != null ? photos[photoIndex] : null
+              const photoSrc = e.image ?? (photoIndex != null ? photos[photoIndex] : null)
               return (
                 <div className="commentary__group" key={i}>
                   <div className="commentary__entry">

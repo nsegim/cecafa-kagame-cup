@@ -65,7 +65,7 @@ export function NewsFeed({ initial }: { initial: Article[] }) {
             onClick={loadMore}
             disabled={loading}
           >
-            {loading ? 'Loading…' : 'Load More'}
+            {loading ? 'Loading…' : 'Reba izindi'}
           </button>
         </div>
       )}

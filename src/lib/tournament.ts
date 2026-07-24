@@ -176,16 +176,34 @@ function matchPhotoUrls(match: Match): string[] {
     .filter((url): url is string => Boolean(url))
 }
 
-export type MatchEventType = 'goal' | 'yellow' | 'red' | 'kickoff' | 'halftime' | 'fulltime' | 'note'
+export type MatchEventType =
+  | 'goal'
+  | 'yellow'
+  | 'red'
+  | 'substitution'
+  | 'kickoff'
+  | 'halftime'
+  | 'fulltime'
+  | 'note'
 
 export interface MatchEvent {
   minute: number | null
   type: MatchEventType
   playerName?: string
+  /** Substitution only — player coming off / going on. */
+  playerOutName?: string
+  playerInName?: string
   teamId?: number | null
   side?: 'home' | 'away' | null
-  /** Free text for a manually-posted 'note' entry — everything that isn't a goal or a card. */
+  /** Free text — the manual caption for a 'note' entry, or optional extra detail on any other type. */
   text?: string
+  /** Optional photo an editor attached to this specific entry. */
+  image?: string | null
+}
+
+function singleMediaUrl(media: number | Media | null | undefined): string | null {
+  if (!media || typeof media === 'number') return null
+  return media.sizes?.hero?.url || media.url || null
 }
 
 export interface LineupPlayerEntry {
@@ -279,11 +297,24 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
   // marked `hidden` stay in the admin for reference but drop out of the feed.
   const notes: MatchEvent[] = (match.commentary ?? [])
     .filter((c) => !c.hidden)
-    .map((c) => ({
-      minute: c.minute ?? null,
-      type: 'note',
-      text: c.text,
-    }))
+    .map((c) => {
+      const player = c.player && typeof c.player === 'object' ? c.player : null
+      const playerOff = c.playerOff && typeof c.playerOff === 'object' ? c.playerOff : null
+      const playerOn = c.playerOn && typeof c.playerOn === 'object' ? c.playerOn : null
+      const side = c.team ?? null
+      const teamId = side === 'home' ? (homeTeam?.id ?? null) : side === 'away' ? (awayTeam?.id ?? null) : null
+      return {
+        minute: c.minute ?? null,
+        type: (c.type as MatchEventType) ?? 'note',
+        playerName: player?.name,
+        playerOutName: playerOff?.name,
+        playerInName: playerOn?.name,
+        teamId,
+        side,
+        text: c.text ?? undefined,
+        image: singleMediaUrl(c.image),
+      }
+    })
 
   const feed = [...scored, ...notes].sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
 

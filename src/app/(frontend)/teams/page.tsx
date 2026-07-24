@@ -14,7 +14,7 @@ export default async function TeamsPage() {
 
   return (
     <>
-      <StadiumHero kicker="Kagame interclub Cup 2025" title="All Teams" />
+      <StadiumHero kicker="Kagame interclub Cup 2026" title="AMAKIPE YOSE" />
       <section className="section teams-section">
         <div className="container">
           <TeamsBoard teams={data.teams} tables={data.tables} />

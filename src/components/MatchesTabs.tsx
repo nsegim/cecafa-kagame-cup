@@ -159,7 +159,7 @@ export function MatchesTabs({
             className={`matches-tabs__tab ${tab === 'upcoming' ? 'is-active' : ''}`}
             onClick={() => setTab('upcoming')}
           >
-            Upcoming Matches
+            Imikino iteganyijwe
           </button>
           <button
             role="tab"
@@ -167,11 +167,13 @@ export function MatchesTabs({
             className={`matches-tabs__tab ${tab === 'previous' ? 'is-active' : ''}`}
             onClick={() => setTab('previous')}
           >
-            Previous Matches
+            Imikino iheruka
           </button>
         </div>
 
-        <div className="matches-label">{tab === 'upcoming' ? 'Upcoming Matches' : 'Previous Matches'}</div>
+        <div className="matches-label">
+          {tab === 'upcoming' ? 'Imikino iteganyijwe' : 'Imikino iheruka'}
+        </div>
 
         <FeaturedBanner featured={featured} />
 

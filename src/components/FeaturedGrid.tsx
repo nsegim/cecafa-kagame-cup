@@ -35,7 +35,7 @@ function ChevronIcon() {
 
 function FeaturedMain({ article }: { article: Article }) {
   return (
-    <Link href={`/news/${article.slug}`} className="featured-main">
+    <Link href={`${article.url}`} target="_blank" className="featured-main">
       <div className="featured-main__img">
         {article.imageUrl && (
           <Image
@@ -50,14 +50,14 @@ function FeaturedMain({ article }: { article: Article }) {
         {article.category && <span className="featured-main__tag">{article.category}</span>}
       </div>
       <h2 className="featured-main__title">{article.title}</h2>
-      {article.excerpt && <p className="featured-main__excerpt">{article.excerpt}</p>}
+      {article.excerpt && <p className="featured-main__excerpt line-clamp-2">{article.excerpt}</p>}
     </Link>
   )
 }
 
 function FeaturedListItem({ article }: { article: Article }) {
   return (
-    <Link href={`/news/${article.slug}`} className="featured-list__item">
+    <Link target="_blank" href={`${article.url}`} className="featured-list__item">
       <h3 className="featured-list__title">{article.title}</h3>
       <div className="featured-list__img" style={{ position: 'relative' }}>
         {article.imageUrl && (

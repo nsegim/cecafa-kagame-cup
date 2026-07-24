@@ -9,6 +9,7 @@ export const COUNTRIES = [
   { label: 'Somalia', value: 'SO' },
   { label: 'South Sudan', value: 'SS' },
   { label: 'Sudan', value: 'SD' },
+  { label: 'Djibouti', value: 'DJ' },
 ] as const
 
 export const GROUPS = [

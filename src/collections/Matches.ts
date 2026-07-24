@@ -118,6 +118,70 @@ function assertSingleCaptain(
   }
 }
 
+export const COMMENTARY_TYPES = [
+  { label: 'General Update', value: 'note' },
+  { label: 'Goal', value: 'goal' },
+  { label: 'Yellow Card', value: 'yellow' },
+  { label: 'Red Card', value: 'red' },
+  { label: 'Substitution', value: 'substitution' },
+] as const
+
+type CommentarySiblingData = { type?: string; team?: 'home' | 'away' }
+
+function asCommentarySiblingData(siblingData: unknown): CommentarySiblingData {
+  return (siblingData as CommentarySiblingData | undefined) ?? {}
+}
+
+/** Restricts a commentary row's player picker to whichever side (Home/Away) that same row is set to. */
+function commentaryPlayerFilter({
+  data,
+  siblingData,
+}: {
+  data?: { homeTeam?: unknown; awayTeam?: unknown }
+  siblingData?: unknown
+}) {
+  const side = asCommentarySiblingData(siblingData).team
+  if (!side) return true
+  const teamRef = side === 'home' ? data?.homeTeam : data?.awayTeam
+  const teamId = teamRef && typeof teamRef === 'object' ? (teamRef as { id?: number }).id : teamRef
+  return teamId ? { team: { equals: teamId } } : true
+}
+
+function validateCommentaryTeam(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  if ((asCommentarySiblingData(siblingData).type ?? 'note') !== 'note' && !value) {
+    return 'Select which team this is for.'
+  }
+  return true
+}
+
+function validateCommentaryText(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  if ((asCommentarySiblingData(siblingData).type ?? 'note') === 'note' && !value) {
+    return 'Enter the update text.'
+  }
+  return true
+}
+
+function validatePlayerForCard(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  if (['goal', 'yellow', 'red'].includes(asCommentarySiblingData(siblingData).type ?? '') && !value) {
+    return 'Select the player this happened to.'
+  }
+  return true
+}
+
+function validatePlayerOff(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  if (asCommentarySiblingData(siblingData).type === 'substitution' && !value) {
+    return 'Select the player coming off.'
+  }
+  return true
+}
+
+function validatePlayerOn(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  if (asCommentarySiblingData(siblingData).type === 'substitution' && !value) {
+    return 'Select the player coming on.'
+  }
+  return true
+}
+
 export const Matches: CollectionConfig = {
   slug: 'matches',
   admin: {
@@ -273,7 +337,7 @@ export const Matches: CollectionConfig = {
       labels: { singular: 'Entry', plural: 'Entries' },
       admin: {
         description:
-          'Manual updates for the Live Expressions feed — post these as the match happens (chances, saves, substitutions, general commentary). Goals and cards recorded in Player Match Stats are added to the feed automatically; you don\'t need to repeat those here.',
+          'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry.',
         initCollapsed: true,
       },
       fields: [
@@ -285,10 +349,76 @@ export const Matches: CollectionConfig = {
           admin: { description: 'Match minute, e.g. 62. Entries are shown in minute order on the feed.' },
         },
         {
+          name: 'type',
+          type: 'select',
+          defaultValue: 'note',
+          options: [...COMMENTARY_TYPES],
+          admin: { description: 'Determines which icon/graphic this entry shows with on the feed.' },
+        },
+        {
+          name: 'team',
+          label: 'Team',
+          type: 'select',
+          options: [
+            { label: 'Home', value: 'home' },
+            { label: 'Away', value: 'away' },
+          ],
+          validate: validateCommentaryTeam,
+          admin: {
+            condition: (_, s) => s?.type !== 'note',
+            description: 'Which side this happened for.',
+          },
+        },
+        {
+          name: 'player',
+          label: 'Player',
+          type: 'relationship',
+          relationTo: 'players',
+          validate: validatePlayerForCard,
+          filterOptions: commentaryPlayerFilter,
+          admin: {
+            condition: (_, s) => ['goal', 'yellow', 'red'].includes(s?.type),
+            description: 'Who scored or was booked.',
+          },
+        },
+        {
+          name: 'playerOff',
+          label: 'Player Off',
+          type: 'relationship',
+          relationTo: 'players',
+          validate: validatePlayerOff,
+          filterOptions: commentaryPlayerFilter,
+          admin: {
+            condition: (_, s) => s?.type === 'substitution',
+            description: 'Player being substituted off.',
+          },
+        },
+        {
+          name: 'playerOn',
+          label: 'Player On',
+          type: 'relationship',
+          relationTo: 'players',
+          validate: validatePlayerOn,
+          filterOptions: commentaryPlayerFilter,
+          admin: {
+            condition: (_, s) => s?.type === 'substitution',
+            description: 'Player coming on.',
+          },
+        },
+        {
           name: 'text',
           type: 'text',
-          required: true,
-          admin: { description: 'e.g. "Good save from the keeper, corner to APR."' },
+          validate: validateCommentaryText,
+          admin: {
+            description:
+              'e.g. "Good save from the keeper, corner to APR." Optional extra detail for a goal/card/substitution — those already get an automatic caption from the fields above.',
+          },
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Optional photo shown with this update.' },
         },
         {
           name: 'hidden',

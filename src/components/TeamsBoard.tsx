@@ -62,7 +62,7 @@ export function TeamsBoard({
           className={`teams-tab ${filter === 'all' ? 'is-active' : ''}`}
           onClick={() => setFilter('all')}
         >
-          All Groups
+          Amatsinda yose
         </button>
         {GROUPS.map((g) => (
           <button
@@ -73,7 +73,7 @@ export function TeamsBoard({
             className={`teams-tab ${filter === g ? 'is-active' : ''}`}
             onClick={() => setFilter(g)}
           >
-            Group {g}
+            Itsinda {g}
           </button>
         ))}
       </div>
