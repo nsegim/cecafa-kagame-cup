@@ -509,6 +509,18 @@ export const Matches: CollectionConfig = {
       ],
     },
     {
+      // Ready-to-paste <iframe> for this match's Live Expressions feed
+      // (`/embed/matches/{id}` — content only, no header/footer). Sits right
+      // after the Live Commentary it embeds. See components/admin/EmbedCode.
+      name: 'embedCode',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/EmbedCode#EmbedCode',
+        },
+      },
+    },
+    {
       name: 'highlightUrl',
       type: 'text',
       admin: { description: 'YouTube link for the highlights section.' },

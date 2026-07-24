@@ -1,0 +1,119 @@
+/*
+ * Embed-only overrides for the `/embed/matches/[id]` Live Expressions frame.
+ * Loaded AFTER the shared site stylesheets so these rules win. The goal: a
+ * self-contained, content-only card that sizes to its content inside a
+ * newsletter <iframe> — no site header, no footer, no full-viewport hero.
+ */
+
+html,
+body.embed-body {
+  /* The shared globals force `min-height: 100%`; an embed should hug its
+     content so the host iframe isn't padded with empty space. */
+  min-height: 0;
+  height: auto;
+  background: transparent;
+}
+
+.embed {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+/* Compact scoreboard — the 600px stadium hero would dominate an embed, so this
+   is a short navy bar that still carries the crests, live score and status
+   pill. It reuses <LiveScore>'s `.match-hero__*` score markup (white on navy). */
+.embed-hero {
+  position: relative;
+  background: var(--navy-900);
+  color: #fff;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.embed-hero__meta {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.embed-hero__teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+}
+
+.embed-hero__team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.embed-hero__name {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* The reused <LiveScore> renders `.match-hero__score` with 64px numerals meant
+   for the full hero — scale it down for the compact bar. */
+.embed-hero .match-hero__score {
+  flex: 0 0 auto;
+  gap: 8px;
+}
+.embed-hero .match-hero__nums {
+  font-size: 40px;
+  gap: 14px;
+}
+
+.embed-body-inner {
+  padding: 8px 20px 16px;
+}
+
+/* The feed's tabs/commentary already look right from components.css; only the
+   outer border (added by `.matchcenter`) is dropped so it doesn't double up
+   with the `.embed` card border. */
+.embed .matchcenter {
+  border: 0;
+}
+
+.embed-credit {
+  display: block;
+  padding: 12px 20px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy-900);
+  text-align: center;
+}
+.embed-credit:hover {
+  color: var(--red-600);
+}
+
+@media (max-width: 520px) {
+  .embed-hero__teams {
+    gap: 16px;
+  }
+  .embed-hero .match-hero__nums {
+    font-size: 32px;
+    gap: 10px;
+  }
+  .embed-hero__name {
+    font-size: 13px;
+  }
+}
