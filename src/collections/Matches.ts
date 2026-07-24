@@ -154,7 +154,10 @@ function validateCommentaryText(value: unknown, { siblingData }: { siblingData?:
 }
 
 function validatePlayerForCard(value: unknown, { siblingData }: { siblingData?: unknown }) {
-  if (['goal', 'yellow', 'red'].includes(asCommentarySiblingData(siblingData).type ?? '') && !value) {
+  // The scorer is optional for a goal — a team's squad may not be loaded yet, or
+  // the scorer may be unknown, and the goal must still be recordable (it counts
+  // toward the score by team either way). Cards still name the player booked.
+  if (['yellow', 'red'].includes(asCommentarySiblingData(siblingData).type ?? '') && !value) {
     return 'Select the player this happened to.'
   }
   return true
@@ -172,6 +175,27 @@ function validatePlayerOn(value: unknown, { siblingData }: { siblingData?: unkno
     return 'Select the player coming on.'
   }
   return true
+}
+
+/** A commentary row, narrowed to just the fields the scoreline is derived from. */
+type ScoringCommentaryRow = { type?: string | null; team?: string | null; hidden?: boolean | null }
+
+/**
+ * The scoreline implied by the goals logged in the Live Commentary (the "Live
+ * Expressions" feed): one goal entry per side counts as one goal for that side.
+ * Hidden entries are excluded, matching what the public feed shows. Returns
+ * `null` when no goals are logged at all, so the caller can leave a manually
+ * entered scoreline (e.g. a knockout result typed straight in) untouched.
+ */
+export function scoreFromGoalCommentary(
+  commentary: ScoringCommentaryRow[] | null | undefined,
+): { home: number; away: number } | null {
+  const goals = (commentary ?? []).filter((c) => c?.type === 'goal' && !c?.hidden)
+  if (goals.length === 0) return null
+  return {
+    home: goals.filter((c) => c.team === 'home').length,
+    away: goals.filter((c) => c.team === 'away').length,
+  }
 }
 
 export const Matches: CollectionConfig = {
@@ -288,16 +312,35 @@ export const Matches: CollectionConfig = {
       },
     },
     {
+      name: 'manualScore',
+      label: 'Enter result manually',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        description:
+          'Turn on to type the scoreline yourself below. Off (default) means goals logged in Live Commentary set the score automatically.',
+      },
+    },
+    {
       name: 'homeScore',
       type: 'number',
       min: 0,
-      admin: { condition: (_, s) => s?.status === 'live' || s?.status === 'final' },
+      admin: {
+        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        description:
+          'With “Enter result manually” on, type the home score here. Otherwise it is auto-filled from goals in Live Commentary.',
+      },
     },
     {
       name: 'awayScore',
       type: 'number',
       min: 0,
-      admin: { condition: (_, s) => s?.status === 'live' || s?.status === 'final' },
+      admin: {
+        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        description:
+          'With “Enter result manually” on, type the away score here. Otherwise it is auto-filled from goals in Live Commentary.',
+      },
     },
     {
       name: 'liveMatchUrl',
@@ -370,7 +413,8 @@ export const Matches: CollectionConfig = {
           filterOptions: commentaryPlayerFilter,
           admin: {
             condition: (_, s) => ['goal', 'yellow', 'red'].includes(s?.type),
-            description: 'Who scored or was booked.',
+            description:
+              'Who scored or was booked. Optional for a goal — leave blank if the scorer isn’t known or the squad isn’t loaded; the goal still counts for the team.',
           },
         },
         {
@@ -482,6 +526,19 @@ export const Matches: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
+        // Goals logged in the Live Commentary (the "Live Expressions" feed) drive
+        // the scoreline automatically, so scoring a goal there updates the
+        // scoreboard and standings — an editor never has to also type the numbers.
+        // Turning on `manualScore` opts out: the editor types/corrects the result
+        // by hand and commentary never overrides it. When auto-scoring is on but no
+        // goals are logged, the score also stays as entered.
+        if (data && !data.manualScore) {
+          const derived = scoreFromGoalCommentary(data.commentary)
+          if (derived) {
+            data.homeScore = derived.home
+            data.awayScore = derived.away
+          }
+        }
         // A final result without a scoreline would silently corrupt the standings.
         if (data?.status === 'final') {
           if (typeof data.homeScore !== 'number' || typeof data.awayScore !== 'number') {

@@ -296,7 +296,17 @@ export interface Match {
    * Only matches marked Final are counted in the standings.
    */
   status: 'scheduled' | 'live' | 'final';
+  /**
+   * Turn on to type the scoreline yourself below. Off (default) means goals logged in Live Commentary set the score automatically.
+   */
+  manualScore?: boolean | null;
+  /**
+   * With “Enter result manually” on, type the home score here. Otherwise it is auto-filled from goals in Live Commentary.
+   */
   homeScore?: number | null;
+  /**
+   * With “Enter result manually” on, type the away score here. Otherwise it is auto-filled from goals in Live Commentary.
+   */
   awayScore?: number | null;
   /**
    * Where the header's LIVE button sends visitors once this match is live — defaults to this match's own page automatically, or enter an external stream link instead.
@@ -324,7 +334,7 @@ export interface Match {
          */
         team?: ('home' | 'away') | null;
         /**
-         * Who scored or was booked.
+         * Who scored or was booked. Optional for a goal — leave blank if the scorer isn’t known or the squad isn’t loaded; the goal still counts for the team.
          */
         player?: (number | null) | Player;
         /**
@@ -830,6 +840,7 @@ export interface MatchesSelect<T extends boolean = true> {
   venue?: T;
   kickoff?: T;
   status?: T;
+  manualScore?: T;
   homeScore?: T;
   awayScore?: T;
   liveMatchUrl?: T;

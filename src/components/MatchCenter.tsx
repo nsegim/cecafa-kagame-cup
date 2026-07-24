@@ -34,13 +34,16 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
   // Optional extra detail an editor added on top of the auto-generated caption.
   const extra = e.type !== 'note' && e.text ? ` ${e.text}` : ''
   switch (e.type) {
-    case 'goal':
+    case 'goal': {
+      // The scorer is optional — fall back to just the team when it's unknown.
+      const scorer = e.playerName ? `${e.playerName}${team ? ` — ${team}` : ''}` : team
       return (
         <>
-          <strong>GOAL!</strong> {e.playerName}
-          {team ? ` — ${team}` : ''}. A goal is on the board.{extra}
+          <strong>GOAL!</strong>
+          {scorer ? ` ${scorer}` : ''}. A goal is on the board.{extra}
         </>
       )
+    }
     case 'yellow':
       return (
         <>
@@ -58,8 +61,8 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
     case 'substitution':
       return (
         <>
-          <strong>Substitution{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'}{' '}
-          off, {e.playerInName ?? 'Player'} on.{extra}
+          <strong>Gusimbuza{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'} off,{' '}
+          {e.playerInName ?? 'Player'} on.{extra}
         </>
       )
     case 'kickoff':

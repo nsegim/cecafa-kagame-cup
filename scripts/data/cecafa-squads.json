@@ -1,0 +1,2782 @@
+[
+  {
+    "teamSlug": "apr-fc",
+    "source": "APR FC REGISTRATION FORM CECAFA KAGAME CUP 2026_0001.docx (scanned image, transcribed)",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "HAKIZIMANA ADOLPHE",
+        "dob": "01/01/2002",
+        "nationality": "RWANDAN",
+        "passportNo": "PS122083",
+        "licenseNo": "",
+        "position": "Goal Keeper",
+        "jerseyNo": "32"
+      },
+      {
+        "no": "2",
+        "name": "RUHAMYANKIKO IVAN",
+        "dob": "17/05/2005",
+        "nationality": "RWANDAN",
+        "passportNo": "PS143910",
+        "licenseNo": "001476M05",
+        "position": "Goal Keeper",
+        "jerseyNo": "1"
+      },
+      {
+        "no": "3",
+        "name": "MUDAHIGWA CHRISTIAN",
+        "dob": "01/01/2003",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1200380138970034",
+        "licenseNo": "",
+        "position": "Goal Keeper",
+        "jerseyNo": "33"
+      },
+      {
+        "no": "4",
+        "name": "NSHIMIYIMANA YUNUSU",
+        "dob": "31/12/2001",
+        "nationality": "RWANDAN",
+        "passportNo": "PS156120",
+        "licenseNo": "001380M01",
+        "position": "Defender",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "5",
+        "name": "ISHIMWE CHRISTIAN",
+        "dob": "02/01/1999",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1199980000182194",
+        "licenseNo": "",
+        "position": "Defender",
+        "jerseyNo": "6"
+      },
+      {
+        "no": "6",
+        "name": "BYIRINGIRO JEAN GILBERT",
+        "dob": "01/01/2000",
+        "nationality": "RWANDAN",
+        "passportNo": "PS121898",
+        "licenseNo": "001046M00",
+        "position": "Defender",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "7",
+        "name": "OMBOLENGA FITINA",
+        "dob": "20/05/1996",
+        "nationality": "RWANDAN",
+        "passportNo": "PS104813",
+        "licenseNo": "000165M96",
+        "position": "Defender",
+        "jerseyNo": "29"
+      },
+      {
+        "no": "8",
+        "name": "BUGINGO HAKIM",
+        "dob": "01/01/1999",
+        "nationality": "RWANDAN",
+        "passportNo": "PS138239",
+        "licenseNo": "001700M99",
+        "position": "Defender",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "9",
+        "name": "IRAGUHA HADJI",
+        "dob": "18/07/1998",
+        "nationality": "RWANDAN",
+        "passportNo": "PS107279",
+        "licenseNo": "",
+        "position": "Striker",
+        "jerseyNo": "14"
+      },
+      {
+        "no": "10",
+        "name": "NGABONZIZA PACIFIQUE",
+        "dob": "01/07/2000",
+        "nationality": "RWANDAN",
+        "passportNo": "PS143480",
+        "licenseNo": "000343M00",
+        "position": "Midfield",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "11",
+        "name": "NDUWAYO ALEXIS",
+        "dob": "01/01/2004",
+        "nationality": "RWANDAN",
+        "passportNo": "PS160066",
+        "licenseNo": "006965M04",
+        "position": "Defender",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "12",
+        "name": "ISHIMWE ABDOUL",
+        "dob": "01/01/2000",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1200080094230068",
+        "licenseNo": "",
+        "position": "Defender",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "13",
+        "name": "RUBUGUZA JEAN PIERRE",
+        "dob": "01/05/2002",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1200280084273080",
+        "licenseNo": "",
+        "position": "Midfield",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "14",
+        "name": "UWIYAREMYE FIDALI",
+        "dob": "18/10/2002",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1200280201377003",
+        "licenseNo": "",
+        "position": "Striker",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "15",
+        "name": "BANA ETHIENNE",
+        "dob": "01/01/2009",
+        "nationality": "RWANDAN",
+        "passportNo": "ID.1200980075380060",
+        "licenseNo": "",
+        "position": "Striker",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "16",
+        "name": "NDUNGUTSE ASSOUMAN",
+        "dob": "18/12/2008",
+        "nationality": "RWANDAN",
+        "passportNo": "ID.1200880144828000",
+        "licenseNo": "",
+        "position": "Midfield",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "17",
+        "name": "MWUMVANEZA TUMUSIFU",
+        "dob": "12/07/2008",
+        "nationality": "RWANDAN",
+        "passportNo": "ID.1200880068692073",
+        "licenseNo": "",
+        "position": "Defender",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "18",
+        "name": "SILUANE ERNAN ALBERTO",
+        "dob": "09/07/1998",
+        "nationality": "MOZAMBIQUE",
+        "passportNo": "AB1805449",
+        "licenseNo": "",
+        "position": "Goal Keeper",
+        "jerseyNo": "31"
+      },
+      {
+        "no": "19",
+        "name": "TRAORE MAMADOU",
+        "dob": "08/02/1999",
+        "nationality": "MALI",
+        "passportNo": "AA0751668",
+        "licenseNo": "",
+        "position": "Midfield",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "20",
+        "name": "AMANI KUODIAKAN MICHEL BREYGENEVE",
+        "dob": "06/04/1999",
+        "nationality": "IVORIAN",
+        "passportNo": "24AT30926",
+        "licenseNo": "",
+        "position": "Striker",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "21",
+        "name": "MADOU ZON",
+        "dob": "21/06/1998",
+        "nationality": "BURKINABE",
+        "passportNo": "A3321917",
+        "licenseNo": "",
+        "position": "Defender",
+        "jerseyNo": "3"
+      },
+      {
+        "no": "22",
+        "name": "DENIS OMEDI",
+        "dob": "13/06/1994",
+        "nationality": "UGANDA",
+        "passportNo": "B00131757",
+        "licenseNo": "011597M94",
+        "position": "Striker",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "23",
+        "name": "HAKIM KIWANUKA",
+        "dob": "11/09/2000",
+        "nationality": "UGANDA",
+        "passportNo": "A00127318",
+        "licenseNo": "",
+        "position": "Striker",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "24",
+        "name": "DAUDA YUSSIF SEIDU",
+        "dob": "17/12/2000",
+        "nationality": "GHANA",
+        "passportNo": "G5048690",
+        "licenseNo": "008720M00",
+        "position": "Midfield",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "25",
+        "name": "DJIBRILL OUATTARA CHEICK",
+        "dob": "19/09/1999",
+        "nationality": "BURKINABE",
+        "passportNo": "A3286467",
+        "licenseNo": "011595M99",
+        "position": "Striker",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "26",
+        "name": "SSEKIGANDA Ronald",
+        "dob": "13/09/2003",
+        "nationality": "UGANDA",
+        "passportNo": "B00145982",
+        "licenseNo": "011815M03",
+        "position": "Midfield",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "27",
+        "name": "DAO RAOUF MEMEL",
+        "dob": "05/09/2003",
+        "nationality": "BURKINABE",
+        "passportNo": "A5054915",
+        "licenseNo": "011817M23",
+        "position": "Midfield",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "28",
+        "name": "TOGUI MEL WILLIAM",
+        "dob": "07/08/1996",
+        "nationality": "IVORIAN",
+        "passportNo": "24AX13777",
+        "licenseNo": "011815M96",
+        "position": "Striker",
+        "jerseyNo": "35"
+      },
+      {
+        "no": "29",
+        "name": "NIYONZIMA ABIDAL",
+        "dob": "19/08/2009",
+        "nationality": "RWANDAN",
+        "passportNo": "ID:1200980051525000",
+        "licenseNo": "",
+        "position": "Defender",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "30",
+        "name": "HABIMANA JACQUES",
+        "dob": "21/10/2009",
+        "nationality": "RWANDAN",
+        "passportNo": "ID: 1200980082803283",
+        "licenseNo": "",
+        "position": "Goal Keeper",
+        "jerseyNo": "34"
+      }
+    ]
+  },
+  {
+    "teamSlug": "garde-republicaine-fc",
+    "source": "GARDE REPUBLICAINE FC REGISTRATION FORM KAGAME CUP 2026-1.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "DEMBELE DIAKARIDIA",
+        "dob": "21/06/1997",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "105748M97",
+        "position": "GARDIEN",
+        "jerseyNo": "1"
+      },
+      {
+        "no": "2",
+        "name": "LIBAN MOHAMED SAID",
+        "dob": "12/11/2001",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "24PP05231",
+        "licenseNo": "104681M01",
+        "position": "GARDIEN",
+        "jerseyNo": "30"
+      },
+      {
+        "no": "3",
+        "name": "MAHAD HASSAN DJAMA",
+        "dob": "10/06/1999",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "23RF21305",
+        "licenseNo": "106090M99",
+        "position": "DEFENSEUR",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "4",
+        "name": "SADIK IDRISS IBRAHIM",
+        "dob": "01/01/2002",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "20RF14334",
+        "licenseNo": "109883M02",
+        "position": "DEFENSEUR",
+        "jerseyNo": "3"
+      },
+      {
+        "no": "5",
+        "name": "MENSAH RICHARD",
+        "dob": "27/07/1997",
+        "nationality": "GHANA",
+        "passportNo": "G2599881",
+        "licenseNo": "112355M97",
+        "position": "DEFENSEUR",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "6",
+        "name": "ABOUBAKER LIBAN ABDI",
+        "dob": "15/03/2003",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "24PP05900",
+        "licenseNo": "108514M03",
+        "position": "DEFENSEUR",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "7",
+        "name": "MAKTAL MAHAMED IBRAHIM",
+        "dob": "05/05/2000",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "107852M00",
+        "position": "DEFENSEUR",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "8",
+        "name": "SOULEY BADAMASSI",
+        "dob": "25/04/1997",
+        "nationality": "CAMEROUN",
+        "passportNo": "AA004557",
+        "licenseNo": "111704M97",
+        "position": "DEFENSEUR",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "9",
+        "name": "MAAROUF ABASS ABANEH",
+        "dob": "07/03/2003",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "21RF02947",
+        "licenseNo": "108239M03",
+        "position": "MILIEU",
+        "jerseyNo": "14"
+      },
+      {
+        "no": "10",
+        "name": "ESSOMBA MANUEL DANNIEL",
+        "dob": "17/01/2007",
+        "nationality": "CAMEROUN",
+        "passportNo": "AA956903",
+        "licenseNo": "103076M07",
+        "position": "MILIEU",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "11",
+        "name": "YACIN ABDOURAHMAN AWALEH",
+        "dob": "17/03/2003",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "104996M96",
+        "position": "MILIEU",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "12",
+        "name": "SAMATAR MOHAMED SOUGUE",
+        "dob": "10/10/1995",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "AA004557",
+        "licenseNo": "107020M03",
+        "position": "MILIEU",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "13",
+        "name": "RAMADAN ABDI ABDILLAHI",
+        "dob": "18/01/1998",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "21RF02947",
+        "licenseNo": "104517M95",
+        "position": "MILIEU",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "14",
+        "name": "SADIK ADEN DJAMA",
+        "dob": "01/01/2000",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "AA956903",
+        "licenseNo": "104829M98",
+        "position": "MILIEU",
+        "jerseyNo": "6"
+      },
+      {
+        "no": "15",
+        "name": "MAHAD ABDILLAHI ABDI",
+        "dob": "11/07/1999",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "AA004557",
+        "licenseNo": "105908M00",
+        "position": "ATTAQUANT",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "16",
+        "name": "CHAKIB ALI OMAR",
+        "dob": "29/04/2003",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "110785M99",
+        "position": "ATTAQUANT",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "17",
+        "name": "ADEN ISMAEL ABDILLAHI",
+        "dob": "08/02/2003",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "107210M03",
+        "position": "ATTAQUANT",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "18",
+        "name": "AYOUB ATTEYEH HASSAN",
+        "dob": "----",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "-----",
+        "position": "MILIEU",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "19",
+        "name": "MOHAMED ALI KHAIREH",
+        "dob": "12/02/2002",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "24PP20655",
+        "licenseNo": "-----",
+        "position": "DEFENSEUR",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "20",
+        "name": "ISMAEL NAHIMANA",
+        "dob": "28/04/1999",
+        "nationality": "BURUNDI",
+        "passportNo": "OP0265366",
+        "licenseNo": "-----",
+        "position": "DEFENSEUR",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "21",
+        "name": "ABDUL BASIT",
+        "dob": "25/01/2002",
+        "nationality": "GHANA",
+        "passportNo": "G2679015",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "22",
+        "name": "AFFISSOU TAMOU NANTI",
+        "dob": "30/06/1995",
+        "nationality": "BENIN",
+        "passportNo": "21PP11696",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "23",
+        "name": "LANDRY KAMWA FOFOU",
+        "dob": "31/12/2001",
+        "nationality": "CAMEROUN",
+        "passportNo": "AA118615",
+        "licenseNo": "-----",
+        "position": "DEFENSEUR",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "24",
+        "name": "DJYBRIL FONKOU TALLA",
+        "dob": "14/01/2006",
+        "nationality": "CAMEROUN",
+        "passportNo": "AA529903",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "25",
+        "name": "AGYENIM MENSAH BOATING",
+        "dob": "20/12/1996",
+        "nationality": "GHANA",
+        "passportNo": "G3715145",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "26",
+        "name": "PATRICK SIBOMANA",
+        "dob": "15/10/1996",
+        "nationality": "RWANDA",
+        "passportNo": "PC618999",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "27",
+        "name": "MOUHYADINE OSMAN ELEYEH",
+        "dob": "-----",
+        "nationality": "DJIBOUTIENNE",
+        "passportNo": "-----",
+        "licenseNo": "-----",
+        "position": "ATTAQUANT",
+        "jerseyNo": "28"
+      }
+    ]
+  },
+  {
+    "teamSlug": "jamus-fc",
+    "source": "JAMUS SC LIST FORM KAGAME CUP 2026.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "MAJAK MALING MAWITH",
+        "dob": "19.09.1999",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00685548",
+        "licenseNo": "",
+        "position": "GK",
+        "jerseyNo": "33"
+      },
+      {
+        "no": "2",
+        "name": "APPIAH KUBI",
+        "dob": "11.01.2001",
+        "nationality": "GHANA",
+        "passportNo": "G2663902",
+        "licenseNo": "",
+        "position": "GK",
+        "jerseyNo": "31"
+      },
+      {
+        "no": "3",
+        "name": "MADUT NYUOL CHOL AGOTH",
+        "dob": "15.07.2005",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00704919",
+        "licenseNo": "",
+        "position": "GK",
+        "jerseyNo": "38"
+      },
+      {
+        "no": "4",
+        "name": "BENJAMIN LAKU LOTELEK",
+        "dob": "27.06.2006",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "O00005066",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "5",
+        "name": "MOHAMMED KESRA HAKEEN",
+        "dob": "25.10.1996",
+        "nationality": "SUDAN",
+        "passportNo": "P11477460",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "6",
+        "name": "HANIF MAKALE WESONGA",
+        "dob": "04.05.2003",
+        "nationality": "KENYA",
+        "passportNo": "AK1404365",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "7",
+        "name": "EMMANUEL UDU MUBARAK",
+        "dob": "12.12.2004",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00680251",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "8",
+        "name": "THOMAS BAWAK ETA",
+        "dob": "10.07.1994",
+        "nationality": "CAMEROON",
+        "passportNo": "AA223126",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "9",
+        "name": "ATENDELE MAWA CHRISTOPHER",
+        "dob": "02.05.2000",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00561784",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "10",
+        "name": "BENZ JEAN NGUMBI",
+        "dob": "06.06.2001",
+        "nationality": "CONGO",
+        "passportNo": "P00308780",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "11",
+        "name": "SABASTIN TECLAR",
+        "dob": "28.02.2000",
+        "nationality": "LIBERIA",
+        "passportNo": "PP0403803",
+        "licenseNo": "",
+        "position": "DEFENDER",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "12",
+        "name": "LAURENT RAMAZANI",
+        "dob": "01.01.2003",
+        "nationality": "CONGO",
+        "passportNo": "P00052111",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "13",
+        "name": "PETER SUNDAY MAKOI",
+        "dob": "01.01.1999",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00706591",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "14",
+        "name": "JOSEPH MALISH MANASE",
+        "dob": "22.07.2002",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00666549",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "6"
+      },
+      {
+        "no": "15",
+        "name": "GOSIM DUVAN ELENGA",
+        "dob": "23.06.2001",
+        "nationality": "CONGO",
+        "passportNo": "OA0790163",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "16",
+        "name": "MARIO TABAN CHERELINO",
+        "dob": "23.04.2006",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00720357",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "17",
+        "name": "WILLIAM GAMA EMMANUEL",
+        "dob": "14.12.2002",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00558045",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "18",
+        "name": "KEVIN MUHIRE",
+        "dob": "17.10.1998",
+        "nationality": "RWANDA",
+        "passportNo": "PC566536",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "19",
+        "name": "JEGBAY MORRIS KONEH",
+        "dob": "11.11.2003",
+        "nationality": "LIBERIA",
+        "passportNo": "PP0300524",
+        "licenseNo": "",
+        "position": "MIDFEILDER",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "20",
+        "name": "MAJAK SIMON",
+        "dob": "17.09.2006",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "",
+        "licenseNo": "",
+        "position": "MIDFIELDER",
+        "jerseyNo": "36"
+      },
+      {
+        "no": "21",
+        "name": "PAUL AMERICA JAWA",
+        "dob": "15.07.2004",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00634909",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "30"
+      },
+      {
+        "no": "22",
+        "name": "MICHAEL TAKU PETER",
+        "dob": "01.01.1998",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00666550",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "14"
+      },
+      {
+        "no": "23",
+        "name": "OUMAR TRAORE",
+        "dob": "04.01.2004",
+        "nationality": "MALI",
+        "passportNo": "PP0120944",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "24",
+        "name": "DHATA JOSEPH STEPHEN",
+        "dob": "05.09.2002",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "R00749103",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "40"
+      },
+      {
+        "no": "25",
+        "name": "JOSEPH IRUNGU WAITHIRA",
+        "dob": "26.11.1994",
+        "nationality": "KENYA",
+        "passportNo": "BK1236616",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "71"
+      },
+      {
+        "no": "26",
+        "name": "HERGY SAMONI",
+        "dob": "30.05.2005",
+        "nationality": "CONGO",
+        "passportNo": "OA0748666",
+        "licenseNo": "",
+        "position": "FORWARD",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "27",
+        "name": "GEORGE RODRIQUE MFEGUE",
+        "dob": "09.06.1997",
+        "nationality": "CAMEROON",
+        "passportNo": "AB226643",
+        "licenseNo": "",
+        "position": "STRIKER",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "28",
+        "name": "BANDIOUGOU DIALLO",
+        "dob": "04.08.2004",
+        "nationality": "MALI",
+        "passportNo": "PP0112531",
+        "licenseNo": "",
+        "position": "STRIKER",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "29",
+        "name": "DENG SIMON BOL",
+        "dob": "",
+        "nationality": "SOUTH SUDAN",
+        "passportNo": "",
+        "licenseNo": "",
+        "position": "STRIKER",
+        "jerseyNo": "29"
+      }
+    ]
+  },
+  {
+    "teamSlug": "kvz-sc",
+    "source": "KVZ SC REGISTRATION FORM KAGAME CUP 2026.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "BASHIR MUSLIM DARWESH",
+        "dob": "23-3-1997",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 359535",
+        "licenseNo": "ZFF/O/932/63",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "2",
+        "name": "HAMAD UBWA HAMAD",
+        "dob": "12-6-2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 503934",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "1"
+      },
+      {
+        "no": "3",
+        "name": "IDRISA MGUNYA MOHAMED",
+        "dob": "3-2-2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077390",
+        "licenseNo": "ZFF/A/510/28",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "4",
+        "name": "MAHADHI JUMA MAHADHI",
+        "dob": "14-11-2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077397",
+        "licenseNo": "ZFF/T/575/82",
+        "position": "RIGHT BACK",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "5",
+        "name": "HARUNA RASHID ALI",
+        "dob": "16-11-2001",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077389",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "LEFT BACK",
+        "jerseyNo": "27"
+      },
+      {
+        "no": "6",
+        "name": "MUNIR ABDU SHAFI",
+        "dob": "19-2-2002",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077402",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "CENTER BACK",
+        "jerseyNo": "29"
+      },
+      {
+        "no": "7",
+        "name": "SAMIR KHAMIS SAID",
+        "dob": "11-4-2001",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077406",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "CENTER BACK",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "8",
+        "name": "MAJID KHAMIS BAKAR",
+        "dob": "3-1-1994",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 359486",
+        "licenseNo": "ZFF/T/638/74",
+        "position": "MIDFIELDER",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "9",
+        "name": "SULEIMAN JUMA KIDAWA",
+        "dob": "4-12-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 475311",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "MIDFIELDER",
+        "jerseyNo": "6"
+      },
+      {
+        "no": "10",
+        "name": "MUDRIK ABDI SHEHE",
+        "dob": "18-6-2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 583935",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "STRIKER",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "11",
+        "name": "AGUSTINO ATANAS CHALAMBA",
+        "dob": "3-3-2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 494526",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "LEFT WINGER",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "12",
+        "name": "MOHAMMED MUSSA HAJI",
+        "dob": "16-11-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077398",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "STRIKER",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "13",
+        "name": "AKRAM MUHINA OMAR",
+        "dob": "4-12-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 472805",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "STRIKER",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "14",
+        "name": "IBRAHIM MOHAMMED SAID",
+        "dob": "22-10-1991",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 099532",
+        "licenseNo": "ZFF/I/357/65",
+        "position": "RIGHT BACK",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "15",
+        "name": "MUKRIM JUMA MADAI",
+        "dob": "25-12-1998",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077401",
+        "licenseNo": "ZFF/V/905/23",
+        "position": "MIDFIELDER",
+        "jerseyNo": "14"
+      },
+      {
+        "no": "16",
+        "name": "MUSSA LEGEYE MUSSA",
+        "dob": "9-11-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077403",
+        "licenseNo": "ZFF/U/945/31",
+        "position": "MIDFIELDER",
+        "jerseyNo": "30"
+      },
+      {
+        "no": "17",
+        "name": "HAMID BAKAR OMAR",
+        "dob": "20-6-1999",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 501681",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "MIDFIELDER",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "18",
+        "name": "YAKOUB SAID MOH’D",
+        "dob": "16-4-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077400",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "MIDFIELDER",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "19",
+        "name": "NATURE SAMSON MWAKILEMBE",
+        "dob": "25-4-2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077399",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "STRIKER",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "20",
+        "name": "ZUBEIR YAHYA ABDUL",
+        "dob": "28-7-2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077405",
+        "licenseNo": "ZFF/N/814/78",
+        "position": "RIGHT WINGER",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "21",
+        "name": "HASSAN KASSIM HASSAN",
+        "dob": "11-2-2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 620708",
+        "licenseNo": "ZFF/A/651/24",
+        "position": "MIDFIELDER",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "22",
+        "name": "MOHAMMED MASOUD DOLA",
+        "dob": "15-2-1998",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 359493",
+        "licenseNo": "ZFF/I/280/87",
+        "position": "STRIKER",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "23",
+        "name": "SIXTUS ROBERT SABILO",
+        "dob": "11-9-1994",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 373304",
+        "licenseNo": "ZFF/C/460/80",
+        "position": "MIDFIELDER",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "24",
+        "name": "ABUBAKAR SULEIMAN BAKAR",
+        "dob": "3-1-2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077386",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "MIDFIELDER",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "25",
+        "name": "AMOUR KHEIR YAHYA",
+        "dob": "18-6-2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077387",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "RIGHT BACK",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "26",
+        "name": "SAID MUSSA SAID",
+        "dob": "6-3-2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 889759",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "LEFT BACK",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "27",
+        "name": "MOHAMMED MWINCHANDE SHAABAN",
+        "dob": "8-4-2003",
+        "nationality": "TANZANIAN",
+        "passportNo": "AB02077929",
+        "licenseNo": "ZFF/N/346/69",
+        "position": "MIDFIELDER",
+        "jerseyNo": "4"
+      }
+    ]
+  },
+  {
+    "teamSlug": "mogadishu-city-club",
+    "source": "MOGADIHU CITY CLUB.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "Onyeama Albert Kamara",
+        "dob": "09/Nov/2003",
+        "nationality": "NIGERIA",
+        "passportNo": "A12260192",
+        "licenseNo": "SFF/SPL/2076-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "77"
+      },
+      {
+        "no": "2",
+        "name": "Abdulkadir Adan Enow",
+        "dob": "01/May/1993",
+        "nationality": "SOMALIA",
+        "passportNo": "P01206814",
+        "licenseNo": "SFF/SPL/0025-2022-2023",
+        "position": "Forward",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "3",
+        "name": "Ilyas Akram Khamis",
+        "dob": "01/Jan/2004",
+        "nationality": "SOMALIA",
+        "passportNo": "P01653761",
+        "licenseNo": "SFF/SPL/24-8208",
+        "position": "Midfielder",
+        "jerseyNo": "40"
+      },
+      {
+        "no": "4",
+        "name": "Ali Abdirahman Omar",
+        "dob": "21/April/2005",
+        "nationality": "SOMALIA",
+        "passportNo": "P01065306",
+        "licenseNo": "SFF/SPL/3931-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "66"
+      },
+      {
+        "no": "5",
+        "name": "Isse Abdulakdir Ibrahim",
+        "dob": "01/july/1999",
+        "nationality": "SOMALIA",
+        "passportNo": "P01076478",
+        "licenseNo": "SFF/SPL/0022-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "6",
+        "name": "Naby Bangoura",
+        "dob": "24/April/2001",
+        "nationality": "GUINEE",
+        "passportNo": "O00827004",
+        "licenseNo": "SFF/SPL/26-9947",
+        "position": "Forward",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "7",
+        "name": "Bangura Ibrahima",
+        "dob": "23/Nov/2005",
+        "nationality": "SIERRA LEONE",
+        "passportNo": "SLR044775",
+        "licenseNo": "SFF/SPL/6627-2022/2023",
+        "position": "MIDFEILDER",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "8",
+        "name": "Issa Adan Yusuf",
+        "dob": "13/feb/2002",
+        "nationality": "SOMALIA",
+        "passportNo": "P01411915",
+        "licenseNo": "SFF/SPL/6602-2022/2023",
+        "position": "Forward",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "9",
+        "name": "Abdulkadir Osman Mohamed",
+        "dob": "03/April/2007",
+        "nationality": "SOMALIA",
+        "passportNo": "P01321218",
+        "licenseNo": "SFF/SPL/2689-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "10",
+        "name": "Feysal Ali Hussein",
+        "dob": "03/Sep/2010",
+        "nationality": "SOMALIA",
+        "passportNo": "P01611560",
+        "licenseNo": "SFF/SPL/3774-2022/2023",
+        "position": "Forward",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "11",
+        "name": "Khalid Ahmed Hassan",
+        "dob": "09/Feb/2006",
+        "nationality": "SOMALIA",
+        "passportNo": "P01237713",
+        "licenseNo": "SFF/SPL/3313-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "12",
+        "name": "Bashir Mukhtar Hassan",
+        "dob": "24/Sep/2010",
+        "nationality": "SOMALIA",
+        "passportNo": "P01611553",
+        "licenseNo": "SFF/SPL/3313-2022/2023",
+        "position": "Midfeilder",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "13",
+        "name": "Hassan Mohamed Adan",
+        "dob": "01/Jan/1999",
+        "nationality": "SOMALIA",
+        "passportNo": "P01735607",
+        "licenseNo": "SFF/SPL/0063-2022/2023",
+        "position": "Midfeilder",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "14",
+        "name": "Yusuf Yaqub yusuf",
+        "dob": "06/April/1997",
+        "nationality": "SOMALIA",
+        "passportNo": "P01737309",
+        "licenseNo": "SFF/SPL/0175-2022/2023",
+        "position": "Goalkeeper",
+        "jerseyNo": "30"
+      },
+      {
+        "no": "15",
+        "name": "Ibrahim Ali Hussein",
+        "dob": "20/Oct/2009",
+        "nationality": "SOMALIA",
+        "passportNo": "P01770549",
+        "licenseNo": "SFF/SPL/24-8691",
+        "position": "Forward",
+        "jerseyNo": "90"
+      },
+      {
+        "no": "16",
+        "name": "Muridi Hussein Abdi",
+        "dob": "03/Feb/2009",
+        "nationality": "SOMALIA",
+        "passportNo": "P01770553",
+        "licenseNo": "SFF/SPL/24-7696",
+        "position": "Defender",
+        "jerseyNo": "14"
+      },
+      {
+        "no": "17",
+        "name": "Samson oluwaseun ogunribide",
+        "dob": "16/Nov/2003",
+        "nationality": "NiGERIA",
+        "passportNo": "A12708063",
+        "licenseNo": "SFF/SPL/0428-2022/2023",
+        "position": "Defender",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "18",
+        "name": "Makuochukwu samuel okoro",
+        "dob": "19/April/1999",
+        "nationality": "NIGERIA",
+        "passportNo": "B00987539",
+        "licenseNo": "SFF/SPL/3765-2022/2023",
+        "position": "Forward",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "19",
+        "name": "Pentecost Obiechina",
+        "dob": "13/Mar/1998",
+        "nationality": "NIGERIA",
+        "passportNo": "B51584779",
+        "licenseNo": "SFF/SPL/26-9958",
+        "position": "Forward",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "20",
+        "name": "Eteme ernest",
+        "dob": "09/April/1996",
+        "nationality": "CAMEROON",
+        "passportNo": "AB434020",
+        "licenseNo": "MCC/PL/26-1002",
+        "position": "Defender",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "21",
+        "name": "Eze Henangue jerry Roussel",
+        "dob": "10/jan/2002",
+        "nationality": "CAMEROON",
+        "passportNo": "AA468654",
+        "licenseNo": "SFF/SPL/0273-2022/2023",
+        "position": "Midfielder",
+        "jerseyNo": "29"
+      },
+      {
+        "no": "22",
+        "name": "Abdishakur Abdulkadir Ibrahim",
+        "dob": "01/Jan/2004",
+        "nationality": "SOMALIA",
+        "passportNo": "P01735613",
+        "licenseNo": "SFF/SPL/0486-2022/2023",
+        "position": "Goalkeeper",
+        "jerseyNo": "31"
+      },
+      {
+        "no": "23",
+        "name": "Mohamed Ali Mohamed",
+        "dob": "14/April/2009",
+        "nationality": "SOMALIA",
+        "passportNo": "P01739184",
+        "licenseNo": "SFF/SPL/0094-2022/2023",
+        "position": "Goalkeeper",
+        "jerseyNo": ""
+      }
+    ]
+  },
+  {
+    "teamSlug": "rayon-sports-fc",
+    "source": "RAYON SPORTS REGISTRATION FORM KAGAME CUP 2026.. (1).docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "DRISSA KOUYATE",
+        "dob": "17/12/1998",
+        "nationality": "Malienne",
+        "passportNo": "AA0628353",
+        "licenseNo": "011843M98",
+        "position": "GOALKEEPER",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "2",
+        "name": "DANDE JUNIOR",
+        "dob": "22/02/1998",
+        "nationality": "CAMEROONEAN",
+        "passportNo": "AA935752",
+        "licenseNo": "NEW",
+        "position": "GOALKEEPER",
+        "jerseyNo": "35"
+      },
+      {
+        "no": "3",
+        "name": "MUGISHA YVES",
+        "dob": "1/01/2001",
+        "nationality": "Rwandan",
+        "passportNo": "1200180178057040",
+        "licenseNo": "000642M01",
+        "position": "GOALKEEPER",
+        "jerseyNo": "32"
+      },
+      {
+        "no": "4",
+        "name": "GANIJURU ISHIMWE ELIE",
+        "dob": "23/07/1998",
+        "nationality": "Rwandan",
+        "passportNo": "1199880102493027",
+        "licenseNo": "002269M98",
+        "position": "LEFTBACK",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "5",
+        "name": "NSHIMIYIMANA EMMANUEL",
+        "dob": "1/01/1998",
+        "nationality": "Rwandan",
+        "passportNo": "1199880175481072",
+        "licenseNo": "001778M98",
+        "position": "RIGHTBACK",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "6",
+        "name": "NSHIMIMANA FABRICE",
+        "dob": "28/10/2003",
+        "nationality": "Rwandan",
+        "passportNo": "1200380088810080",
+        "licenseNo": "003239M03",
+        "position": "CENTERBACK",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "7",
+        "name": "NSHUTI DIDIER",
+        "dob": "21/05/2002",
+        "nationality": "Rwandan",
+        "passportNo": "1200280063069064",
+        "licenseNo": "NEW",
+        "position": "CENTERBACK",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "8",
+        "name": "WAKONDA ABDEL MATUMONA",
+        "dob": "24/02/1999",
+        "nationality": "CONGOLAISE",
+        "passportNo": "OP1706954",
+        "licenseNo": "NEW",
+        "position": "CENTERBACK",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "9",
+        "name": "CHARLES TCHOUPLAOU",
+        "dob": "30/01/2001",
+        "nationality": "Chadian",
+        "passportNo": "RK5439576",
+        "licenseNo": "NEW",
+        "position": "CENTERBACK",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "10",
+        "name": "TONY KITOGA",
+        "dob": "3/7/2005",
+        "nationality": "CONGOLAISE",
+        "passportNo": "LP0004187",
+        "licenseNo": "011841M05",
+        "position": "A. MEDFIELD",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "11",
+        "name": "TAMBWE NGONGO GLOIRE",
+        "dob": "29/01/2005",
+        "nationality": "CONGOLAISE",
+        "passportNo": "OP0964070",
+        "licenseNo": "011842M05",
+        "position": "A. MEDFIELD",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "12",
+        "name": "NKUDIMANA",
+        "dob": "1/01/1999",
+        "nationality": "Rwandan",
+        "passportNo": "1199980143208041",
+        "licenseNo": "NEW",
+        "position": "A. MEDFIELD",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "13",
+        "name": "NISINGIZWE CHRISTIAN",
+        "dob": "14/04/2001",
+        "nationality": "Rwandan",
+        "passportNo": "1200180006822044",
+        "licenseNo": "NEW",
+        "position": "D.MEDFIELD",
+        "jerseyNo": "6"
+      },
+      {
+        "no": "14",
+        "name": "MUDERI AKBAR",
+        "dob": "28/04/2003",
+        "nationality": "Burundian",
+        "passportNo": "0P0410238",
+        "licenseNo": "NEW",
+        "position": "D.MEDFIELD",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "15",
+        "name": "NDAYISHIMIYE DIDIE",
+        "dob": "16/06/2005",
+        "nationality": "Rwandan",
+        "passportNo": "1200580092897206",
+        "licenseNo": "NEW",
+        "position": "A. MEDFIELD",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "16",
+        "name": "IBRAHIM MANSOURU DJINGAREY",
+        "dob": "22/11/2005",
+        "nationality": "Nigerian",
+        "passportNo": "12PC15619",
+        "licenseNo": "NEW",
+        "position": "D.MEDFIELD",
+        "jerseyNo": "8"
+      },
+      {
+        "no": "17",
+        "name": "ISSA DJIGUIBA",
+        "dob": "4/01/2004",
+        "nationality": "Malienne",
+        "passportNo": "PP0075122",
+        "licenseNo": "NEW",
+        "position": "A. MEDFIELD",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "18",
+        "name": "BORIS GBENOU",
+        "dob": "31/01/2004",
+        "nationality": "Central AFRICA",
+        "passportNo": "O00290978",
+        "licenseNo": "NEW",
+        "position": "WINGER",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "19",
+        "name": "NDIKUMANA ASMAN",
+        "dob": "10/08/1999",
+        "nationality": "Burundian",
+        "passportNo": "OP0309477",
+        "licenseNo": "011840M99",
+        "position": "STRIKER",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "20",
+        "name": "NIZEYIMANA MUBARAKA",
+        "dob": "25/11/2003",
+        "nationality": "Rwandan",
+        "passportNo": "1200380127123062",
+        "licenseNo": "NEW",
+        "position": "STRIKER",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "21",
+        "name": "MUHOZA Daniel",
+        "dob": "1/1/2006",
+        "nationality": "Rwandan",
+        "passportNo": "1200680132323066",
+        "licenseNo": "NEW",
+        "position": "WINGER",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "22",
+        "name": "ANTONIO ATISSO KODJO KOSSIVI",
+        "dob": "13/06/1999",
+        "nationality": "TOGO",
+        "passportNo": "EB813220",
+        "licenseNo": "NEW",
+        "position": "WINGER",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "23",
+        "name": "IRADUKUNDA ELIE TATOU",
+        "dob": "1/10/2006",
+        "nationality": "Rwandan",
+        "passportNo": "PC689708",
+        "licenseNo": "NEW",
+        "position": "WINGER",
+        "jerseyNo": "40"
+      },
+      {
+        "no": "24",
+        "name": "HAKIZIMANA ZUBERI",
+        "dob": "23/03/1998",
+        "nationality": "Rwandan",
+        "passportNo": "1199880020395022",
+        "licenseNo": "NEW",
+        "position": "WINGER",
+        "jerseyNo": "39"
+      },
+      {
+        "no": "25",
+        "name": "KAMENI HERMAN JUNIOR",
+        "dob": "14/05/2001",
+        "nationality": "CAMEROONEAN",
+        "passportNo": "AB514767",
+        "licenseNo": "NEW",
+        "position": "STRICKER",
+        "jerseyNo": "25"
+      }
+    ]
+  },
+  {
+    "teamSlug": "simba-sc",
+    "source": "SIMBA SC LIST.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1.",
+        "name": "NICKSON CLEMENT KIBABAGE",
+        "dob": "12/10/2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 135145",
+        "licenseNo": "001964M00",
+        "position": "DF",
+        "jerseyNo": "3"
+      },
+      {
+        "no": "2.",
+        "name": "VEDASTUS PAUL MASINDE",
+        "dob": "16/06/2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 780390",
+        "licenseNo": "006832M03",
+        "position": "DF",
+        "jerseyNo": "04"
+      },
+      {
+        "no": "3.",
+        "name": "ANTHONY RICHARD MLIGO",
+        "dob": "08/08/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 859729",
+        "licenseNo": "007436M07",
+        "position": "DF",
+        "jerseyNo": "05"
+      },
+      {
+        "no": "4.",
+        "name": "LIBASSE GUEYE",
+        "dob": "05/07/2003",
+        "nationality": "SENEGALAISE",
+        "passportNo": "A 04056171",
+        "licenseNo": "012406M03",
+        "position": "MF",
+        "jerseyNo": "07"
+      },
+      {
+        "no": "5.",
+        "name": "INNO JOSPIN LOEMBA",
+        "dob": "04/08/2004",
+        "nationality": "CONGOLAISE",
+        "passportNo": "OA 0587664",
+        "licenseNo": "012449M04",
+        "position": "MF",
+        "jerseyNo": "10"
+      },
+      {
+        "no": "6.",
+        "name": "MATLALA KELETSO MAKGALWA",
+        "dob": "03/01/1997",
+        "nationality": "SOUTH AFRICAN",
+        "passportNo": "M 00346590",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "7.",
+        "name": "SHOMARI SALUM KAPOMBE",
+        "dob": "28/01/1992",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 696142",
+        "licenseNo": "000109M92",
+        "position": "DF",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "8.",
+        "name": "MOTHUSI COOPER",
+        "dob": "19/07/1997",
+        "nationality": "BOTSWANA",
+        "passportNo": "BN 2168821",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "9.",
+        "name": "DAVID FRANK KAMETA",
+        "dob": "12/12/2001",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 369544",
+        "licenseNo": "003277M94",
+        "position": "DF",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "10.",
+        "name": "SAMBA NIASS",
+        "dob": "06/03/2006",
+        "nationality": "MAURITANIENNE",
+        "passportNo": "B00380138",
+        "licenseNo": "",
+        "position": "DF",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "11.",
+        "name": "CLATOUS CHAMA",
+        "dob": "18/06/1991",
+        "nationality": "ZAMBIAN",
+        "passportNo": "ZQ 138056",
+        "licenseNo": "001715M91",
+        "position": "MF",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "12.",
+        "name": "MORICE MICHAEL ABRAHAM",
+        "dob": "13/08/2003",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 750758",
+        "licenseNo": "003206M03",
+        "position": "MF",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "13.",
+        "name": "BAKARI SELEMANI MSIMU",
+        "dob": "10/12/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 667907",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "14.",
+        "name": "ANICET ALAIN OURA",
+        "dob": "07/12/1999",
+        "nationality": "IVORIENNE",
+        "passportNo": "25AA32532",
+        "licenseNo": "012448M99",
+        "position": "MF",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "15.",
+        "name": "YUSUPH ALLY KAGOMA",
+        "dob": "01/02/1996",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 499816",
+        "licenseNo": "000079M96",
+        "position": "MF",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "16.",
+        "name": "RUSHINE STANLEY DE REUCK",
+        "dob": "09/02/1996",
+        "nationality": "SOUTH AFRICAN",
+        "passportNo": "A 11345253",
+        "licenseNo": "010881M96",
+        "position": "DF",
+        "jerseyNo": "23"
+      },
+      {
+        "no": "17.",
+        "name": "KELVIN NASHON NAFTAL",
+        "dob": "03/08/2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 161399",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "18.",
+        "name": "ISMAEL OLIVIER TOURE",
+        "dob": "31/12/1997",
+        "nationality": "IVORIENNE",
+        "passportNo": "24AV30860",
+        "licenseNo": "012408M97",
+        "position": "DF",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "19.",
+        "name": "NATHANIEL RAPHAEL CHILAMBO",
+        "dob": "03/04/2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 493527",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "20.",
+        "name": "IBRAHEEM OLALEKAN JABAAR",
+        "dob": "24/10/2002",
+        "nationality": "NIGERIAN",
+        "passportNo": "B51529439",
+        "licenseNo": "",
+        "position": "MF",
+        "jerseyNo": "27"
+      },
+      {
+        "no": "21.",
+        "name": "HUSSEIN ABEIL THOMAS",
+        "dob": "18/03/1999",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 630097",
+        "licenseNo": "002767M99",
+        "position": "FW",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "22.",
+        "name": "IBRAHIM DOUMBIA",
+        "dob": "31/12/2007",
+        "nationality": "MALIENNE",
+        "passportNo": "PP0135244",
+        "licenseNo": "",
+        "position": "FW",
+        "jerseyNo": "29"
+      },
+      {
+        "no": "23.",
+        "name": "ELIE NKIBISAWALA MPANZU",
+        "dob": "01/01/2002",
+        "nationality": "CONGOLAISE",
+        "passportNo": "PO000838",
+        "licenseNo": "009675M02",
+        "position": "MF",
+        "jerseyNo": "34"
+      },
+      {
+        "no": "24.",
+        "name": "HUSSEIN DAVID SEMFUKO",
+        "dob": "17/05/2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 416582",
+        "licenseNo": "005932M04",
+        "position": "MF",
+        "jerseyNo": "37"
+      },
+      {
+        "no": "25.",
+        "name": "MAHAMADOU TANJA KASSALI",
+        "dob": "05/07/1996",
+        "nationality": "NIGERIENNE",
+        "passportNo": "12PC 13571",
+        "licenseNo": "012407M96",
+        "position": "GK",
+        "jerseyNo": "39"
+      },
+      {
+        "no": "26.",
+        "name": "SELEMANI MWALIMU ABDALLAH",
+        "dob": "19/01/2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 784704",
+        "licenseNo": "001768M98",
+        "position": "FW",
+        "jerseyNo": "40"
+      },
+      {
+        "no": "27.",
+        "name": "ALEXANDER ERASTO MWAKAPAMBIKA",
+        "dob": "04/08/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE 513209",
+        "licenseNo": "008697M09",
+        "position": "GK",
+        "jerseyNo": "42"
+      }
+    ]
+  },
+  {
+    "teamSlug": "tusker-fc",
+    "source": "TUSKER FC.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "Francis Odour Onyango",
+        "dob": "29/01/1992",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "0495",
+        "position": "Center Back",
+        "jerseyNo": "4"
+      },
+      {
+        "no": "2",
+        "name": "Erick Kapaito Muugi",
+        "dob": "25/12/1995",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "2891",
+        "position": "Striker",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "3",
+        "name": "Yakeen Muteheli",
+        "dob": "18/06/1999",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "51753",
+        "position": "Right Winger",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "4",
+        "name": "Warsama Hassan",
+        "dob": "16/03/1999",
+        "nationality": "Djiboutian",
+        "passportNo": "24PP01118",
+        "licenseNo": "N/A",
+        "position": "Defensive Midfieder",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "5",
+        "name": "Eugine Ikutwa Shipwoni",
+        "dob": "05/11/2003",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "4888",
+        "position": "Right Back",
+        "jerseyNo": "15"
+      },
+      {
+        "no": "6",
+        "name": "Fabian Bathes Adikiny",
+        "dob": "26/05/1999",
+        "nationality": "Kenyan",
+        "passportNo": "CK301293",
+        "licenseNo": "1104",
+        "position": "Central Midfieder",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "7",
+        "name": "Stephen Etyang Odima",
+        "dob": "02/20/1996",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "2883",
+        "position": "Left Winger",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "8",
+        "name": "Ian Simiyu Barasa",
+        "dob": "08/03/2003",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "3096",
+        "position": "Striker",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "9",
+        "name": "Ronny Otieno Okoth",
+        "dob": "15/08/2000",
+        "nationality": "Kenyan",
+        "passportNo": "AK0557701",
+        "licenseNo": "22116",
+        "position": "Striker",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "10",
+        "name": "Chrispine Erambo Otieno",
+        "dob": "10/12/2004",
+        "nationality": "Kenyan",
+        "passportNo": "AK1096845",
+        "licenseNo": "7344",
+        "position": "Central Midfielder",
+        "jerseyNo": "28"
+      },
+      {
+        "no": "11",
+        "name": "Servyl Akouala Amuor",
+        "dob": "19/01/2004",
+        "nationality": "Congolese",
+        "passportNo": "0A0593333",
+        "licenseNo": "142294",
+        "position": "Left Back",
+        "jerseyNo": "38"
+      },
+      {
+        "no": "12",
+        "name": "Brandon Obiero Nathan",
+        "dob": "07/05/1996",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "00407",
+        "position": "Goalkeeper",
+        "jerseyNo": "35"
+      },
+      {
+        "no": "13",
+        "name": "Thomas Teka Omenda",
+        "dob": "03/04/2000",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "3376",
+        "position": "Central Defender",
+        "jerseyNo": "40"
+      },
+      {
+        "no": "14",
+        "name": "Mark Otieno",
+        "dob": "18/02/2004",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "N/A",
+        "position": "GoalKeeper",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "15",
+        "name": "Telena Ochieng",
+        "dob": "07/11/2007",
+        "nationality": "Kenyan",
+        "passportNo": "BK608253",
+        "licenseNo": "046936",
+        "position": "Right Winger",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "16",
+        "name": "Perrauld Ndinga",
+        "dob": "08/05/1999",
+        "nationality": "Congolese",
+        "passportNo": "OA0644116",
+        "licenseNo": "N/A",
+        "position": "Goalkeeper",
+        "jerseyNo": "1"
+      },
+      {
+        "no": "17",
+        "name": "Aboubacar Doumbia",
+        "dob": "10/08/2004",
+        "nationality": "Ivorian",
+        "passportNo": "23AL14657",
+        "licenseNo": "N/A",
+        "position": "Right Back",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "18",
+        "name": "John Otieno",
+        "dob": "08/11/2000",
+        "nationality": "Kenyan",
+        "passportNo": "AK0230306",
+        "licenseNo": "7055",
+        "position": "Center Back",
+        "jerseyNo": "44"
+      },
+      {
+        "no": "19",
+        "name": "Aboud Omar",
+        "dob": "09/09/1992",
+        "nationality": "Kenyan",
+        "passportNo": "BK797971",
+        "licenseNo": "5302",
+        "position": "Center Back",
+        "jerseyNo": "3"
+      },
+      {
+        "no": "20",
+        "name": "Collins Ochieng",
+        "dob": "01/01/2007",
+        "nationality": "Kenyan",
+        "passportNo": "AK1479386",
+        "licenseNo": "N/A",
+        "position": "Left Back",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "21",
+        "name": "Abdoulie Joof",
+        "dob": "12/01/2005",
+        "nationality": "Gambian",
+        "passportNo": "PC763344",
+        "licenseNo": "N/A",
+        "position": "Left Winger",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "22",
+        "name": "December Kisaka",
+        "dob": "18/12/2004",
+        "nationality": "Kenyan",
+        "passportNo": "AK0817291",
+        "licenseNo": "17809",
+        "position": "Right Winger",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "23",
+        "name": "Victor Mbaoma",
+        "dob": "20/10/1996",
+        "nationality": "Nigerian",
+        "passportNo": "A10375046",
+        "licenseNo": "N/A",
+        "position": "Striker",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "24",
+        "name": "Herbert Asimwe",
+        "dob": "02/01/2008",
+        "nationality": "Ugandan",
+        "passportNo": "B00443718",
+        "licenseNo": "N/A",
+        "position": "Striker",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "25",
+        "name": "Steve Omondi",
+        "dob": "26/06/2007",
+        "nationality": "Kenyan",
+        "passportNo": "BK1189690",
+        "licenseNo": "N/A",
+        "position": "Left Winger",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "26",
+        "name": "Evans Malo",
+        "dob": "30/04/2004",
+        "nationality": "Kenyan",
+        "passportNo": "TBC",
+        "licenseNo": "N/A",
+        "position": "Right Winger",
+        "jerseyNo": "TBC"
+      },
+      {
+        "no": "27",
+        "name": "Golan Oliech",
+        "dob": "24/06/2009",
+        "nationality": "Kenyan",
+        "passportNo": "AK1678962",
+        "licenseNo": "N/A",
+        "position": "Goalkeeper",
+        "jerseyNo": "TBC"
+      }
+    ]
+  },
+  {
+    "teamSlug": "vipers-sc",
+    "source": "VIPERS SC REGISTRATION.docx",
+    "positionPlaceholder": false,
+    "players": [
+      {
+        "no": "1",
+        "name": "KIGGUNDU DENIS",
+        "dob": "15-05-2000",
+        "nationality": "UGANDA",
+        "passportNo": "A00271538",
+        "licenseNo": "-",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "20"
+      },
+      {
+        "no": "2",
+        "name": "KOMAKECH JACK",
+        "dob": "31-07-2002",
+        "nationality": "UGANDA",
+        "passportNo": "A00027337",
+        "licenseNo": "-",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "19"
+      },
+      {
+        "no": "3",
+        "name": "MBABA LOYCE MARIUS",
+        "dob": "04-05-1998",
+        "nationality": "GABON",
+        "passportNo": "26PP05061",
+        "licenseNo": "-",
+        "position": "GOAL KEEPER",
+        "jerseyNo": "1"
+      },
+      {
+        "no": "4",
+        "name": "MANDELA ASHRAF",
+        "dob": "20-12-2002",
+        "nationality": "UGANDA",
+        "passportNo": "A00628018",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "31"
+      },
+      {
+        "no": "5",
+        "name": "MANGOBA JACQUES IYADI",
+        "dob": "21-01-2001",
+        "nationality": "DR CONGO",
+        "passportNo": "P00079523",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "2"
+      },
+      {
+        "no": "6",
+        "name": "MWERE NICHOLAS",
+        "dob": "13-03-2001",
+        "nationality": "UGANDA",
+        "passportNo": "A00521936",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "13"
+      },
+      {
+        "no": "7",
+        "name": "NDAHIRO DERRICK",
+        "dob": "10-10-2000",
+        "nationality": "UGANDA",
+        "passportNo": "A00247415",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "3"
+      },
+      {
+        "no": "8",
+        "name": "MUKUNDANE HILLARY PANUEL",
+        "dob": "09-12-2001",
+        "nationality": "UGANDA",
+        "passportNo": "A00810621",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "16"
+      },
+      {
+        "no": "9",
+        "name": "TORACH ROGERS OCHAKI",
+        "dob": "23-06-2003",
+        "nationality": "UGANDA",
+        "passportNo": "A00806110",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "30"
+      },
+      {
+        "no": "10",
+        "name": "KEVIN DASYLVA BADY",
+        "dob": "24-12-2004",
+        "nationality": "DR CONGO",
+        "passportNo": "OP1232404",
+        "licenseNo": "-",
+        "position": "DEFENDER",
+        "jerseyNo": "5"
+      },
+      {
+        "no": "11",
+        "name": "SSERUNJOJI JOEL",
+        "dob": "16-06-2002",
+        "nationality": "UGANDA",
+        "passportNo": "B00127468",
+        "licenseNo": "-",
+        "position": "MID FIELDER",
+        "jerseyNo": "24"
+      },
+      {
+        "no": "12",
+        "name": "MBOWA PAUL PATRICK",
+        "dob": "15-11-1995",
+        "nationality": "UGANDA",
+        "passportNo": "A00266240",
+        "licenseNo": "-",
+        "position": "MID FIELDER",
+        "jerseyNo": "18"
+      },
+      {
+        "no": "13",
+        "name": "MARVIN JOSEPH YOUNGMAN",
+        "dob": "05-05-1998",
+        "nationality": "UGANDA",
+        "passportNo": "A00297618",
+        "licenseNo": "-",
+        "position": "MID FIELDER",
+        "jerseyNo": "22"
+      },
+      {
+        "no": "14",
+        "name": "WATAMBALA ABDU KARIM",
+        "dob": "03-03-2000",
+        "nationality": "UGANDA",
+        "passportNo": "A00161606",
+        "licenseNo": "-",
+        "position": "MID FIELDER",
+        "jerseyNo": "25"
+      },
+      {
+        "no": "15",
+        "name": "MUNOGERA AMOUR",
+        "dob": "11-02-2007",
+        "nationality": "UGANDA",
+        "passportNo": "B00799011",
+        "licenseNo": "-",
+        "position": "MID FIELDER",
+        "jerseyNo": "34"
+      },
+      {
+        "no": "16",
+        "name": "ODILI CHUKWUMA",
+        "dob": "24-12-2001",
+        "nationality": "NIGERIA",
+        "passportNo": "B04463324",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "7"
+      },
+      {
+        "no": "17",
+        "name": "USAMA ARAFAT KIZA",
+        "dob": "27-06-2004",
+        "nationality": "UGANDA",
+        "passportNo": "A00953091",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "27"
+      },
+      {
+        "no": "18",
+        "name": "MULONGO GUSTO WA ILUNGA",
+        "dob": "21-02-2004",
+        "nationality": "DR CONGO",
+        "passportNo": "OP1721403",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "21"
+      },
+      {
+        "no": "19",
+        "name": "KARISA MILTON",
+        "dob": "27.07.1995",
+        "nationality": "UGANDA",
+        "passportNo": "A00476824",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "11"
+      },
+      {
+        "no": "20",
+        "name": "MANZOKI CESAR LOBI",
+        "dob": "12-10-1996",
+        "nationality": "CENTRAL AFRICAN REPUBLIC",
+        "passportNo": "O000251373",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "9"
+      },
+      {
+        "no": "21",
+        "name": "OGWANG ISAAC",
+        "dob": "22-01-1997",
+        "nationality": "UGANDA",
+        "passportNo": "A00271594",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "17"
+      },
+      {
+        "no": "22",
+        "name": "BEYUKU GLODI MUNSI",
+        "dob": "20-05-2002",
+        "nationality": "DR CONGO",
+        "passportNo": "P00315221",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "35"
+      },
+      {
+        "no": "23",
+        "name": "ANKUNDA ANNEST",
+        "dob": "03-03-2003",
+        "nationality": "UGANDA",
+        "passportNo": "B00671132",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "29"
+      },
+      {
+        "no": "24",
+        "name": "SSENTAMU YUNUS JUNIOR",
+        "dob": "13.08.1994",
+        "nationality": "UGANDA",
+        "passportNo": "A00007513",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "12"
+      },
+      {
+        "no": "25",
+        "name": "KIMERA KENNETH",
+        "dob": "25-12-2008",
+        "nationality": "UGANDA",
+        "passportNo": "B00306249",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": "26"
+      },
+      {
+        "no": "26",
+        "name": "MIYA FARUKU",
+        "dob": "26-11-1997",
+        "nationality": "UGANDA",
+        "passportNo": "B00410373",
+        "licenseNo": "-",
+        "position": "FORWARD",
+        "jerseyNo": ""
+      }
+    ]
+  },
+  {
+    "teamSlug": "singida-black-stars-fc",
+    "source": "SINGIDA FC.docx",
+    "positionPlaceholder": true,
+    "players": [
+      {
+        "no": "1",
+        "name": "METACHA MNATA",
+        "dob": "25/11/1998",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE997452",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "2",
+        "name": "KENEDY JUMA",
+        "dob": "07/08/1994",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE650489",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "3",
+        "name": "ANDREA SIMCHIMBA",
+        "dob": "29/12/2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE214935",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "4",
+        "name": "AHMED PIPINO",
+        "dob": "27/02/2005",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE036514",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "5",
+        "name": "YUSUPH HAMIS",
+        "dob": "29/09/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE888669",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "6",
+        "name": "RAHIM SHOMARY",
+        "dob": "17/02/2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE746780",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "7",
+        "name": "NICKSON MOSHA",
+        "dob": "12/12/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE781727",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "8",
+        "name": "OFFEN CHIKOLA",
+        "dob": "22/03/2000",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE499818",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "9",
+        "name": "ATHUMAN ISMAIL ATHUMAN",
+        "dob": "11/09/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "10",
+        "name": "HEMED SAID",
+        "dob": "23/03/2006",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE937169",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "11",
+        "name": "YONA AMOS",
+        "dob": "09/08/1999",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE684592",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "12",
+        "name": "HENRY DAVID",
+        "dob": "05/03/2006",
+        "nationality": "NIGERIAN",
+        "passportNo": "A13241309",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "13",
+        "name": "SHEIKHAN KHAMIS",
+        "dob": "19/08/2005",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE649551",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "14",
+        "name": "MIRAJY ABDALAH",
+        "dob": "30/06/2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE517398",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "15",
+        "name": "MARCEL CANADI",
+        "dob": "27/10/1997",
+        "nationality": "AUSTRALIA",
+        "passportNo": "U 5032740",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "16",
+        "name": "IDD KANYIKA",
+        "dob": "",
+        "nationality": "TANZANIAN",
+        "passportNo": "",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "17",
+        "name": "ABDALAH HAMIS",
+        "dob": "16/11/1997",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE268593",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "18",
+        "name": "AUBIN KRAMO",
+        "dob": "28/02/1996",
+        "nationality": "IVOIRIENNE",
+        "passportNo": "23AP14602",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "19",
+        "name": "JAMES MWASHINGA",
+        "dob": "27/09/1999",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE431496",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "20",
+        "name": "LADACK CHASAMBI",
+        "dob": "15/03/2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE019572",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "21",
+        "name": "OMAR OMAR",
+        "dob": "08/08/2004",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE702308",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "22",
+        "name": "LINDA MTANGE",
+        "dob": "26/11/2002",
+        "nationality": "CONGOLAISE",
+        "passportNo": "P00012585",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "23",
+        "name": "IBRAHIM NINDI",
+        "dob": "13/06/2007",
+        "nationality": "TANZANIAN",
+        "passportNo": "TAE859920",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "24",
+        "name": "EXAUCE SAGESSE NZAOU",
+        "dob": "09/02/2003",
+        "nationality": "CONGOLAISE",
+        "passportNo": "OA0584555",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "25",
+        "name": "JONATHAN SOWAH",
+        "dob": "01/01/1999",
+        "nationality": "GHANAIN",
+        "passportNo": "G3444336",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "26",
+        "name": "BENJAMIN TANIMU",
+        "dob": "24/07/2002",
+        "nationality": "NIGERIAN",
+        "passportNo": "B51564660",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "27",
+        "name": "FRANK ASSINK",
+        "dob": "15/04/2002",
+        "nationality": "GHANAIN",
+        "passportNo": "G4103784",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "28",
+        "name": "JAMES MBOMA",
+        "dob": "03/10/2003",
+        "nationality": "CONGOLAISE",
+        "passportNo": "P000012155",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "19",
+        "name": "MATHEW TEGISIS",
+        "dob": "18/07/2004",
+        "nationality": "KENYAN",
+        "passportNo": "AK1104784",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      },
+      {
+        "no": "30",
+        "name": "DRAMANE KAMBOU",
+        "dob": "05/01/2000",
+        "nationality": "BURKINABE",
+        "passportNo": "A5001347",
+        "licenseNo": "",
+        "position": "",
+        "jerseyNo": ""
+      }
+    ]
+  }
+]
