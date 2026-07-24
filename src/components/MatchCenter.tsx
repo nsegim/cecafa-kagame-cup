@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { RichText } from '@payloadcms/richtext-lexical/react'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { MatchEvent } from '@/lib/tournament'
+import { richTextHasContent } from '@/lib/richText'
 import Image from 'next/image'
 
 type Tab = 'live' | 'stats' | 'photos'
@@ -29,10 +32,15 @@ function EventIcon({ type }: { type: MatchEvent['type'] }) {
   return <span className="commentary__icon commentary__icon--whistle" aria-hidden="true" />
 }
 
-function eventText(e: MatchEvent, homeName: string, awayName: string): React.ReactNode {
+/**
+ * The auto-generated caption line for an event (GOAL!, cards, subs, whistle
+ * markers). Returns `null` for a plain 'note', whose whole content is the
+ * editor's rich text — rendered separately below the caption by <RichText>.
+ * The editor's optional extra detail is no longer inlined here; it renders as
+ * its own rich-text block under the caption.
+ */
+function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.ReactNode {
   const team = e.side === 'home' ? homeName : e.side === 'away' ? awayName : ''
-  // Optional extra detail an editor added on top of the auto-generated caption.
-  const extra = e.type !== 'note' && e.text ? ` ${e.text}` : ''
   switch (e.type) {
     case 'goal': {
       // The scorer is optional — fall back to just the team when it's unknown.
@@ -40,7 +48,7 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
       return (
         <>
           <strong>GOAL!</strong>
-          {scorer ? ` ${scorer}` : ''}. A goal is on the board.{extra}
+          {scorer ? ` ${scorer}` : ''}. A goal is on the board.
         </>
       )
     }
@@ -48,21 +56,21 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
       return (
         <>
           {e.playerName}
-          {team ? ` (${team})` : ''} ahawe ikarita y'umuhondo.{extra}
+          {team ? ` (${team})` : ''} ahawe ikarita y'umuhondo.
         </>
       )
     case 'red':
       return (
         <>
           <strong>Ikarita y'umutuku.</strong> {e.playerName}
-          {team ? ` (${team})` : ''} avuye mu kibuga.{extra}
+          {team ? ` (${team})` : ''} avuye mu kibuga.
         </>
       )
     case 'substitution':
       return (
         <>
           <strong>Gusimbuza{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'} off,{' '}
-          {e.playerInName ?? 'Player'} on.{extra}
+          {e.playerInName ?? 'Player'} on.
         </>
       )
     case 'kickoff':
@@ -75,14 +83,12 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
       return (
         <>
           <strong>Ikiruhuko.</strong>
-          {extra}
         </>
       )
     case 'secondhalf':
       return (
         <>
           <strong>Umukino ukomeje!</strong>
-          {extra}
         </>
       )
     case 'fulltime':
@@ -92,7 +98,6 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
         </>
       )
     case 'note':
-      return e.text
     default:
       return null
   }
@@ -174,7 +179,17 @@ export function MatchCenter({
                       {e.minute != null ? `${e.minute}'` : ''}
                     </span>
                     <EventIcon type={e.type} />
-                    <p className="commentary__text">{eventText(e, homeName, awayName)}</p>
+                    <div className="commentary__text">
+                      {(() => {
+                        const caption = eventCaption(e, homeName, awayName)
+                        return caption ? <p className="commentary__caption">{caption}</p> : null
+                      })()}
+                      {richTextHasContent(e.text) && (
+                        <div className="commentary__richtext">
+                          <RichText data={e.text as DefaultTypedEditorState} />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {photoSrc && (
                     <figure className="commentary__photo">

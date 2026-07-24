@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getActiveLiveMatch } from '@/lib/tournament'
+import { SiteNav, type NavItem } from './SiteNav'
 
-const NAV = [
+const NAV: NavItem[] = [
   { label: 'AMAKURU', href: '/news' },
   { label: 'IMIKINO', href: '/matches' },
   { label: 'AMAKIPE', href: '/teams' },
@@ -40,21 +41,7 @@ export async function SiteHeader() {
           </Link>
         </span>
 
-        <div className="site-header__navigation">
-          <nav className="site-nav" aria-label="Primary">
-            {NAV.map((item) => (
-              <Link key={item.href} href={item.href} className="site-nav__link">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {liveMatch && (
-            <a href={liveMatch.liveMatchUrl} className="site-header__cta">
-              {'LIVE'}
-            </a>
-          )}
-        </div>
+        <SiteNav nav={NAV} liveHref={liveMatch?.liveMatchUrl ?? null} />
       </div>
     </header>
   )

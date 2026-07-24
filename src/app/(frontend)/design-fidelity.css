@@ -201,6 +201,90 @@ body > main {
   box-shadow: none;
 }
 
+/* ===== Mobile menu (hamburger) — hidden until the header breakpoint below ===== */
+.site-header__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.site-header__burger-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--navy-900);
+  border-radius: 2px;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+/* Bars morph into an X when the menu is open. */
+.site-header__burger.is-open .site-header__burger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.site-header__burger.is-open .site-header__burger-bar:nth-child(2) {
+  opacity: 0;
+}
+.site-header__burger.is-open .site-header__burger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.site-mobile-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  padding: 8px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  z-index: 60;
+}
+.site-mobile-menu.is-open {
+  display: flex;
+}
+.site-mobile-menu__nav {
+  display: flex;
+  flex-direction: column;
+}
+.site-mobile-menu__link {
+  display: block;
+  padding: 14px 16px;
+  color: var(--navy-900);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+}
+.site-mobile-menu__link:hover,
+.site-mobile-menu__link:active {
+  background: var(--band);
+}
+.site-mobile-menu__cta {
+  display: block;
+  margin-top: 6px;
+  padding: 14px 16px;
+  background: #aa0205;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-align: center;
+  border-radius: 4px;
+}
+
 .section-head {
   margin-bottom: 40px;
 }
@@ -344,6 +428,18 @@ body > main {
   padding: 0;
   font-size: 12px;
   line-height: 16px;
+}
+
+.upcoming-row__score {
+  padding: 0;
+}
+.upcoming-row__nums {
+  font-size: 13px;
+  line-height: 15px;
+}
+.upcoming-row__state {
+  font-size: 8px;
+  line-height: 9px;
 }
 
 .upcoming-panel__cta {
@@ -1027,9 +1123,6 @@ body > main {
 .commentary__text {
   font-size: 13px;
   line-height: 17px;
-  /* Preserve the line breaks and blank-line paragraph gaps an editor types in
-     the (multi-line) commentary text, instead of collapsing them to one space. */
-  white-space: pre-line;
 }
 
 .commentary__photo {
@@ -2357,51 +2450,29 @@ body > main {
   }
 }
 
+/* Below this width the inline nav can't fit next to the brand + LIVE button,
+   so it collapses into the hamburger menu (see .site-header__burger). */
 @media (max-width: 900px) {
-  .site-header__navigation {
-    padding-left: 0;
-  }
-}
-
-@media (max-width: 820px) {
   .site-header {
     height: auto;
   }
-
   .site-header__inner {
-    display: grid;
-    grid-template-areas:
-      'brand cta'
-      'nav nav';
-    grid-template-columns: auto 1fr;
-    height: auto;
-    padding: 16px 20px;
-    row-gap: 12px;
+    height: 64px;
+    padding: 0 16px;
+    gap: 0;
   }
-
-  .brand {
-    grid-area: brand;
-  }
-
   .site-header__navigation {
-    display: contents;
+    flex: 1 1 auto;
+    height: auto;
+    padding-left: 0;
   }
-
-  .site-nav {
-    grid-area: nav;
-    justify-self: center;
-    max-width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .site-nav::-webkit-scrollbar {
+  /* Hide the inline desktop nav + LIVE button; show the hamburger instead. */
+  .site-header__navigation > .site-nav,
+  .site-header__navigation > .site-header__cta {
     display: none;
   }
-
-  .site-header__cta {
-    grid-area: cta;
-    justify-self: end;
+  .site-header__burger {
+    display: inline-flex;
   }
 }
 

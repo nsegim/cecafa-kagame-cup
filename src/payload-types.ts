@@ -346,9 +346,23 @@ export interface Match {
          */
         playerOn?: (number | null) | Player;
         /**
-         * e.g. "Good save from the keeper, corner to APR." Optional extra detail for a goal/card/substitution — those already get an automatic caption from the fields above.
+         * The update text — supports rich formatting (bold, italics, links, lists, headings) and as many paragraphs as you need. For a goal/card/substitution this is optional extra detail shown under the automatic caption.
          */
-        text?: string | null;
+        text?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         /**
          * Optional photo shown with this update.
          */

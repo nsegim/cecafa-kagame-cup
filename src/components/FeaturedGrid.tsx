@@ -4,6 +4,7 @@ import type { Article } from '@/lib/news'
 import type { Match, Team } from '@/payload-types'
 import { TeamCrest } from './TeamCrest'
 import { matchTime } from '@/lib/datetime'
+import { effectiveMatchStatus } from '@/lib/matchStatus'
 
 export interface UpcomingGroup {
   dateLabel: string
@@ -69,18 +70,44 @@ function FeaturedListItem({ article }: { article: Article }) {
 }
 
 function UpcomingRow({ match }: { match: Match }) {
-  return (
-    <div className="upcoming-row">
+  // A live or finished match shows its score (and LIVE/FT) in place of the
+  // kickoff time. Scores come straight off the match — for a live game that's
+  // the running total the Live Commentary keeps up to date.
+  const status = effectiveMatchStatus(match)
+  const played = status !== 'scheduled'
+  const row = (
+    <>
       <span className="upcoming-row__team">
         {sideLabel(match.homeTeam, match.homeTeamPlaceholder)}
       </span>
       <TeamCrest team={sideTeam(match.homeTeam)} size={32} />
-      <span className="upcoming-row__time">{matchTime(match.kickoff)}</span>
+      {played ? (
+        <span className={`upcoming-row__score ${status === 'live' ? 'is-live' : ''}`}>
+          <span className="upcoming-row__nums">
+            {match.homeScore ?? 0}
+            <span className="upcoming-row__dash">-</span>
+            {match.awayScore ?? 0}
+          </span>
+          <span className="upcoming-row__state">{status === 'live' ? 'LIVE' : 'FT'}</span>
+        </span>
+      ) : (
+        <span className="upcoming-row__time">{matchTime(match.kickoff)}</span>
+      )}
       <TeamCrest team={sideTeam(match.awayTeam)} size={32} />
       <span className="upcoming-row__team">
         {sideLabel(match.awayTeam, match.awayTeamPlaceholder)}
       </span>
-    </div>
+    </>
+  )
+
+  // Live/finished rows link through to the match page (live feed / result);
+  // upcoming rows stay static, matching the previous behaviour.
+  return played ? (
+    <Link href={`/matches/${match.id}`} className="upcoming-row upcoming-row--link">
+      {row}
+    </Link>
+  ) : (
+    <div className="upcoming-row">{row}</div>
   )
 }
 

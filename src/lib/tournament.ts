@@ -7,6 +7,7 @@
  * once and can never disagree with itself.
  */
 import { cache } from 'react'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { getPayloadClient } from '@/lib/payload'
 import type { Match, Media, Team, Player, PlayerMatchStat } from '@/payload-types'
 import {
@@ -198,8 +199,8 @@ export interface MatchEvent {
   playerInName?: string
   teamId?: number | null
   side?: 'home' | 'away' | null
-  /** Free text — the manual caption for a 'note' entry, or optional extra detail on any other type. */
-  text?: string
+  /** Rich text (Lexical) — the body of a 'note' entry, or optional extra detail on any other type. */
+  text?: DefaultTypedEditorState | null
   /** Optional photo an editor attached to this specific entry. */
   image?: string | null
 }

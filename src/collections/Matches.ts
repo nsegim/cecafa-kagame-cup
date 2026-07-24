@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { revalidatePath } from 'next/cache'
 import { GROUPS } from './Teams'
+import { richTextHasContent } from '../lib/richText'
 
 export const VENUES = [
   { label: 'Amahoro Stadium', value: 'amahoro' },
@@ -165,7 +166,9 @@ function validateCommentaryTeam(value: unknown, { siblingData }: { siblingData?:
 }
 
 function validateCommentaryText(value: unknown, { siblingData }: { siblingData?: unknown }) {
-  if ((asCommentarySiblingData(siblingData).type ?? 'note') === 'note' && !value) {
+  // `value` is a Lexical editor state (an object), never an empty string, so
+  // emptiness is checked by walking for real text — see richTextHasContent.
+  if ((asCommentarySiblingData(siblingData).type ?? 'note') === 'note' && !richTextHasContent(value)) {
     return 'Enter the update text.'
   }
   return true
@@ -484,12 +487,11 @@ export const Matches: CollectionConfig = {
         },
         {
           name: 'text',
-          type: 'textarea',
+          type: 'richText',
           validate: validateCommentaryText,
           admin: {
-            rows: 5,
             description:
-              'The update text — write as many lines and paragraphs as you need (press Enter for a new line; leave a blank line between paragraphs). For a goal/card/substitution this is optional extra detail on top of the automatic caption.',
+              'The update text — supports rich formatting (bold, italics, links, lists, headings) and as many paragraphs as you need. For a goal/card/substitution this is optional extra detail shown under the automatic caption.',
           },
         },
         {
