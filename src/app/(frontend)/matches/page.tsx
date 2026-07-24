@@ -1,4 +1,5 @@
 import { getTournamentData } from '@/lib/tournament'
+import { effectiveMatchStatus } from '@/lib/matchStatus'
 import { StadiumHero } from '@/components/StadiumHero'
 import { MatchesTabs, type FeaturedMatch } from '@/components/MatchesTabs'
 import type { Match } from '@/payload-types'
@@ -20,19 +21,19 @@ export default async function MatchesPage() {
   const data = await getTournamentData()
 
   const upcoming = data.matches
-    .filter((m) => m.status === 'scheduled')
+    .filter((m) => effectiveMatchStatus(m) === 'scheduled')
     .sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff))
 
   const previous = data.matches
-    .filter((m) => m.status === 'final' || m.status === 'live')
+    .filter((m) => effectiveMatchStatus(m) !== 'scheduled')
     .sort((a, b) => +new Date(b.kickoff) - +new Date(a.kickoff))
 
   const featuredUpcoming: FeaturedMatch | null = upcoming[0]
-    ? { label: 'Next Match', match: upcoming[0], imageUrl: thumbUrl(upcoming[0]) }
+    ? { label: 'UMUKINO UKURIKIRA', match: upcoming[0], imageUrl: thumbUrl(upcoming[0]) }
     : null
 
   const featuredPrevious: FeaturedMatch | null = previous[0]
-    ? { label: 'Last Match', match: previous[0], imageUrl: thumbUrl(previous[0]) }
+    ? { label: 'UMUKINO UHERUKA', match: previous[0], imageUrl: thumbUrl(previous[0]) }
     : null
 
   return (

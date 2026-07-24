@@ -299,11 +299,11 @@ export interface Match {
   homeScore?: number | null;
   awayScore?: number | null;
   /**
-   * Where the header's LIVE button sends visitors while this match is live — this match's own page (e.g. /matches/5) or an external stream link. Required while the Live button is shown below.
+   * Where the header's LIVE button sends visitors once this match is live — defaults to this match's own page automatically, or enter an external stream link instead.
    */
   liveMatchUrl?: string | null;
   /**
-   * Show the site-wide header LIVE button while this match is live. Turn off to track the match live internally without surfacing the public button yet.
+   * Show the site-wide header LIVE button once this match is live. A match automatically counts as live from its kickoff time (or you can set Status to Live yourself). Turn this off to keep the button hidden regardless.
    */
   showLiveButton?: boolean | null;
   /**

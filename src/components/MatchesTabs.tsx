@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { Match } from '@/payload-types'
+import { effectiveMatchStatus } from '@/lib/matchStatus'
 import { TeamCrest } from './TeamCrest'
 import { matchSide, VENUE_LABEL } from '@/lib/matchLabels'
 import { matchDate, matchTime, matchDateParts } from '@/lib/datetime'
@@ -38,7 +39,7 @@ function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
   const { match, label, imageUrl } = featured
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
-  const played = match.status === 'final' || match.status === 'live'
+  const played = effectiveMatchStatus(match) !== 'scheduled'
 
   return (
     <div
@@ -90,7 +91,7 @@ function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
 function MatchListRow({ match }: { match: Match }) {
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
-  const played = match.status === 'final' || match.status === 'live'
+  const played = effectiveMatchStatus(match) !== 'scheduled'
   const { day, month, year } = matchDateParts(match.kickoff)
 
   return (
@@ -128,7 +129,7 @@ function MatchListRow({ match }: { match: Match }) {
       </span>
 
       <Link href={`/matches/${match.id}`} className="btn btn--red match-row__preview">
-        Match Preview
+        IBYEREKEYE UMUKINO
       </Link>
     </div>
   )

@@ -18,8 +18,10 @@ import {
   type TeamRef,
 } from './standings'
 import { computeBracket, type Bracket } from './bracket'
+import { effectiveMatchStatus } from './matchStatus'
 
 export type { StandingRow } from './standings'
+export { effectiveMatchStatus } from './matchStatus'
 
 function relId(rel: number | { id: number } | null | undefined): number | null {
   if (rel == null) return null
@@ -319,14 +321,15 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
   const feed = [...scored, ...notes].sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
 
   // Frame the recorded events with kick-off / half-time / full-time markers so
-  // the feed reads like live commentary even before editors add prose.
+  // the feed reads like live commentary even before editors add prose. Full-time
+  // only ever comes from an editor's explicit Final — kick-off can be automatic.
   const events: MatchEvent[] = []
   if (match.status === 'final') events.push({ minute: 90, type: 'fulltime' })
   events.push(...feed)
-  if (match.status !== 'scheduled') events.push({ minute: 0, type: 'kickoff' })
+  if (effectiveMatchStatus(match) !== 'scheduled') events.push({ minute: 0, type: 'kickoff' })
 
   const otherMatches = (allMatchesRes.docs as Match[])
-    .filter((m) => m.id !== id && (m.status === 'final' || m.status === 'live'))
+    .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
     .slice(0, 4)
 
   const photos = matchPhotoUrls(match)
@@ -345,14 +348,18 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
 export const getActiveLiveMatch = cache(async (): Promise<{ id: number; liveMatchUrl: string } | null> => {
   try {
     const payload = await getPayloadClient()
+    // A match already marked Final is never a candidate; everything else
+    // (Scheduled or Live) is checked against the automatic kickoff window.
     const res = await payload.find({
       collection: 'matches',
-      where: { status: { equals: 'live' } },
+      where: { status: { not_equals: 'final' } },
       sort: 'matchNumber',
       limit: 25,
       depth: 0,
     })
-    const match = (res.docs as Match[]).find((m) => m.showLiveButton !== false && m.liveMatchUrl)
+    const match = (res.docs as Match[])
+      .filter((m) => effectiveMatchStatus(m) === 'live')
+      .find((m) => m.showLiveButton !== false && m.liveMatchUrl)
     if (!match?.liveMatchUrl) return null
     return { id: match.id, liveMatchUrl: match.liveMatchUrl }
   } catch (err) {

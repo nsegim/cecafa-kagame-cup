@@ -15,23 +15,13 @@ export const STAGES = [
 ] as const
 
 /**
- * Required only while the match is live and the header button is shown for
- * it — a scheduled/final fixture, or a live one with the button hidden, has
- * no need for a destination yet. Accepts an internal path (e.g. /matches/5)
- * or a full http(s) URL for an external stream.
+ * Defaults to this match's own page, so editors never have to type one in —
+ * see the `beforeValidate`/`afterChange` hooks below. Left free-form so a
+ * custom external stream link can still be entered instead. Accepts an
+ * internal path (e.g. /matches/5) or a full http(s) URL.
  */
-function validateLiveMatchUrl(
-  value: string | null | undefined,
-  { siblingData }: { siblingData?: { status?: string; showLiveButton?: boolean } },
-) {
-  const isLive = siblingData?.status === 'live'
-  const buttonShown = siblingData?.showLiveButton !== false
-  if (!value) {
-    if (isLive && buttonShown) {
-      return 'A Live Match URL is required while this match is Live and the Live button is shown.'
-    }
-    return true
-  }
+function validateLiveMatchUrl(value: string | null | undefined) {
+  if (!value) return true
   if (value.startsWith('/')) return true
   try {
     const parsed = new URL(value)
@@ -313,9 +303,9 @@ export const Matches: CollectionConfig = {
       type: 'text',
       validate: validateLiveMatchUrl,
       admin: {
-        condition: (_, s) => s?.status === 'live',
+        condition: (_, s) => s?.status !== 'final',
         description:
-          'Where the header\'s LIVE button sends visitors while this match is live — this match\'s own page (e.g. /matches/5) or an external stream link. Required while the Live button is shown below.',
+          'Where the header\'s LIVE button sends visitors once this match is live — defaults to this match\'s own page automatically, or enter an external stream link instead.',
       },
     },
     {
@@ -324,10 +314,10 @@ export const Matches: CollectionConfig = {
       type: 'checkbox',
       defaultValue: true,
       admin: {
-        condition: (_, s) => s?.status === 'live',
+        condition: (_, s) => s?.status !== 'final',
         position: 'sidebar',
         description:
-          'Show the site-wide header LIVE button while this match is live. Turn off to track the match live internally without surfacing the public button yet.',
+          'Show the site-wide header LIVE button once this match is live. A match automatically counts as live from its kickoff time (or you can set Status to Live yourself). Turn this off to keep the button hidden regardless.',
       },
     },
     {
@@ -480,7 +470,7 @@ export const Matches: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
-      ({ data }) => {
+      ({ data, originalDoc }) => {
         // A final result without a scoreline would silently corrupt the standings.
         if (data?.status === 'final') {
           if (typeof data.homeScore !== 'number' || typeof data.awayScore !== 'number') {
@@ -491,11 +481,18 @@ export const Matches: CollectionConfig = {
         }
         assertSingleCaptain(data?.homeLineup, 'Home team')
         assertSingleCaptain(data?.awayLineup, 'Away team')
+        // Default the Live Match URL to this match's own page so editors never
+        // have to type one in — only when it's genuinely empty, so a manually
+        // entered external stream link is never overwritten. A brand-new match
+        // doesn't have an id yet here; the afterChange hook below covers that case.
+        if (data && !data.liveMatchUrl && originalDoc?.id) {
+          data.liveMatchUrl = `/matches/${originalDoc.id}`
+        }
         return data
       },
     ],
     afterChange: [
-      ({ doc }) => {
+      async ({ doc, operation, req }) => {
         // Live commentary, scores and status need to appear immediately during a
         // live match — don't make an editor wait out the page's ISR window.
         revalidatePath(`/matches/${doc.id}`)
@@ -505,6 +502,18 @@ export const Matches: CollectionConfig = {
         // the root layout — bust every route's cache, not just the match pages,
         // so the button appears/disappears immediately site-wide.
         revalidatePath('/', 'layout')
+
+        // A brand-new match has no id yet when beforeValidate runs, so its
+        // default Live Match URL couldn't be filled in there — do it now that
+        // one exists. Guarded by `operation === 'create'` so this one follow-up
+        // write doesn't re-trigger itself.
+        if (operation === 'create' && !doc.liveMatchUrl) {
+          await req.payload.update({
+            collection: 'matches',
+            id: doc.id,
+            data: { liveMatchUrl: `/matches/${doc.id}` },
+          })
+        }
       },
     ],
   },

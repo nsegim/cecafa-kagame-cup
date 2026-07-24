@@ -18,9 +18,12 @@ export interface MatchCenterProps {
 }
 
 function EventIcon({ type }: { type: MatchEvent['type'] }) {
-  if (type === 'goal') return <span className="commentary__icon commentary__icon--goal" aria-hidden="true" />
-  if (type === 'yellow') return <span className="commentary__icon commentary__icon--yellow" aria-hidden="true" />
-  if (type === 'red') return <span className="commentary__icon commentary__icon--red" aria-hidden="true" />
+  if (type === 'goal')
+    return <span className="commentary__icon commentary__icon--goal" aria-hidden="true" />
+  if (type === 'yellow')
+    return <span className="commentary__icon commentary__icon--yellow" aria-hidden="true" />
+  if (type === 'red')
+    return <span className="commentary__icon commentary__icon--red" aria-hidden="true" />
   if (type === 'substitution')
     return <span className="commentary__icon commentary__icon--substitution" aria-hidden="true" />
   return <span className="commentary__icon commentary__icon--whistle" aria-hidden="true" />
@@ -42,33 +45,33 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
       return (
         <>
           {e.playerName}
-          {team ? ` (${team})` : ''} is shown a yellow card for a late challenge.{extra}
+          {team ? ` (${team})` : ''} ahawe ikarita y'umuhondo.{extra}
         </>
       )
     case 'red':
       return (
         <>
-          <strong>Red card.</strong> {e.playerName}
-          {team ? ` (${team})` : ''} is sent off.{extra}
+          <strong>Ikarita y'umutuku.</strong> {e.playerName}
+          {team ? ` (${team})` : ''} avuye mu kibuga.{extra}
         </>
       )
     case 'substitution':
       return (
         <>
-          <strong>Substitution{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'} off,{' '}
-          {e.playerInName ?? 'Player'} on.{extra}
+          <strong>Substitution{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'}{' '}
+          off, {e.playerInName ?? 'Player'} on.{extra}
         </>
       )
     case 'kickoff':
       return (
         <>
-          <strong>Kick-off.</strong> We are under way at the stadium.
+          <strong>Umukino utangiye!</strong> Tugeze muri sitade
         </>
       )
     case 'fulltime':
       return (
         <>
-          <strong>Full-time.</strong> The referee brings the match to a close.
+          <strong>Umukino urarangiye.</strong>
         </>
       )
     case 'note':
@@ -97,10 +100,7 @@ function photoInsertIndex(eventCount: number, photoCount: number): Map<number, n
   const map = new Map<number, number>()
   if (eventCount === 0 || photoCount === 0) return map
   for (let p = 0; p < photoCount; p++) {
-    const position = Math.min(
-      eventCount - 1,
-      Math.round(((p + 1) * eventCount) / (photoCount + 1)),
-    )
+    const position = Math.min(eventCount - 1, Math.round(((p + 1) * eventCount) / (photoCount + 1)))
     if (!map.has(position)) map.set(position, p)
   }
   return map
@@ -122,9 +122,9 @@ export function MatchCenter({
       <div className="matchcenter__tabs" role="tablist" aria-label="Match detail">
         {(
           [
-            ['live', 'Live Expressions'],
-            ['stats', 'Statistics'],
-            ['photos', 'Match Photos'],
+            ['live', `Imigendekere y'umukino`],
+            ['stats', `Imibare y'umukino`],
+            ['photos', `Amafoto y'umukino`],
           ] as [Tab, string][]
         ).map(([key, label]) => (
           <button
@@ -143,7 +143,7 @@ export function MatchCenter({
       {tab === 'live' && (
         <div className="commentary">
           {events.length === 0 ? (
-            <p className="perf__empty">Commentary will appear once the match kicks off.</p>
+            <p className="perf__empty">Ubusesenguzi bw'umukino buraza umukino nutangira.</p>
           ) : (
             events.map((e, i) => {
               // An image an editor attached directly to this entry takes priority
@@ -153,7 +153,9 @@ export function MatchCenter({
               return (
                 <div className="commentary__group" key={i}>
                   <div className="commentary__entry">
-                    <span className="commentary__min">{e.minute != null ? `${e.minute}'` : ''}</span>
+                    <span className="commentary__min">
+                      {e.minute != null ? `${e.minute}'` : ''}
+                    </span>
                     <EventIcon type={e.type} />
                     <p className="commentary__text">{eventText(e, homeName, awayName)}</p>
                   </div>
@@ -167,7 +169,8 @@ export function MatchCenter({
                         style={{ objectFit: 'cover' }}
                       />
                       <figcaption>
-                        {e.playerName || (e.side === 'home' ? homeName : awayName)} · {e.minute ?? ''}
+                        {e.playerName || (e.side === 'home' ? homeName : awayName)} ·{' '}
+                        {e.minute ?? ''}
                         &apos;
                       </figcaption>
                     </figure>

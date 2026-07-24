@@ -17,9 +17,7 @@ interface GalleryPageProps {
 
 export default async function GalleryPage({ searchParams }: GalleryPageProps) {
   const params = await searchParams
-  const requestedCategory = Array.isArray(params.category)
-    ? params.category[0]
-    : params.category
+  const requestedCategory = Array.isArray(params.category) ? params.category[0] : params.category
   const initialCategory = isGalleryFilter(requestedCategory) ? requestedCategory : 'All'
 
   const [allImages, heroImage] = await Promise.all([getGalleryImages(), getGalleryHero()])
@@ -37,7 +35,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
           style={{ objectFit: 'cover' }}
         />
         <span className="gallery-hero__overlay" aria-hidden="true" />
-        <h1 id="gallery-title">Gallery</h1>
+        <h1 id="gallery-title">Amafoto</h1>
       </section>
 
       <GalleryBrowser initialCategory={initialCategory} allImages={allImages} />

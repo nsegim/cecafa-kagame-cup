@@ -72,7 +72,7 @@ export function GalleryLightbox({ images, index, onClose, onNavigate }: GalleryL
               target="_blank"
               rel="noopener noreferrer"
             >
-              View Full Album
+              Reba andi
             </a>
           )}
         </div>

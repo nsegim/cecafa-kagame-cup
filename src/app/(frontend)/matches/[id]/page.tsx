@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getMatchDetail } from '@/lib/tournament'
+import { getMatchDetail, effectiveMatchStatus } from '@/lib/tournament'
 import { TeamCrest } from '@/components/TeamCrest'
 import { MatchCenter } from '@/components/MatchCenter'
 import { Lineups } from '@/components/Lineups'
@@ -30,7 +30,7 @@ export async function generateMetadata({
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
   const title = `${home.label} vs ${away.label} — CECAFA Kagame Cup 2026 | IGIHE`
-  const played = match.status === 'final' || match.status === 'live'
+  const played = effectiveMatchStatus(match) !== 'scheduled'
   const description = played
     ? `${home.label} ${match.homeScore ?? 0}-${match.awayScore ?? 0} ${away.label} — ${VENUE_LABEL[match.venue] ?? match.venue}, ${matchDate(match.kickoff)}.`
     : `${home.label} vs ${away.label} — ${matchDate(match.kickoff)} at ${VENUE_LABEL[match.venue] ?? match.venue}, Kigali.`
@@ -46,17 +46,26 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
   const { match, homeLineup, awayLineup, events, otherMatches, photos } = detail
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
-  const played = match.status === 'final' || match.status === 'live'
+  const displayStatus = effectiveMatchStatus(match)
+  const played = displayStatus !== 'scheduled'
   const homeScore = match.homeScore ?? 0
   const awayScore = match.awayScore ?? 0
-  const metaLabel = match.group ? `Group ${match.group}` : STAGE_LABEL[match.stage] ?? ''
+  const metaLabel = match.group ? `Group ${match.group}` : (STAGE_LABEL[match.stage] ?? '')
   const statusLabel =
-    match.status === 'live' ? 'Live' : match.status === 'final' ? 'FT' : matchTime(match.kickoff)
+    displayStatus === 'live' ? 'Live' : displayStatus === 'final' ? 'FT' : matchTime(match.kickoff)
 
   const count = (side: 'home' | 'away', type: 'yellow' | 'red') =>
     events.filter((e) => e.side === side && e.type === type).length
-  const homeStats = { goals: homeScore, yellows: count('home', 'yellow'), reds: count('home', 'red') }
-  const awayStats = { goals: awayScore, yellows: count('away', 'yellow'), reds: count('away', 'red') }
+  const homeStats = {
+    goals: homeScore,
+    yellows: count('home', 'yellow'),
+    reds: count('home', 'red'),
+  }
+  const awayStats = {
+    goals: awayScore,
+    yellows: count('away', 'yellow'),
+    reds: count('away', 'red'),
+  }
 
   return (
     <>
@@ -71,7 +80,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
             </div>
 
             <div className="match-hero__score">
-              <span className={`match-hero__status ${match.status === 'live' ? 'is-live' : ''}`}>
+              <span className={`match-hero__status ${displayStatus === 'live' ? 'is-live' : ''}`}>
                 {statusLabel}
               </span>
               <div className="match-hero__nums">
@@ -106,18 +115,18 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
 
           <aside className="match-detail__side">
             <div className="sidecard">
-              <div className="sidecard__head">Match Info</div>
+              <div className="sidecard__head">Amakuru y'umukino</div>
               <dl className="matchinfo">
                 <div className="matchinfo__row">
-                  <dt>Tournament</dt>
+                  <dt>Irushanwa</dt>
                   <dd>Kagame Cup · {metaLabel}</dd>
                 </div>
                 <div className="matchinfo__row">
-                  <dt>Stadium</dt>
+                  <dt>Sitade</dt>
                   <dd>{VENUE_LABEL[match.venue] ?? match.venue}, Kigali</dd>
                 </div>
                 <div className="matchinfo__row">
-                  <dt>Date</dt>
+                  <dt>Italiki</dt>
                   <dd>
                     {matchDate(match.kickoff)} · {matchTime(match.kickoff)}
                   </dd>
@@ -134,7 +143,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
 
             {otherMatches.length > 0 && (
               <div className="sidecard">
-                <div className="sidecard__head">Other Matches</div>
+                <div className="sidecard__head">Indi mikino</div>
                 <ul className="othermatches">
                   {otherMatches.map((m) => {
                     const h = matchSide(m.homeTeam, m.homeTeamPlaceholder)
