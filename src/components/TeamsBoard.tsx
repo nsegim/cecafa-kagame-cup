@@ -28,7 +28,7 @@ function TeamCard({ team }: { team: Team }) {
   return (
     <article className="team-card">
       <div className="team-card__media">
-        <span className="team-card__group">Group {team.group}</span>
+        <span className="team-card__group">Itsinda {team.group}</span>
       </div>
       <div className="team-card__info">
         <TeamCrest team={team} size={54} />

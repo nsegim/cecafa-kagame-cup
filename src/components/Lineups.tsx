@@ -53,7 +53,7 @@ export function Lineups({
 
   return (
     <div className="sidecard">
-      <div className="sidecard__head">Starting XI</div>
+      <div className="sidecard__head">11 babanjemo</div>
       <div className="lineup__toggle" role="tablist" aria-label="Choose team">
         <button
           type="button"
@@ -76,7 +76,7 @@ export function Lineups({
       </div>
 
       {starting.length === 0 ? (
-        <p className="lineup__empty">Line-up to be confirmed.</p>
+        <p className="lineup__empty"></p>
       ) : (
         <>
           <ol className="lineup__list">

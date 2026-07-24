@@ -47,7 +47,8 @@ function lineupEntryFields(side: 'home' | 'away') {
       type: 'relationship' as const,
       relationTo: 'players' as const,
       admin: {
-        description: 'Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.',
+        description:
+          'Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.',
       },
       filterOptions: ({ data }: { data?: { homeTeam?: unknown; awayTeam?: unknown } }) => {
         const teamRef = side === 'home' ? data?.homeTeam : data?.awayTeam
@@ -74,12 +75,13 @@ function lineupGroupFields(side: 'home' | 'away') {
     },
     {
       name: 'startingXI',
-      label: 'Starting XI',
+      label: '11 babanjemo',
       type: 'array' as const,
       labels: { singular: 'Player', plural: 'Players' },
       maxRows: 11,
       admin: {
-        description: 'Up to 11 players. Drag to reorder; the order shown here is the display order.',
+        description:
+          'Up to 11 players. Drag to reorder; the order shown here is the display order.',
         initCollapsed: true,
       },
       fields: lineupEntryFields(side),
@@ -89,7 +91,8 @@ function lineupGroupFields(side: 'home' | 'away') {
       type: 'array' as const,
       labels: { singular: 'Player', plural: 'Players' },
       admin: {
-        description: 'Bench players for this match. Drag a row here from Starting XI (or back) to move it.',
+        description:
+          'Bench players for this match. Drag a row here from Starting XI (or back) to move it.',
         initCollapsed: true,
       },
       fields: lineupEntryFields(side),
@@ -99,14 +102,21 @@ function lineupGroupFields(side: 'home' | 'away') {
 
 /** At most one player per side may be marked captain for a given match. */
 function assertSingleCaptain(
-  lineup: { startingXI?: Array<{ isCaptain?: boolean | null }>; substitutes?: Array<{ isCaptain?: boolean | null }> } | undefined,
+  lineup:
+    | {
+        startingXI?: Array<{ isCaptain?: boolean | null }>
+        substitutes?: Array<{ isCaptain?: boolean | null }>
+      }
+    | undefined,
   teamLabel: string,
 ) {
   const captains = [...(lineup?.startingXI ?? []), ...(lineup?.substitutes ?? [])].filter(
     (entry) => entry?.isCaptain,
   ).length
   if (captains > 1) {
-    throw new Error(`${teamLabel} lineup has more than one player marked Captain — only one is allowed.`)
+    throw new Error(
+      `${teamLabel} lineup has more than one player marked Captain — only one is allowed.`,
+    )
   }
 }
 
@@ -116,7 +126,15 @@ export const COMMENTARY_TYPES = [
   { label: 'Yellow Card', value: 'yellow' },
   { label: 'Red Card', value: 'red' },
   { label: 'Substitution', value: 'substitution' },
+  { label: 'Half Time', value: 'halftime' },
+  { label: 'Second Half (Resume)', value: 'secondhalf' },
 ] as const
+
+/**
+ * Commentary types that belong to one side, so they require a Team. The rest
+ * (a general note, or the whole-match markers Half Time / Second Half) don't.
+ */
+const TEAM_COMMENTARY_TYPES = ['goal', 'yellow', 'red', 'substitution']
 
 type CommentarySiblingData = { type?: string; team?: 'home' | 'away' }
 
@@ -140,7 +158,7 @@ function commentaryPlayerFilter({
 }
 
 function validateCommentaryTeam(value: unknown, { siblingData }: { siblingData?: unknown }) {
-  if ((asCommentarySiblingData(siblingData).type ?? 'note') !== 'note' && !value) {
+  if (TEAM_COMMENTARY_TYPES.includes(asCommentarySiblingData(siblingData).type ?? '') && !value) {
     return 'Select which team this is for.'
   }
   return true
@@ -198,6 +216,22 @@ export function scoreFromGoalCommentary(
   }
 }
 
+/**
+ * Whether the scoreline fields should be shown/editable in the admin. A result
+ * is relevant once a match is under way — explicitly Live or Final, or simply
+ * past its kickoff time even while still marked Scheduled (a match reads as live
+ * by the clock before an editor flips the status). This keeps the score editable
+ * exactly when there's something to record, without cluttering future fixtures.
+ */
+function scoreEntryVisible(
+  siblingData: { status?: unknown; kickoff?: unknown } | undefined,
+): boolean {
+  const status = siblingData?.status
+  if (status === 'live' || status === 'final') return true
+  const kickoff = siblingData?.kickoff
+  return typeof kickoff === 'string' && new Date(kickoff).getTime() <= Date.now()
+}
+
 export const Matches: CollectionConfig = {
   slug: 'matches',
   admin: {
@@ -236,7 +270,10 @@ export const Matches: CollectionConfig = {
       index: true,
       min: 1,
       max: 99,
-      admin: { description: 'Official fixture number. 1–22 are the tournament fixtures; use a higher number (e.g. 99) for a test or extra match.' },
+      admin: {
+        description:
+          'Official fixture number. 1–22 are the tournament fixtures; use a higher number (e.g. 99) for a test or extra match.',
+      },
     },
     {
       name: 'stage',
@@ -317,7 +354,7 @@ export const Matches: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        condition: (_, s) => scoreEntryVisible(s),
         description:
           'Turn on to type the scoreline yourself below. Off (default) means goals logged in Live Commentary set the score automatically.',
       },
@@ -327,7 +364,7 @@ export const Matches: CollectionConfig = {
       type: 'number',
       min: 0,
       admin: {
-        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        condition: (_, s) => scoreEntryVisible(s),
         description:
           'With “Enter result manually” on, type the home score here. Otherwise it is auto-filled from goals in Live Commentary.',
       },
@@ -337,7 +374,7 @@ export const Matches: CollectionConfig = {
       type: 'number',
       min: 0,
       admin: {
-        condition: (_, s) => s?.status === 'live' || s?.status === 'final',
+        condition: (_, s) => scoreEntryVisible(s),
         description:
           'With “Enter result manually” on, type the away score here. Otherwise it is auto-filled from goals in Live Commentary.',
       },
@@ -350,7 +387,7 @@ export const Matches: CollectionConfig = {
       admin: {
         condition: (_, s) => s?.status !== 'final',
         description:
-          'Where the header\'s LIVE button sends visitors once this match is live — defaults to this match\'s own page automatically, or enter an external stream link instead.',
+          "Where the header's LIVE button sends visitors once this match is live — defaults to this match's own page automatically, or enter an external stream link instead.",
       },
     },
     {
@@ -381,14 +418,18 @@ export const Matches: CollectionConfig = {
           type: 'number',
           min: 0,
           max: 120,
-          admin: { description: 'Match minute, e.g. 62. Entries are shown in minute order on the feed.' },
+          admin: {
+            description: 'Match minute, e.g. 62. Entries are shown in minute order on the feed.',
+          },
         },
         {
           name: 'type',
           type: 'select',
           defaultValue: 'note',
           options: [...COMMENTARY_TYPES],
-          admin: { description: 'Determines which icon/graphic this entry shows with on the feed.' },
+          admin: {
+            description: 'Determines which icon/graphic this entry shows with on the feed.',
+          },
         },
         {
           name: 'team',
@@ -400,7 +441,7 @@ export const Matches: CollectionConfig = {
           ],
           validate: validateCommentaryTeam,
           admin: {
-            condition: (_, s) => s?.type !== 'note',
+            condition: (_, s) => TEAM_COMMENTARY_TYPES.includes(s?.type),
             description: 'Which side this happened for.',
           },
         },
@@ -461,7 +502,8 @@ export const Matches: CollectionConfig = {
           type: 'checkbox',
           defaultValue: false,
           admin: {
-            description: 'Hide this entry from the public Live Expressions feed without deleting it.',
+            description:
+              'Hide this entry from the public Live Expressions feed without deleting it.',
           },
         },
       ],
@@ -509,7 +551,7 @@ export const Matches: CollectionConfig = {
       label: 'Home Team Lineup',
       type: 'group',
       admin: {
-        description: 'Starting XI, substitutes and coach for the home team.',
+        description: '11 babanjemo, substitutes and coach for the home team.',
       },
       fields: lineupGroupFields('home'),
     },
@@ -518,7 +560,7 @@ export const Matches: CollectionConfig = {
       label: 'Away Team Lineup',
       type: 'group',
       admin: {
-        description: 'Starting XI, substitutes and coach for the away team.',
+        description: '11 babanjemo, substitutes and coach for the away team.',
       },
       fields: lineupGroupFields('away'),
     },

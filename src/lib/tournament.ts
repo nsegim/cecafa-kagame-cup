@@ -185,6 +185,7 @@ export type MatchEventType =
   | 'substitution'
   | 'kickoff'
   | 'halftime'
+  | 'secondhalf'
   | 'fulltime'
   | 'note'
 

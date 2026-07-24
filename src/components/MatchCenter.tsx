@@ -68,7 +68,21 @@ function eventText(e: MatchEvent, homeName: string, awayName: string): React.Rea
     case 'kickoff':
       return (
         <>
-          <strong>Umukino utangiye!</strong> Tugeze muri sitade
+          <strong>Umukino uratangiye!</strong>
+        </>
+      )
+    case 'halftime':
+      return (
+        <>
+          <strong>Ikiruhuko.</strong>
+          {extra}
+        </>
+      )
+    case 'secondhalf':
+      return (
+        <>
+          <strong>Umukino ukomeje!</strong>
+          {extra}
         </>
       )
     case 'fulltime':
@@ -191,16 +205,16 @@ export function MatchCenter({
             <span>{homeName}</span>
             <span>{awayName}</span>
           </div>
-          <StatRow label="Goals" home={homeStats.goals} away={awayStats.goals} />
-          <StatRow label="Yellow Cards" home={homeStats.yellows} away={awayStats.yellows} />
-          <StatRow label="Red Cards" home={homeStats.reds} away={awayStats.reds} />
+          <StatRow label="Ibitego" home={homeStats.goals} away={awayStats.goals} />
+          <StatRow label="Amakarita y'umuhondo" home={homeStats.yellows} away={awayStats.yellows} />
+          <StatRow label="Amakarita y'umutuku" home={homeStats.reds} away={awayStats.reds} />
         </div>
       )}
 
       {tab === 'photos' && (
         <div className="matchphotos">
           {photos.length === 0 ? (
-            <p className="perf__empty">Photos will appear here once added.</p>
+            <p className="perf__empty"></p>
           ) : (
             photos.map((src, i) => (
               <div key={i} className="matchphotos__img" style={{ position: 'relative' }}>

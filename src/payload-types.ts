@@ -169,11 +169,11 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * Describe the image for screen readers, e.g. "APR FC club crest".
+   * Auto-filled from the file name on upload — edit it to best describe the image for screen readers (e.g. "APR FC club crest").
    */
-  alt: string;
+  alt?: string | null;
   /**
-   * Optional caption for galleries and articles.
+   * Auto-filled from the file name on upload — edit or clear it. Shown in galleries and articles.
    */
   caption?: string | null;
   updatedAt: string;
@@ -328,7 +328,7 @@ export interface Match {
         /**
          * Determines which icon/graphic this entry shows with on the feed.
          */
-        type?: ('note' | 'goal' | 'yellow' | 'red' | 'substitution') | null;
+        type?: ('note' | 'goal' | 'yellow' | 'red' | 'substitution' | 'halftime' | 'secondhalf') | null;
         /**
          * Which side this happened for.
          */
@@ -375,7 +375,7 @@ export interface Match {
       }[]
     | null;
   /**
-   * Starting XI, substitutes and coach for the home team.
+   * 11 babanjemo, substitutes and coach for the home team.
    */
   homeLineup?: {
     /**
@@ -410,7 +410,7 @@ export interface Match {
       | null;
   };
   /**
-   * Starting XI, substitutes and coach for the away team.
+   * 11 babanjemo, substitutes and coach for the away team.
    */
   awayLineup?: {
     /**

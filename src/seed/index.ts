@@ -27,7 +27,9 @@ if (existingUsers.totalDocs === 0) {
     data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
   })
   console.log(`  admin created: ${ADMIN_EMAIL}`)
-  console.log(`  password:      ${ADMIN_PASSWORD}   \x1b[33m<- change this after first login\x1b[0m`)
+  console.log(
+    `  password:      ${ADMIN_PASSWORD}   \x1b[33m<- change this after first login\x1b[0m`,
+  )
 } else {
   console.log(`  admin already exists (${existingUsers.totalDocs} user(s)) — skipped`)
 }
@@ -100,8 +102,12 @@ await seedContent(payload)
 // --- Summary ----------------------------------------------------------------
 const groups = await Promise.all(
   (['A', 'B', 'C'] as const).map(async (g) => {
-    const r = await payload.find({ collection: 'teams', where: { group: { equals: g } }, limit: 10 })
-    return `  Group ${g}: ${r.docs.map((d) => d.name).join(', ')}`
+    const r = await payload.find({
+      collection: 'teams',
+      where: { group: { equals: g } },
+      limit: 10,
+    })
+    return `  Itsinda ${g}: ${r.docs.map((d) => d.name).join(', ')}`
   }),
 )
 console.log()
