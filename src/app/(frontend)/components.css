@@ -969,7 +969,7 @@
 /* ============ Stadium hero — dark sub-page banner ============ */
 .stadium-hero {
   position: relative;
-  background: url('/assets/hero-stadium.jpg') center / cover no-repeat;
+  background: url('/assets/amahoro.webp') center / cover no-repeat;
   background-color: var(--navy-900);
   display: flex;
   align-items: center;
@@ -1093,7 +1093,7 @@
 .match-hero {
   position: relative;
   height: 600px;
-  background: url('/assets/hero-stadium.jpg') center / cover no-repeat;
+  background: url('/assets/amahoro.webp') center / cover no-repeat;
   background-color: var(--navy-900);
   display: flex;
   align-items: center;
