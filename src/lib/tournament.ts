@@ -362,9 +362,11 @@ export const getActiveLiveMatch = cache(async (): Promise<{ id: number; liveMatc
     })
     const match = (res.docs as Match[])
       .filter((m) => effectiveMatchStatus(m) === 'live')
-      .find((m) => m.showLiveButton !== false && m.liveMatchUrl)
-    if (!match?.liveMatchUrl) return null
-    return { id: match.id, liveMatchUrl: match.liveMatchUrl }
+      .find((m) => m.showLiveButton !== false)
+    if (!match) return null
+    // Blank Live Match URL defaults to the match's own page. `showLiveButton`
+    // (default on) is the real toggle for hiding the button — not the URL.
+    return { id: match.id, liveMatchUrl: match.liveMatchUrl || `/matches/${match.id}` }
   } catch (err) {
     console.error('[live-match] failed to read active live match:', err)
     return null

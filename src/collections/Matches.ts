@@ -433,13 +433,22 @@ export const Matches: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'bulkPhotoUpload',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/BulkPhotoUpload#BulkPhotoUpload',
+        },
+      },
+    },
+    {
       name: 'photos',
       type: 'array',
       label: 'Match Photos',
       labels: { singular: 'Photo', plural: 'Photos' },
       admin: {
         description:
-          'Shown in the Match Photos tab and interspersed through the live commentary feed on the match page.',
+          'Shown in the Match Photos tab and interspersed through the live commentary feed on the match page. Use “Bulk upload photos” above to add several at once.',
         initCollapsed: true,
       },
       fields: [
@@ -472,7 +481,7 @@ export const Matches: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
-      ({ data, originalDoc }) => {
+      ({ data }) => {
         // A final result without a scoreline would silently corrupt the standings.
         if (data?.status === 'final') {
           if (typeof data.homeScore !== 'number' || typeof data.awayScore !== 'number') {
@@ -483,18 +492,14 @@ export const Matches: CollectionConfig = {
         }
         assertSingleCaptain(data?.homeLineup, 'Home team')
         assertSingleCaptain(data?.awayLineup, 'Away team')
-        // Default the Live Match URL to this match's own page so editors never
-        // have to type one in — only when it's genuinely empty, so a manually
-        // entered external stream link is never overwritten. A brand-new match
-        // doesn't have an id yet here; the afterChange hook below covers that case.
-        if (data && !data.liveMatchUrl && originalDoc?.id) {
-          data.liveMatchUrl = `/matches/${originalDoc.id}`
-        }
+        // Note: the Live Match URL is left exactly as entered. When it's blank,
+        // getActiveLiveMatch() falls back to this match's own page (/matches/{id})
+        // at read time — so there's no follow-up write to persist a default.
         return data
       },
     ],
     afterChange: [
-      async ({ doc, operation, req }) => {
+      ({ doc }) => {
         // Live commentary, scores and status need to appear immediately during a
         // live match — don't make an editor wait out the page's ISR window.
         revalidatePath(`/matches/${doc.id}`)
@@ -504,18 +509,6 @@ export const Matches: CollectionConfig = {
         // the root layout — bust every route's cache, not just the match pages,
         // so the button appears/disappears immediately site-wide.
         revalidatePath('/', 'layout')
-
-        // A brand-new match has no id yet when beforeValidate runs, so its
-        // default Live Match URL couldn't be filled in there — do it now that
-        // one exists. Guarded by `operation === 'create'` so this one follow-up
-        // write doesn't re-trigger itself.
-        if (operation === 'create' && !doc.liveMatchUrl) {
-          await req.payload.update({
-            collection: 'matches',
-            id: doc.id,
-            data: { liveMatchUrl: `/matches/${doc.id}` },
-          })
-        }
       },
     ],
   },

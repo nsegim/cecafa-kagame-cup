@@ -356,7 +356,7 @@ export interface Match {
   highlightUrl?: string | null;
   highlightThumb?: (number | null) | Media;
   /**
-   * Shown in the Match Photos tab and interspersed through the live commentary feed on the match page.
+   * Shown in the Match Photos tab and interspersed through the live commentary feed on the match page. Use “Bulk upload photos” above to add several at once.
    */
   photos?:
     | {

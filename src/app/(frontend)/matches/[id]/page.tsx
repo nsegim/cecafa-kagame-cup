@@ -3,9 +3,12 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getMatchDetail, effectiveMatchStatus } from '@/lib/tournament'
 import { TeamCrest } from '@/components/TeamCrest'
-import { MatchCenter } from '@/components/MatchCenter'
+import { LiveMatchProvider } from '@/components/LiveMatchProvider'
+import { LiveScore } from '@/components/LiveScore'
+import { LiveMatchCenter } from '@/components/LiveMatchCenter'
 import { Lineups } from '@/components/Lineups'
 import { matchSide, VENUE_LABEL } from '@/lib/matchLabels'
+import { matchSideStats, type LiveMatchData } from '@/lib/matchStats'
 import { matchDate, matchTime } from '@/lib/datetime'
 
 export const revalidate = 120
@@ -47,28 +50,32 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
   const displayStatus = effectiveMatchStatus(match)
-  const played = displayStatus !== 'scheduled'
   const homeScore = match.homeScore ?? 0
   const awayScore = match.awayScore ?? 0
   const metaLabel = match.group ? `Group ${match.group}` : (STAGE_LABEL[match.stage] ?? '')
-  const statusLabel =
-    displayStatus === 'live' ? 'Live' : displayStatus === 'final' ? 'FT' : matchTime(match.kickoff)
 
-  const count = (side: 'home' | 'away', type: 'yellow' | 'red') =>
-    events.filter((e) => e.side === side && e.type === type).length
-  const homeStats = {
-    goals: homeScore,
-    yellows: count('home', 'yellow'),
-    reds: count('home', 'red'),
+  // Everything that changes while the match is live is seeded here from the
+  // server render, then kept fresh in place by <LiveMatchProvider>'s polling.
+  const { home: homeStats, away: awayStats } = matchSideStats(events, homeScore, awayScore)
+  const initialLive: LiveMatchData = {
+    status: displayStatus,
+    homeScore,
+    awayScore,
+    events,
+    photos,
+    homeStats,
+    awayStats,
   }
-  const awayStats = {
-    goals: awayScore,
-    yellows: count('away', 'yellow'),
-    reds: count('away', 'red'),
-  }
+  // Only poll a match that's live or about to kick off — never a final result
+  // (frozen) or a fixture still days away (pointless load).
+  const KICKOFF_SOON_MS = 30 * 60 * 1000
+  const pollEnabled =
+    displayStatus === 'live' ||
+    (displayStatus === 'scheduled' &&
+      new Date(match.kickoff).getTime() - Date.now() < KICKOFF_SOON_MS)
 
   return (
-    <>
+    <LiveMatchProvider matchId={match.id} initial={initialLive} enabled={pollEnabled}>
       <section className="match-hero">
         <div className="match-hero__overlay" />
         <div className="match-hero__content">
@@ -79,16 +86,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
               <span className="match-hero__name">{home.label}</span>
             </div>
 
-            <div className="match-hero__score">
-              <span className={`match-hero__status ${displayStatus === 'live' ? 'is-live' : ''}`}>
-                {statusLabel}
-              </span>
-              <div className="match-hero__nums">
-                <span>{played ? homeScore : '–'}</span>
-                <span className="match-hero__colon">:</span>
-                <span>{played ? awayScore : '–'}</span>
-              </div>
-            </div>
+            <LiveScore scheduledLabel={matchTime(match.kickoff)} />
 
             <div className="match-hero__team">
               <TeamCrest team={away.team} size={78} />
@@ -101,16 +99,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
       <section className="section match-detail">
         <div className="container match-detail__grid">
           <div className="match-detail__main">
-            <MatchCenter
-              events={events}
-              homeName={home.label}
-              awayName={away.label}
-              homeScore={homeScore}
-              awayScore={awayScore}
-              homeStats={homeStats}
-              awayStats={awayStats}
-              photos={photos}
-            />
+            <LiveMatchCenter homeName={home.label} awayName={away.label} />
           </div>
 
           <aside className="match-detail__side">
@@ -172,6 +161,6 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
           </aside>
         </div>
       </section>
-    </>
+    </LiveMatchProvider>
   )
 }
