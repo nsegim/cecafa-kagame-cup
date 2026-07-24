@@ -266,7 +266,7 @@ export interface Match {
    */
   label?: string | null;
   /**
-   * Official fixture number, 1–22.
+   * Official fixture number. 1–22 are the tournament fixtures; use a higher number (e.g. 99) for a test or extra match.
    */
   matchNumber: number;
   stage: 'group' | 'semi' | 'third' | 'final';
@@ -377,7 +377,10 @@ export interface Match {
      */
     startingXI?:
       | {
-          player: number | Player;
+          /**
+           * Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.
+           */
+          player?: (number | null) | Player;
           isCaptain?: boolean | null;
           id?: string | null;
         }[]
@@ -387,7 +390,10 @@ export interface Match {
      */
     substitutes?:
       | {
-          player: number | Player;
+          /**
+           * Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.
+           */
+          player?: (number | null) | Player;
           isCaptain?: boolean | null;
           id?: string | null;
         }[]
@@ -406,7 +412,10 @@ export interface Match {
      */
     startingXI?:
       | {
-          player: number | Player;
+          /**
+           * Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.
+           */
+          player?: (number | null) | Player;
           isCaptain?: boolean | null;
           id?: string | null;
         }[]
@@ -416,7 +425,10 @@ export interface Match {
      */
     substitutes?:
       | {
-          player: number | Player;
+          /**
+           * Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.
+           */
+          player?: (number | null) | Player;
           isCaptain?: boolean | null;
           id?: string | null;
         }[]

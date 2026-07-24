@@ -230,7 +230,7 @@ export interface MatchDetail {
   photos: string[]
 }
 
-type RawLineupRow = { player: number | Player; isCaptain?: boolean | null }
+type RawLineupRow = { player?: number | Player | null; isCaptain?: boolean | null }
 type RawLineup = { coach?: string | null; startingXI?: RawLineupRow[] | null; substitutes?: RawLineupRow[] | null }
 
 /**
@@ -243,7 +243,10 @@ function resolveLineup(raw: RawLineup | null | undefined): TeamLineup | null {
   if (!raw) return null
   const toEntries = (rows: RawLineupRow[] | null | undefined): LineupPlayerEntry[] =>
     (rows ?? [])
-      .filter((row): row is { player: Player; isCaptain?: boolean | null } => typeof row.player === 'object')
+      // Player is optional in the CMS now — a row with no player selected yet
+      // (stored as null) must be dropped. `typeof null === 'object'`, so guard
+      // with a truthy check, not `typeof` alone.
+      .filter((row): row is { player: Player; isCaptain?: boolean | null } => !!row.player && typeof row.player === 'object')
       .map((row) => ({ player: row.player, isCaptain: Boolean(row.isCaptain) }))
 
   const startingXI = toEntries(raw.startingXI)

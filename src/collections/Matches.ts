@@ -46,7 +46,9 @@ function lineupEntryFields(side: 'home' | 'away') {
       name: 'player',
       type: 'relationship' as const,
       relationTo: 'players' as const,
-      required: true,
+      admin: {
+        description: 'Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.',
+      },
       filterOptions: ({ data }: { data?: { homeTeam?: unknown; awayTeam?: unknown } }) => {
         const teamRef = side === 'home' ? data?.homeTeam : data?.awayTeam
         const teamId =
