@@ -1374,6 +1374,15 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+  overflow: hidden;
+  cursor: pointer;
+}
+.matchphotos__img img {
+  transition: transform 300ms ease;
+}
+.matchphotos__img:hover img,
+.matchphotos__img:focus-visible img {
+  transform: scale(1.04);
 }
 
 /* Sidebar cards */

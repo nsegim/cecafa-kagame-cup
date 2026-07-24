@@ -193,17 +193,24 @@ export function MatchCenter({
                   </div>
                   {photoSrc && (
                     <figure className="commentary__photo">
-                      <Image
-                        src={photoSrc}
-                        alt=""
-                        fill
-                        sizes="(max-width: 768px) 100vw, 640px"
-                        style={{ objectFit: 'cover' }}
-                      />
+                      <a
+                        href={photoSrc}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="commentary__photo-frame"
+                        aria-label="Fungura ifoto"
+                      >
+                        <Image
+                          src={photoSrc}
+                          alt=""
+                          fill
+                          sizes="(max-width: 900px) 100vw, 800px"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </a>
                       <figcaption>
-                        {e.playerName || (e.side === 'home' ? homeName : awayName)} ·{' '}
-                        {e.minute ?? ''}
-                        &apos;
+                        {e.playerName || (e.side === 'home' ? homeName : awayName)}
+                        {e.minute != null ? ` · ${e.minute}'` : ''}
                       </figcaption>
                     </figure>
                   )}
@@ -232,7 +239,15 @@ export function MatchCenter({
             <p className="perf__empty"></p>
           ) : (
             photos.map((src, i) => (
-              <div key={i} className="matchphotos__img" style={{ position: 'relative' }}>
+              <a
+                key={i}
+                href={src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="matchphotos__img"
+                style={{ position: 'relative', display: 'block' }}
+                aria-label="Fungura ifoto"
+              >
                 <Image
                   src={src}
                   alt=""
@@ -240,7 +255,7 @@ export function MatchCenter({
                   sizes="(max-width: 768px) 50vw, 320px"
                   style={{ objectFit: 'cover' }}
                 />
-              </div>
+              </a>
             ))
           )}
         </div>

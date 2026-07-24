@@ -1126,30 +1126,40 @@ body > main {
 }
 
 .commentary__photo {
-  position: relative;
-  width: 778px;
-  height: 260px;
   margin: 20px 25px 16px;
 }
 
-.commentary__photo img {
+/* The clickable image frame — 500px tall, opens the full photo in a new tab
+   (works on the site and inside the newsletter iframe). */
+.commentary__photo-frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--band);
+}
+
+.commentary__photo-frame img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 300ms ease;
 }
 
+.commentary__photo-frame:hover img,
+.commentary__photo-frame:focus-visible img {
+  transform: scale(1.03);
+}
+
+/* Caption sits below the image (news-article style), not overlaid. */
 .commentary__photo figcaption {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 37px;
-  padding: 11px 14px;
-  background: linear-gradient(90deg, rgba(0, 36, 82, 0.7), transparent);
-  color: #fff;
-  font-size: 10px;
-  line-height: 13px;
-  text-transform: uppercase;
+  margin-top: 8px;
+  color: var(--ink-500);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .match-detail__side .sidecard {
@@ -2350,8 +2360,7 @@ body > main {
     height: auto;
   }
 
-  .teams-side .standings,
-  .commentary__photo {
+  .teams-side .standings {
     width: 100%;
   }
 
@@ -2624,10 +2633,10 @@ body > main {
   }
 
   .commentary__photo {
-    width: calc(100% - 32px);
-    height: auto;
-    aspect-ratio: 3 / 1;
     margin: 16px;
+  }
+  .commentary__photo-frame {
+    height: 320px;
   }
 
   .page-hero__title {
