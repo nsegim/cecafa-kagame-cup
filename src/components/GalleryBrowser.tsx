@@ -73,7 +73,7 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
                 type="button"
                 className="gallery-detail__trigger"
                 onClick={() => setOpenIndex(index)}
-                aria-label={`View photo: ${image.alt || image.category}`}
+                aria-label={`View photo: ${image.title || image.alt || image.category}`}
               >
                 <Image
                   src={image.src}
@@ -82,6 +82,9 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
                   sizes="(max-width: 900px) 50vw, 33vw"
                   style={{ objectFit: 'cover' }}
                 />
+                <span className="media-overlay">
+                  <span className="media-overlay__title">{image.title || image.category}</span>
+                </span>
               </button>
               <figcaption>{image.category}</figcaption>
             </figure>

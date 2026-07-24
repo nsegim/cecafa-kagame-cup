@@ -75,6 +75,7 @@ export interface Config {
     'player-match-stats': PlayerMatchStat;
     articles: Article;
     'gallery-images': GalleryImage;
+    videos: Video;
     subscribers: Subscriber;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -91,6 +92,7 @@ export interface Config {
     'player-match-stats': PlayerMatchStatsSelect<false> | PlayerMatchStatsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'gallery-images': GalleryImagesSelect<false> | GalleryImagesSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -102,11 +104,9 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
   globals: {
-    homepage: Homepage;
     gallery: Gallery;
   };
   globalsSelect: {
-    homepage: HomepageSelect<false> | HomepageSelect<true>;
     gallery: GallerySelect<false> | GallerySelect<true>;
   };
   locale: 'en';
@@ -520,7 +520,7 @@ export interface Article {
   createdAt: string;
 }
 /**
- * Gallery albums shown on /gallery. Each entry is a cover photo that redirects to its Flickr album when clicked.
+ * Gallery albums shown on /gallery, newest first. Each entry is a cover photo that redirects to its Flickr album when clicked.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery-images".
@@ -548,13 +548,40 @@ export interface GalleryImage {
    */
   description?: string | null;
   /**
-   * Show this album on the public /gallery page. Uncheck to hide it without deleting it.
+   * Show this album on the public /gallery page. Uncheck to hide it without deleting it. Visible albums are listed newest-added first.
    */
   visible?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Clips shown in the homepage Highlights carousel, newest-added first.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
   /**
-   * Lower numbers appear first in the gallery grid.
+   * e.g. "APR FC vs Vipers SC — Extended Highlights" or "Press Conference Ahead of CECAFA".
    */
-  order?: number | null;
+  title: string;
+  /**
+   * Optional short label shown under the title, e.g. "Fri 24 Jul".
+   */
+  dateLabel?: string | null;
+  /**
+   * The preview photo shown on the card.
+   */
+  thumbnail?: (number | null) | Media;
+  /**
+   * YouTube/highlight link. Leave blank for a static card with no link.
+   */
+  videoUrl?: string | null;
+  /**
+   * Show this video in the Highlights carousel. Uncheck to hide it without deleting it.
+   */
+  visible?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -624,6 +651,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gallery-images';
         value: number | GalleryImage;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
       } | null)
     | ({
         relationTo: 'subscribers';
@@ -913,7 +944,19 @@ export interface GalleryImagesSelect<T extends boolean = true> {
   flickrAlbumUrl?: T;
   description?: T;
   visible?: T;
-  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  dateLabel?: T;
+  thumbnail?: T;
+  videoUrl?: T;
+  visible?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -968,43 +1011,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage".
- */
-export interface Homepage {
-  id: number;
-  /**
-   * Featured clips shown in the Match Highlights section. Falls back to an automatic pick from match data if left empty.
-   */
-  matchHighlights?:
-    | {
-        /**
-         * e.g. "APR FC"
-         */
-        homeTeam: string;
-        /**
-         * e.g. "Vipers SC"
-         */
-        awayTeam: string;
-        /**
-         * e.g. "Fri 24 Jul"
-         */
-        dateLabel?: string | null;
-        /**
-         * The action photo shown on the card.
-         */
-        thumbnail?: (number | null) | Media;
-        /**
-         * YouTube/highlight link. Leave blank for a static card with no link.
-         */
-        videoUrl?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
  * The banner image at the top of the /gallery page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1018,25 +1024,6 @@ export interface Gallery {
   heroImage?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage_select".
- */
-export interface HomepageSelect<T extends boolean = true> {
-  matchHighlights?:
-    | T
-    | {
-        homeTeam?: T;
-        awayTeam?: T;
-        dateLabel?: T;
-        thumbnail?: T;
-        videoUrl?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -14,7 +14,7 @@ export function StandingsTable({
   return (
     <div className="standings">
       <div className="standings__head">
-        <span className="standings__group">Group {group}</span>
+        <span className="standings__group">Itsinda {group}</span>
         <span className="standings__cols">
           <span>W</span>
           <span>D</span>
@@ -33,7 +33,10 @@ export function StandingsTable({
                 <TeamCrest team={team} size={26} />
                 <span className="standings__name">{team?.shortName ?? r.name}</span>
                 {r.requiresDrawOfLots && (
-                  <span className="standings__lots" title="Level on all criteria — awaiting drawing of lots">
+                  <span
+                    className="standings__lots"
+                    title="Level on all criteria — awaiting drawing of lots"
+                  >
                     ⚖
                   </span>
                 )}
@@ -42,7 +45,9 @@ export function StandingsTable({
                 <span>{r.won}</span>
                 <span>{r.drawn}</span>
                 <span>{r.lost}</span>
-                <span className={r.goalDifference > 0 ? 'is-pos' : r.goalDifference < 0 ? 'is-neg' : ''}>
+                <span
+                  className={r.goalDifference > 0 ? 'is-pos' : r.goalDifference < 0 ? 'is-neg' : ''}
+                >
                   {r.goalDifference > 0 ? '+' : ''}
                   {r.goalDifference}
                 </span>

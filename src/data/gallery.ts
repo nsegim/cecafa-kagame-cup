@@ -23,6 +23,7 @@ export interface GalleryImage {
   id: string
   src: string
   alt: string
+  title: string
   category: GalleryCategory
   /** Flickr album this cover photo links to. Absent means the tile isn't clickable. */
   flickrAlbumUrl?: string

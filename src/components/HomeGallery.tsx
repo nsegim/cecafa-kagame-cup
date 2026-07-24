@@ -25,7 +25,7 @@ export function HomeGallery({ tiles }: { tiles: GalleryImage[] }) {
               type="button"
               onClick={() => setOpenIndex(index)}
               className={`home-gallery__tile home-gallery__tile--${index + 1}`}
-              aria-label={`View photo: ${image.alt || image.category}`}
+              aria-label={`View photo: ${image.title || image.alt || image.category}`}
               style={{ position: 'relative' }}
             >
               <Image
@@ -35,6 +35,9 @@ export function HomeGallery({ tiles }: { tiles: GalleryImage[] }) {
                 sizes="(max-width: 900px) 50vw, 25vw"
                 style={{ objectFit: 'cover' }}
               />
+              <span className="media-overlay">
+                <span className="media-overlay__title">{image.title || image.category}</span>
+              </span>
             </button>
           ))}
         </div>

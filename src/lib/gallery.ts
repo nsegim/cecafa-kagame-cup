@@ -2,9 +2,9 @@
  * Server-side data layer for the gallery.
  *
  * `gallery-images` is the single source of truth for every gallery section —
- * the /gallery grid and the home-page mosaic both read the same ordered,
- * visible list; the mosaic is simply its first nine items. Adding, editing,
- * deleting, reordering, or hiding an item there updates both places
+ * the /gallery grid and the home-page mosaic both read the same visible list,
+ * newest-added first; the mosaic is simply its first nine items. Adding,
+ * editing, deleting, or hiding an item there updates both places
  * automatically, with no separate curation step.
  */
 import { getPayloadClient } from '@/lib/payload'
@@ -40,19 +40,20 @@ function toView(doc: GalleryImageDoc, id: string): GalleryImage | null {
     id,
     src,
     alt: imageAlt(doc.image),
+    title: doc.title ?? '',
     category: doc.category as GalleryCategory,
     flickrAlbumUrl: doc.flickrAlbumUrl ?? undefined,
   }
 }
 
-/** Every visible gallery album, ordered, for the /gallery filterable grid. */
+/** Every visible gallery album, newest-added first, for the /gallery filterable grid. */
 export async function getGalleryImages(): Promise<GalleryImage[]> {
   try {
     const payload = await getPayloadClient()
     const res = await payload.find({
       collection: 'gallery-images',
       where: { visible: { not_equals: false } },
-      sort: 'order',
+      sort: '-createdAt',
       limit: 200,
       depth: 1,
     })

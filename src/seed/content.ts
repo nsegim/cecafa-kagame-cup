@@ -127,14 +127,13 @@ async function upsertGalleryImage(
   payload: Payload,
   seed: GallerySeed,
   imageId: number,
-  order: number,
 ): Promise<number> {
   const existing = await payload.find({
     collection: 'gallery-images',
     where: { title: { equals: seed.key } },
     limit: 1,
   })
-  const data = { title: seed.key, image: imageId, category: seed.category, order }
+  const data = { title: seed.key, image: imageId, category: seed.category }
   if (existing.docs.length > 0) {
     const doc = await payload.update({ collection: 'gallery-images', id: existing.docs[0].id, data })
     return doc.id
@@ -169,12 +168,11 @@ async function upsertArticle(payload: Payload, seed: ArticleSeed, imageId: numbe
 
 export async function seedContent(payload: Payload): Promise<void> {
   // --- Gallery images ---------------------------------------------------------
-  // The home-page mosaic is just the first nine of this same list (by `order`)
-  // — no separate curation step, so nothing else to seed for it here.
-  for (let i = 0; i < GALLERY_SEED.length; i++) {
-    const seed = GALLERY_SEED[i]
+  // The home-page mosaic is just the first nine of this same list (newest
+  // added first) — no separate curation step, so nothing else to seed for it.
+  for (const seed of GALLERY_SEED) {
     const mediaId = await upsertMedia(payload, seed.file, seed.alt)
-    await upsertGalleryImage(payload, seed, mediaId, i)
+    await upsertGalleryImage(payload, seed, mediaId)
   }
   console.log(`  gallery: ${GALLERY_SEED.length} photos`)
 

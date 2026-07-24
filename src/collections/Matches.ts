@@ -209,8 +209,8 @@ export const Matches: CollectionConfig = {
       unique: true,
       index: true,
       min: 1,
-      max: 22,
-      admin: { description: 'Official fixture number, 1–22.' },
+      max: 99,
+      admin: { description: 'Official fixture number. 1–22 are the tournament fixtures; use a higher number (e.g. 99) for a test or extra match.' },
     },
     {
       name: 'stage',

@@ -14,7 +14,7 @@ import { PlayerMatchStats } from './collections/PlayerMatchStats'
 import { Subscribers } from './collections/Subscribers'
 import { Articles } from './collections/Articles'
 import { GalleryImages } from './collections/GalleryImages'
-import { Homepage } from './globals/Homepage'
+import { Videos } from './collections/Videos'
 import { Gallery } from './globals/Gallery'
 import { cloudinaryStorage } from './storage/cloudinary'
 
@@ -40,9 +40,10 @@ export default buildConfig({
     PlayerMatchStats,
     Articles,
     GalleryImages,
+    Videos,
     Subscribers,
   ],
-  globals: [Homepage, Gallery],
+  globals: [Gallery],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

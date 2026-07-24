@@ -5,8 +5,7 @@ import { VideoLightbox } from './VideoLightbox'
 
 export interface HighlightCard {
   id: string | number
-  homeLabel: string
-  awayLabel: string
+  title: string
   dateLabel: string
   thumbnailUrl: string | null
   videoUrl: string | null
@@ -31,12 +30,8 @@ function Card({ card, onPlay }: { card: HighlightCard; onPlay: () => void }) {
         </span>
       </div>
       <div className="highlight-card__cap">
-        <span className="highlight-card__teams">
-          <span>{card.homeLabel}</span>
-          <em>vs</em>
-          <span>{card.awayLabel}</span>
-        </span>
-        <span className="highlight-card__date">{card.dateLabel}</span>
+        <span className="highlight-card__title">{card.title}</span>
+        {card.dateLabel && <span className="highlight-card__date">{card.dateLabel}</span>}
       </div>
     </button>
   )

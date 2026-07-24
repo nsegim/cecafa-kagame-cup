@@ -40,15 +40,15 @@ export const GalleryImages: CollectionConfig = {
   labels: { singular: 'Gallery Album', plural: 'Gallery Albums' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'category', 'visible', 'order'],
+    defaultColumns: ['title', 'category', 'visible', 'createdAt'],
     group: 'Content',
     description:
-      'Gallery albums shown on /gallery. Each entry is a cover photo that redirects to its Flickr album when clicked.',
+      'Gallery albums shown on /gallery, newest first. Each entry is a cover photo that redirects to its Flickr album when clicked.',
   },
   access: {
     read: () => true,
   },
-  defaultSort: 'order',
+  defaultSort: '-createdAt',
   fields: [
     {
       name: 'title',
@@ -97,17 +97,8 @@ export const GalleryImages: CollectionConfig = {
       defaultValue: true,
       admin: {
         position: 'sidebar',
-        description: 'Show this album on the public /gallery page. Uncheck to hide it without deleting it.',
-      },
-    },
-    {
-      name: 'order',
-      label: 'Display Order',
-      type: 'number',
-      defaultValue: 0,
-      admin: {
-        position: 'sidebar',
-        description: 'Lower numbers appear first in the gallery grid.',
+        description:
+          'Show this album on the public /gallery page. Uncheck to hide it without deleting it. Visible albums are listed newest-added first.',
       },
     },
   ],

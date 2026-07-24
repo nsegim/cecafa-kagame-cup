@@ -1,5 +1,4 @@
-import type { Homepage, Match, Player, Team } from '@/payload-types'
-import { getPayloadClient } from '@/lib/payload'
+import type { Match, Player, Team, Video } from '@/payload-types'
 import { getTournamentData, getLeaderboards, type LeaderboardRow } from '@/lib/tournament'
 import { fetchLatestNews } from '@/lib/news'
 import { matchDayLabel } from '@/lib/datetime'
@@ -11,6 +10,7 @@ import { PlayersPerformance, type PerfRow } from '@/components/PlayersPerformanc
 import { HomeGallery } from '@/components/HomeGallery'
 import { LatestNews } from '@/components/LatestNews'
 import { getHomeGalleryTiles } from '@/lib/gallery'
+import { getVideos } from '@/lib/videos'
 import type { GroupId } from '@/lib/standings'
 
 export const revalidate = 300
@@ -29,22 +29,23 @@ const POSITION_LABEL: Record<string, string> = {
 }
 
 /**
- * Match Highlights cards come from the editor-controlled Homepage global. If
- * none are set, fall back to matches that already have a highlight video
- * attached, then to a preview of the next few fixtures — so the section is
- * never empty before an editor curates it.
+ * Highlight cards come from the editor-managed Videos collection, newest
+ * added first. If none are visible yet, fall back to matches that already
+ * have a highlight video attached, then to a preview of the next few
+ * fixtures — so the section is never empty before an editor adds a video.
+ *
+ * Videos are generic (a title, not a forced "Team A vs Team B") since not
+ * every video is match footage. The two fallback tiers below genuinely are
+ * about a specific match, so they build a "home vs away" string for the title.
  */
-function getHighlightCards(matches: Match[], home: Homepage | null): HighlightCard[] {
-  const editorCards = (home?.matchHighlights ?? [])
-    .filter((c) => c.homeTeam && c.awayTeam)
-    .map((c, i) => ({
-      id: `editor-${i}`,
-      homeLabel: c.homeTeam,
-      awayLabel: c.awayTeam,
-      dateLabel: c.dateLabel ?? '',
-      thumbnailUrl: mediaUrl(c.thumbnail),
-      videoUrl: c.videoUrl || null,
-    }))
+function getHighlightCards(matches: Match[], videos: Video[]): HighlightCard[] {
+  const editorCards: HighlightCard[] = videos.map((v) => ({
+    id: v.id,
+    title: v.title,
+    dateLabel: v.dateLabel ?? '',
+    thumbnailUrl: mediaUrl(v.thumbnail),
+    videoUrl: v.videoUrl || null,
+  }))
 
   if (editorCards.length > 0) return editorCards
 
@@ -56,8 +57,7 @@ function getHighlightCards(matches: Match[], home: Homepage | null): HighlightCa
   if (withVideo.length > 0) {
     return withVideo.map((m) => ({
       id: m.id,
-      homeLabel: shortTeamLabel(m.homeTeam, m.homeTeamPlaceholder),
-      awayLabel: shortTeamLabel(m.awayTeam, m.awayTeamPlaceholder),
+      title: `${shortTeamLabel(m.homeTeam, m.homeTeamPlaceholder)} vs ${shortTeamLabel(m.awayTeam, m.awayTeamPlaceholder)}`,
       dateLabel: matchDayLabel(m.kickoff),
       thumbnailUrl:
         m.highlightThumb && typeof m.highlightThumb !== 'number'
@@ -75,8 +75,7 @@ function getHighlightCards(matches: Match[], home: Homepage | null): HighlightCa
 
   return preview.map((m) => ({
     id: m.id,
-    homeLabel: shortTeamLabel(m.homeTeam, m.homeTeamPlaceholder),
-    awayLabel: shortTeamLabel(m.awayTeam, m.awayTeamPlaceholder),
+    title: `${shortTeamLabel(m.homeTeam, m.homeTeamPlaceholder)} vs ${shortTeamLabel(m.awayTeam, m.awayTeamPlaceholder)}`,
     dateLabel: matchDayLabel(m.kickoff),
     thumbnailUrl: null,
     videoUrl: null,
@@ -120,22 +119,17 @@ function toPerfRow(rows: LeaderboardRow[]): PerfRow[] {
   })
 }
 
-async function getHomepageGlobal(): Promise<Homepage | null> {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({ slug: 'homepage', depth: 1 })
-}
-
 export default async function HomePage() {
-  const [data, leaderboards, news, homeGalleryTiles, homepageGlobal] = await Promise.all([
+  const [data, leaderboards, news, homeGalleryTiles, videos] = await Promise.all([
     getTournamentData(),
     getLeaderboards(),
     fetchLatestNews({ limit: 11 }),
     getHomeGalleryTiles(),
-    getHomepageGlobal(),
+    getVideos(),
   ])
 
   const teamsById = new Map<number, Team>(data.teams.map((t) => [t.id, t]))
-  const highlightCards = getHighlightCards(data.matches, homepageGlobal)
+  const highlightCards = getHighlightCards(data.matches, videos)
   const upcomingGroups = groupUpcoming(data.matches)
   const topNews = news.slice(0, 6)
   const bottomNews = news.slice(6, 11)

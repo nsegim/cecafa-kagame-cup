@@ -2,11 +2,11 @@
 const TZ = 'Africa/Kigali'
 
 export function matchDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', {
+  return new Date(iso).toLocaleDateString('rw-RW', {
     timeZone: TZ,
+    weekday: 'long',
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
   })
 }
 
@@ -20,11 +20,11 @@ export function matchTime(iso: string): string {
 }
 
 export function matchDayLabel(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', {
+  return new Date(iso).toLocaleDateString('rw-RW', {
     timeZone: TZ,
-    weekday: 'short',
+    weekday: 'long',
     day: 'numeric',
-    month: 'short',
+    month: 'long',
   })
 }
 
@@ -33,7 +33,7 @@ export function matchDateParts(iso: string): { day: string; month: string; year:
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: TZ,
     day: 'numeric',
-    month: 'long',
+    month: '2-digit',
     year: 'numeric',
   }).formatToParts(new Date(iso))
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''

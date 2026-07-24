@@ -7,6 +7,7 @@ const NAV = [
   { label: 'IMIKINO', href: '/matches' },
   { label: 'AMAKIPE', href: '/teams' },
   { label: 'URUTONDE', href: '/#standings' },
+  { label: 'SURA IGIHE', href: 'https:igihe.com' },
 ]
 
 export async function SiteHeader() {
@@ -27,7 +28,7 @@ export async function SiteHeader() {
             />
           </Link>
           <span className="brand__divider" aria-hidden="true" />
-          <Link href="https://igihe.com" target="_blank">
+          <Link href="/" target="_blank">
             <Image
               src="/assets/IGIHE-logo.svg"
               alt="IGIHE"
