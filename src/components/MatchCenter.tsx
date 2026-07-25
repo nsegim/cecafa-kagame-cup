@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { MatchEvent } from '@/lib/tournament'
@@ -8,6 +8,94 @@ import { richTextHasContent } from '@/lib/richText'
 import Image from 'next/image'
 
 type Tab = 'live' | 'stats' | 'photos'
+
+/**
+ * Full-screen lightbox for the commentary photos — click any photo to open it,
+ * arrow keys / on-screen arrows to move between the images of that same entry,
+ * Escape or a click outside to close. Reuses the site's `.lightbox` /
+ * `.gallery-lightbox__*` styles. Inside the embed iframe it covers the iframe
+ * viewport (the most a framed page can do).
+ */
+function PhotoLightbox({
+  images,
+  index,
+  onClose,
+  onNavigate,
+}: {
+  images: string[]
+  index: number
+  onClose: () => void
+  onNavigate: (i: number) => void
+}) {
+  const count = images.length
+  const goPrev = useCallback(
+    () => onNavigate((index - 1 + count) % count),
+    [index, count, onNavigate],
+  )
+  const goNext = useCallback(() => onNavigate((index + 1) % count), [index, count, onNavigate])
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') goPrev()
+      if (e.key === 'ArrowRight') goNext()
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose, goPrev, goNext])
+
+  const src = images[index]
+  if (!src) return null
+
+  return (
+    <div className="lightbox gallery-lightbox" role="dialog" aria-modal="true" onClick={onClose}>
+      <button type="button" className="lightbox__close" aria-label="Funga" onClick={onClose}>
+        ✕
+      </button>
+      {count > 1 && (
+        <button
+          type="button"
+          className="gallery-lightbox__nav gallery-lightbox__nav--prev"
+          aria-label="Ifoto ibanza"
+          onClick={(e) => {
+            e.stopPropagation()
+            goPrev()
+          }}
+        >
+          ‹
+        </button>
+      )}
+      <div className="gallery-lightbox__frame" onClick={(e) => e.stopPropagation()}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" />
+        {count > 1 && (
+          <div className="gallery-lightbox__footer">
+            <span className="gallery-lightbox__caption">
+              {index + 1} / {count}
+            </span>
+          </div>
+        )}
+      </div>
+      {count > 1 && (
+        <button
+          type="button"
+          className="gallery-lightbox__nav gallery-lightbox__nav--next"
+          aria-label="Ifoto ikurikira"
+          onClick={(e) => {
+            e.stopPropagation()
+            goNext()
+          }}
+        >
+          ›
+        </button>
+      )}
+    </div>
+  )
+}
 
 export interface MatchCenterProps {
   events: MatchEvent[]
@@ -48,7 +136,7 @@ function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.
       return (
         <>
           <strong>GOAL!</strong>
-          {scorer ? ` ${scorer}` : ''}. A goal is on the board.
+          {scorer ? ` ${scorer}` : ''}. Igitego kirinjiye.
         </>
       )
     }
@@ -122,6 +210,7 @@ export function MatchCenter({
   photos,
 }: MatchCenterProps) {
   const [tab, setTab] = useState<Tab>('live')
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null)
 
   return (
     <div className="matchcenter">
@@ -174,31 +263,49 @@ export function MatchCenter({
                       )}
                     </div>
                   </div>
-                  {images.map((photoSrc, j) => (
-                    <figure className="commentary__photo" key={j}>
-                      <a
-                        href={photoSrc}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                  {images.length === 1 && (
+                    <figure className="commentary__photo">
+                      <button
+                        type="button"
                         className="commentary__photo-frame"
+                        onClick={() => setLightbox({ images, index: 0 })}
                         aria-label="Fungura ifoto"
                       >
                         <Image
-                          src={photoSrc}
+                          src={images[0]}
                           alt=""
                           fill
                           sizes="(max-width: 900px) 100vw, 800px"
                           style={{ objectFit: 'contain' }}
                         />
-                      </a>
-                      {images.length === 1 && (
-                        <figcaption>
-                          {e.playerName || (e.side === 'home' ? homeName : awayName)}
-                          {e.minute != null ? ` · ${e.minute}'` : ''}
-                        </figcaption>
-                      )}
+                      </button>
+                      <figcaption>
+                        {e.playerName || (e.side === 'home' ? homeName : awayName)}
+                        {e.minute != null ? ` · ${e.minute}'` : ''}
+                      </figcaption>
                     </figure>
-                  ))}
+                  )}
+                  {images.length > 1 && (
+                    <div className="commentary__photos">
+                      {images.map((photoSrc, j) => (
+                        <button
+                          type="button"
+                          key={j}
+                          className="commentary__photo-frame"
+                          onClick={() => setLightbox({ images, index: j })}
+                          aria-label="Fungura ifoto"
+                        >
+                          <Image
+                            src={photoSrc}
+                            alt=""
+                            fill
+                            sizes="(max-width: 640px) 100vw, 320px"
+                            style={{ objectFit: 'cover' }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             })
@@ -224,13 +331,12 @@ export function MatchCenter({
             <p className="perf__empty"></p>
           ) : (
             photos.map((src, i) => (
-              <a
+              <button
+                type="button"
                 key={i}
-                href={src}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="matchphotos__img"
                 style={{ position: 'relative', display: 'block' }}
+                onClick={() => setLightbox({ images: photos, index: i })}
                 aria-label="Fungura ifoto"
               >
                 <Image
@@ -240,10 +346,19 @@ export function MatchCenter({
                   sizes="(max-width: 768px) 50vw, 320px"
                   style={{ objectFit: 'cover' }}
                 />
-              </a>
+              </button>
             ))
           )}
         </div>
+      )}
+
+      {lightbox && (
+        <PhotoLightbox
+          images={lightbox.images}
+          index={lightbox.index}
+          onClose={() => setLightbox(null)}
+          onNavigate={(i) => setLightbox({ images: lightbox.images, index: i })}
+        />
       )}
     </div>
   )

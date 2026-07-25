@@ -1376,6 +1376,9 @@
   object-fit: cover;
   overflow: hidden;
   cursor: pointer;
+  padding: 0;
+  border: 0;
+  background: var(--band);
 }
 .matchphotos__img img {
   transition: transform 300ms ease;

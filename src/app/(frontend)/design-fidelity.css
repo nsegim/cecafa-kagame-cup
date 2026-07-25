@@ -1129,13 +1129,38 @@ body > main {
   margin: 20px 25px 16px;
 }
 
-/* The clickable image frame — 500px tall, opens the full photo in a new tab
-   (works on the site and inside the newsletter iframe). */
+/* Several photos on one entry — a 2-up grid on desktop; the last row's items
+   grow to fill the whole width when there aren't enough to fill it. */
+.commentary__photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 25px 16px;
+}
+.commentary__photos .commentary__photo-frame {
+  /* 2 columns (1 × 12px gap); flex-grow makes a partial last row fill up. */
+  flex: 1 1 calc((100% - 12px) / 2);
+  width: auto;
+  height: 300px;
+}
+/* A photo left alone on the last grid row (odd count) fills the full width, so
+   it gets the taller full-width height like a lone single image. Desktop only —
+   on phones every photo is already one-per-row at 350px. */
+@media (min-width: 641px) {
+  .commentary__photos .commentary__photo-frame:last-child:nth-child(odd) {
+    height: 600px;
+  }
+}
+
+/* The clickable image frame (a <button>) — opens the photo in a lightbox.
+   A single image spans the full width, so it gets the tall 600px height. */
 .commentary__photo-frame {
   position: relative;
   display: block;
   width: 100%;
-  height: 500px;
+  height: 600px;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   cursor: pointer;
   background: var(--band);
@@ -2632,11 +2657,18 @@ body > main {
     font-size: 34px;
   }
 
-  .commentary__photo {
+  .commentary__photo,
+  .commentary__photos {
     margin: 16px;
   }
-  .commentary__photo-frame {
-    height: 320px;
+  /* One photo per row on phones, 350px tall — for single images and grids alike. */
+  .commentary__photos {
+    gap: 12px;
+  }
+  .commentary__photo-frame,
+  .commentary__photos .commentary__photo-frame {
+    flex-basis: 100%;
+    height: 350px;
   }
 
   .page-hero__title {
