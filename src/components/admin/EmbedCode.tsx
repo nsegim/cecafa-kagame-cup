@@ -25,7 +25,7 @@ export function EmbedCode() {
   const snippet = useMemo(
     () =>
       embedUrl
-        ? `<iframe src="${embedUrl}" width="100%" height="720" style="border:0;max-width:960px;width:100%" loading="lazy" title="Live Expressions"></iframe>`
+        ? `<iframe src="${embedUrl}" width="100%" height="1720" style="border:0;max-width:960px;width:100%" loading="lazy" title="Live Expressions"></iframe>`
         : '',
     [embedUrl],
   )
@@ -57,8 +57,8 @@ export function EmbedCode() {
               margin: '0 0 0.5rem',
             }}
           >
-            Copy this and paste it into the newsletter. It shows only the Live Expressions feed —
-            no site header or footer — and keeps updating itself live.
+            Copy this and paste it into the newsletter. It shows only the Live Expressions feed — no
+            site header or footer — and keeps updating itself live.
           </p>
           <textarea
             readOnly
@@ -78,7 +78,9 @@ export function EmbedCode() {
               color: 'var(--theme-elevation-800)',
             }}
           />
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+          <div
+            style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}
+          >
             <Button
               buttonStyle="secondary"
               icon={copied ? ['checkmark'] : undefined}

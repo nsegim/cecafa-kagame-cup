@@ -217,7 +217,7 @@ export function MatchCenter({
       <div className="matchcenter__tabs" role="tablist" aria-label="Match detail">
         {(
           [
-            ['live', `Imigendekere y'umukino`],
+            ['live', `UKO UMUKINO URI KUGENDA`],
             ['stats', `Imibare y'umukino`],
             ['photos', `Amafoto y'umukino`],
           ] as [Tab, string][]
