@@ -8,7 +8,7 @@ const NAV: NavItem[] = [
   { label: 'IMIKINO', href: '/matches' },
   { label: 'AMAKIPE', href: '/teams' },
   { label: 'URUTONDE', href: '/#standings' },
-  { label: 'SURA IGIHE', href: 'https:igihe.com' },
+  { label: 'SURA IGIHE', href: 'https//:igihe.com' },
 ]
 
 export async function SiteHeader() {
