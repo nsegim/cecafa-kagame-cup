@@ -495,10 +495,14 @@ export const Matches: CollectionConfig = {
           },
         },
         {
-          name: 'image',
+          name: 'images',
           type: 'upload',
           relationTo: 'media',
-          admin: { description: 'Optional photo shown with this update.' },
+          hasMany: true,
+          admin: {
+            description:
+              'Optional photos for this update — add one or several. They appear right here on the feed in this order (drag to reorder). Use “Bulk upload photos” at the top to add many to the media library first, then pick them here.',
+          },
         },
         {
           name: 'hidden',

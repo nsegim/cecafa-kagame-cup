@@ -364,9 +364,9 @@ export interface Match {
           [k: string]: unknown;
         } | null;
         /**
-         * Optional photo shown with this update.
+         * Optional photos for this update — add one or several. They appear right here on the feed in this order (drag to reorder). Use “Bulk upload photos” at the top to add many to the media library first, then pick them here.
          */
-        image?: (number | null) | Media;
+        images?: (number | Media)[] | null;
         /**
          * Hide this entry from the public Live Expressions feed without deleting it.
          */
@@ -869,7 +869,7 @@ export interface MatchesSelect<T extends boolean = true> {
         playerOff?: T;
         playerOn?: T;
         text?: T;
-        image?: T;
+        images?: T;
         hidden?: T;
         id?: T;
       };

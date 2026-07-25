@@ -113,21 +113,6 @@ function StatRow({ label, home, away }: { label: string; home: number; away: num
   )
 }
 
-/**
- * Photos are interspersed evenly through the commentary feed rather than at
- * fixed positions, so it adapts to however many real photos and events exist
- * (instead of assuming a specific transcript length).
- */
-function photoInsertIndex(eventCount: number, photoCount: number): Map<number, number> {
-  const map = new Map<number, number>()
-  if (eventCount === 0 || photoCount === 0) return map
-  for (let p = 0; p < photoCount; p++) {
-    const position = Math.min(eventCount - 1, Math.round(((p + 1) * eventCount) / (photoCount + 1)))
-    if (!map.has(position)) map.set(position, p)
-  }
-  return map
-}
-
 export function MatchCenter({
   events,
   homeName,
@@ -137,7 +122,6 @@ export function MatchCenter({
   photos,
 }: MatchCenterProps) {
   const [tab, setTab] = useState<Tab>('live')
-  const photoAtIndex = photoInsertIndex(events.length, photos.length)
 
   return (
     <div className="matchcenter">
@@ -168,10 +152,9 @@ export function MatchCenter({
             <p className="perf__empty">Ubusesenguzi bw'umukino buraza umukino nutangira.</p>
           ) : (
             events.map((e, i) => {
-              // An image an editor attached directly to this entry takes priority
-              // over the general Match Photos pool interspersed by position.
-              const photoIndex = photoAtIndex.get(i)
-              const photoSrc = e.image ?? (photoIndex != null ? photos[photoIndex] : null)
+              // Photos are shown exactly where the editor attached them — on this
+              // entry, in the order they set. One entry can carry several.
+              const images = e.images ?? []
               return (
                 <div className="commentary__group" key={i}>
                   <div className="commentary__entry">
@@ -191,8 +174,8 @@ export function MatchCenter({
                       )}
                     </div>
                   </div>
-                  {photoSrc && (
-                    <figure className="commentary__photo">
+                  {images.map((photoSrc, j) => (
+                    <figure className="commentary__photo" key={j}>
                       <a
                         href={photoSrc}
                         target="_blank"
@@ -208,12 +191,14 @@ export function MatchCenter({
                           style={{ objectFit: 'cover' }}
                         />
                       </a>
-                      <figcaption>
-                        {e.playerName || (e.side === 'home' ? homeName : awayName)}
-                        {e.minute != null ? ` · ${e.minute}'` : ''}
-                      </figcaption>
+                      {images.length === 1 && (
+                        <figcaption>
+                          {e.playerName || (e.side === 'home' ? homeName : awayName)}
+                          {e.minute != null ? ` · ${e.minute}'` : ''}
+                        </figcaption>
+                      )}
                     </figure>
-                  )}
+                  ))}
                 </div>
               )
             })

@@ -201,13 +201,22 @@ export interface MatchEvent {
   side?: 'home' | 'away' | null
   /** Rich text (Lexical) — the body of a 'note' entry, or optional extra detail on any other type. */
   text?: DefaultTypedEditorState | null
-  /** Optional photo an editor attached to this specific entry. */
-  image?: string | null
+  /** Photos an editor attached to this specific entry, in order — shown right here on the feed. */
+  images?: string[]
 }
 
 function singleMediaUrl(media: number | Media | null | undefined): string | null {
   if (!media || typeof media === 'number') return null
   return media.sizes?.hero?.url || media.url || null
+}
+
+/** Resolve a `hasMany` upload value (or a single one) to display URLs, in order. */
+function multiMediaUrls(
+  media: (number | Media)[] | number | Media | null | undefined,
+): string[] {
+  if (!media) return []
+  const list = Array.isArray(media) ? media : [media]
+  return list.map(singleMediaUrl).filter((url): url is string => Boolean(url))
 }
 
 export interface LineupPlayerEntry {
@@ -319,19 +328,29 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
         teamId,
         side,
         text: c.text ?? undefined,
-        image: singleMediaUrl(c.image),
+        images: multiMediaUrls(c.images),
       }
     })
 
-  const feed = [...scored, ...notes].sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0))
-
-  // Frame the recorded events with kick-off / half-time / full-time markers so
-  // the feed reads like live commentary even before editors add prose. Full-time
-  // only ever comes from an editor's explicit Final — kick-off can be automatic.
-  const events: MatchEvent[] = []
-  if (match.status === 'final') events.push({ minute: 90, type: 'fulltime' })
-  events.push(...feed)
-  if (effectiveMatchStatus(match) !== 'scheduled') events.push({ minute: 0, type: 'kickoff' })
+  // Build the feed newest-first. Primary key is the match minute (descending);
+  // when entries share a minute — including the pre-match / pre-live entries
+  // that have no minute yet — the more recently posted one (a later row in the
+  // commentary array) shows on top, so the latest update is always at the top
+  // even before kickoff. Kick-off sorts in at minute 0 (just under the first
+  // in-match update, above any pre-match notes); a final result's full-time
+  // marker sorts to the very top.
+  type Ordered = { ev: MatchEvent; min: number; seq: number }
+  const ordered: Ordered[] = []
+  scored.forEach((ev, i) => ordered.push({ ev, min: ev.minute ?? -1, seq: -1 - i }))
+  notes.forEach((ev, i) => ordered.push({ ev, min: ev.minute ?? -1, seq: i }))
+  if (effectiveMatchStatus(match) !== 'scheduled') {
+    ordered.push({ ev: { minute: 0, type: 'kickoff' }, min: 0, seq: -1_000_000 })
+  }
+  if (match.status === 'final') {
+    ordered.push({ ev: { minute: 90, type: 'fulltime' }, min: Number.POSITIVE_INFINITY, seq: 1_000_000 })
+  }
+  ordered.sort((a, b) => b.min - a.min || b.seq - a.seq)
+  const events: MatchEvent[] = ordered.map((o) => o.ev)
 
   const otherMatches = (allMatchesRes.docs as Match[])
     .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
