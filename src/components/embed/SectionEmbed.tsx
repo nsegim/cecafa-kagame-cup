@@ -111,6 +111,8 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
                 ▶
               </span>
             )}
+            {feature.category && <span className="secw__tag">{feature.category}</span>}
+            <span className="secw__feature-overlay" />
             <span className="secw__feature-title">{feature.title}</span>
           </a>
         )}
@@ -138,7 +140,7 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
         </div>
 
         <div className="upcoming-panel secw__panel">
-          <div className="upcoming-panel__head">UPCOMING GAMES</div>
+          <div className="upcoming-panel__head">IMIKINO IKURIKIRA</div>
           <div className="upcoming-panel__body">
             {groups.length === 0 ? (
               <p className="upcoming-panel__empty">No fixtures yet.</p>
@@ -159,7 +161,7 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
             rel="noopener noreferrer"
             className="upcoming-panel__cta"
           >
-            View all matches
+            Reba imikino yose
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d="M9 5l7 7-7 7"

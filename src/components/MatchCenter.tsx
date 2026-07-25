@@ -157,8 +157,8 @@ function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.
     case 'substitution':
       return (
         <>
-          <strong>Gusimbuza{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'} off,{' '}
-          {e.playerInName ?? 'Player'} on.
+          <strong>Gusimbuza{team ? ` — ${team}` : ''}.</strong> {e.playerOutName ?? 'Player'}{' '}
+          avuyemo, {e.playerInName ?? 'Player'} arinjiye.
         </>
       )
     case 'kickoff':
@@ -176,7 +176,7 @@ function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.
     case 'secondhalf':
       return (
         <>
-          <strong>Umukino ukomeje!</strong>
+          <strong>Umukino urakomeje!</strong>
         </>
       )
     case 'fulltime':

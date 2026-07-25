@@ -177,6 +177,7 @@ function matchPhotoUrls(match: Match): string[] {
       return media.sizes?.hero?.url || media.url || null
     })
     .filter((url): url is string => Boolean(url))
+    .reverse() // newest-added photos first, so the most recent match images show at the top
 }
 
 export type MatchEventType =

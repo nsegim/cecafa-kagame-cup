@@ -6,7 +6,7 @@
  * so it can be both server-rendered and polled for real-time refreshes.
  */
 import { getPayloadClient } from '@/lib/payload'
-import type { Match, Team } from '@/payload-types'
+import type { Match, Team, Media } from '@/payload-types'
 import { fetchLatestNews } from '@/lib/news'
 import { getVideos } from '@/lib/videos'
 import { effectiveMatchStatus } from '@/lib/matchStatus'
@@ -46,10 +46,13 @@ export interface SectionFeature {
   /** Destination on our own system, opened in a new tab from the iframe. */
   href: string
   isVideo: boolean
+  category: string | null
 }
 
 export interface SectionData {
+  /** Match-highlights video tile (top-left). */
   feature: SectionFeature | null
+  /** The latest-news cards. */
   news: SectionNews[]
   groups: SectionGroup[]
 }
@@ -109,50 +112,62 @@ function buildGroups(matches: Match[], take = 5): SectionGroup[] {
   return groups
 }
 
-export async function getSectionData(): Promise<SectionData> {
-  const [news, videos, matchesRes] = await Promise.all([
-    fetchLatestNews({ limit: 2 }),
-    getVideos(),
-    getPayloadClient()
-      .then((p) => p.find({ collection: 'matches', sort: 'kickoff', limit: 30, depth: 2 }))
-      .catch(() => null),
-  ])
+function mediaCardUrl(media: number | Media | null | undefined): string | null {
+  if (!media || typeof media === 'number') return null
+  return media.sizes?.card?.url || media.url || null
+}
 
-  // Featured tile: prefer a real video (shows a play button), otherwise fall
-  // back to the top news story's image so the tile is never empty.
+export async function getSectionData(): Promise<SectionData> {
+  const [news, matchesRes, videos] = await Promise.all([
+    // The two latest articles become the news cards.
+    fetchLatestNews({ limit: 2 }),
+    getPayloadClient()
+      .then((p) => p.find({ collection: 'matches', sort: '-kickoff', limit: 30, depth: 2 }))
+      .catch(() => null),
+    getVideos(),
+  ])
+  const matches = matchesRes ? (matchesRes.docs as Match[]) : []
+
+  // Video tile from the Videos collection (newest first). Falls back to the
+  // most recent match with a highlight clip, then to nothing.
   let feature: SectionFeature | null = null
   const video = videos[0]
   if (video) {
-    const thumb = video.thumbnail
     feature = {
       title: video.title,
-      thumbnailUrl:
-        thumb && typeof thumb !== 'number' ? (thumb.sizes?.card?.url ?? thumb.url ?? null) : null,
-      href: '/', // opens our homepage (where highlights live) in a new tab
+      thumbnailUrl: mediaCardUrl(video.thumbnail),
+      href: '/', // videos play on our homepage highlights section
       isVideo: true,
+      category: 'HIGHLIGHTS',
     }
-  } else if (news[0]) {
-    feature = {
-      title: news[0].title,
-      thumbnailUrl: news[0].imageUrl,
-      href: news[0].url,
-      isVideo: false,
+  } else {
+    const highlightMatch = matches
+      .filter((m) => m.highlightUrl)
+      .sort((a, b) => +new Date(b.kickoff) - +new Date(a.kickoff))[0]
+    if (highlightMatch) {
+      feature = {
+        title: `${sideShort(highlightMatch.homeTeam, highlightMatch.homeTeamPlaceholder)} vs ${sideShort(highlightMatch.awayTeam, highlightMatch.awayTeamPlaceholder)}`,
+        thumbnailUrl: mediaCardUrl(highlightMatch.highlightThumb),
+        href: `/matches/${highlightMatch.id}`,
+        isVideo: true,
+        category: 'HIGHLIGHTS',
+      }
     }
   }
 
-  const groups = matchesRes ? buildGroups(matchesRes.docs as Match[]) : []
+  const toNews = (a: (typeof news)[number]): SectionNews => ({
+    id: a.id,
+    title: a.title,
+    excerpt: a.excerpt,
+    imageUrl: a.imageUrl,
+    category: a.category,
+    readingMinutes: a.readingMinutes,
+    url: a.url,
+  })
 
   return {
     feature,
-    news: news.map((a) => ({
-      id: a.id,
-      title: a.title,
-      excerpt: a.excerpt,
-      imageUrl: a.imageUrl,
-      category: a.category,
-      readingMinutes: a.readingMinutes,
-      url: a.url,
-    })),
-    groups,
+    news: news.map(toNews),
+    groups: buildGroups(matches),
   }
 }

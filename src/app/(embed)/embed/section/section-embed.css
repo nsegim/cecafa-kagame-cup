@@ -61,10 +61,20 @@
 /* ---- 3-column body ---- */
 .secw__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1.05fr) 320px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.15fr) 272px;
+  grid-template-areas: 'feature news upcoming';
   gap: 24px;
   padding: 28px 24px 32px;
   align-items: start;
+}
+.secw__feature {
+  grid-area: feature;
+}
+.secw__news {
+  grid-area: news;
+}
+.secw__panel {
+  grid-area: upcoming;
 }
 
 /* ---- Featured video / story ---- */
@@ -96,13 +106,35 @@
 .secw__feature:hover .secw__play {
   transform: translate(-50%, -50%) scale(1.08);
 }
+/* Gradient + headline overlay — the feature is now the latest article. */
+.secw__feature-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 12, 28, 0) 42%, rgba(0, 20, 46, 0.9) 100%);
+}
+.secw__feature .secw__tag {
+  z-index: 2;
+}
 .secw__feature-title {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 22px 24px;
+  color: #fff;
+  font-size: 26px;
+  line-height: 1.22;
+  font-weight: 800;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+}
+.secw__feature:hover .secw__feature-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---- News cards column ---- */
@@ -135,7 +167,7 @@
 }
 .secw__card-title {
   margin: 0 0 8px;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.25;
   font-weight: 800;
   color: var(--navy-900);
@@ -159,12 +191,41 @@
 }
 
 /* ---- Upcoming games panel (reuses .upcoming-panel / .upcoming-row) ---- */
+/* A touch smaller than the site's default so the widget stays compact. */
 .secw__panel {
   border: 1px solid var(--line);
 }
+.secw__panel .upcoming-panel__head {
+  height: 44px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.secw__panel .upcoming-panel__body {
+  padding: 0 14px;
+}
+.secw__panel .upcoming-panel__date {
+  font-size: 13px;
+}
+.secw__panel .upcoming-row {
+  height: 46px;
+  padding: 8px 4px;
+  gap: 6px;
+}
+.secw__panel .upcoming-row__team {
+  font-size: 12px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.secw__panel .upcoming-panel__cta {
+  height: 40px;
+  font-size: 12px;
+}
 .secw__crest {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -179,16 +240,79 @@
   border-radius: 2px;
 }
 
-/* ---- Responsive: stack the columns on narrow embeds ---- */
+/* ---- Responsive ---- */
+/* ---- Responsive ladder ---- */
+/* ≤900 (tablets): video full-width on top; latest news + upcoming games share
+   one row below it. Fixtures get the wider share and stay compact. */
 @media (max-width: 900px) {
   .secw__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-areas:
+      'feature feature'
+      'news upcoming';
+    gap: 16px;
+    padding: 20px 16px 24px;
+  }
+  .secw__feature {
+    aspect-ratio: 3 / 2;
+  }
+  .secw__feature-title {
+    font-size: 21px;
+    padding: 16px 18px;
+  }
+  .secw__news {
+    gap: 18px;
+  }
+  .secw__card-title {
+    font-size: 16px;
+  }
+  .secw__card-excerpt {
+    display: none;
+  }
+  /* Compact fixtures so they fit the narrow column. */
+  .secw__panel .upcoming-row {
+    padding: 8px 2px;
+    gap: 3px;
+  }
+  .secw__panel .upcoming-row__team {
+    font-size: 11px;
+  }
+  .secw__panel .upcoming-panel__body {
+    padding: 0 8px;
+  }
+  .secw__crest {
+    width: 16px;
+    height: 16px;
+  }
+  .secw__panel .upcoming-row__time {
+    font-size: 11px;
+  }
+}
+
+/* ≤630: the video drops into the news column (left); the upcoming-games panel
+   spans the full height alongside — so the video sits in the same column as
+   news and on the same row as the fixtures. */
+@media (max-width: 630px) {
+  .secw__grid {
+    grid-template-areas:
+      'news upcoming'
+      'feature upcoming';
   }
   .secw__feature {
     aspect-ratio: 16 / 9;
   }
 }
-@media (max-width: 520px) {
+
+/* ≤560 (phones): news + upcoming games on one row at the top, video below. */
+@media (max-width: 560px) {
+  .secw__grid {
+    grid-template-areas:
+      'news upcoming'
+      'feature feature';
+  }
+  .secw__feature {
+    aspect-ratio: 3 / 2;
+  }
   .secw__bar {
     flex-direction: column;
     align-items: stretch;
