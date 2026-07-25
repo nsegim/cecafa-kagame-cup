@@ -51,6 +51,14 @@ export function SiteNav({ nav, liveHref }: { nav: NavItem[]; liveHref: string | 
             {item.label}
           </Link>
         ))}
+        <a
+          key="igihe"
+          href="https://igihe.com/index.php"
+          target="_blank"
+          className="site-nav__link"
+        >
+          SURA IGIHE
+        </a>
       </nav>
 
       {liveHref && (
@@ -72,7 +80,11 @@ export function SiteNav({ nav, liveHref }: { nav: NavItem[]; liveHref: string | 
         <span className="site-header__burger-bar" />
       </button>
 
-      <div id="site-mobile-menu" className={`site-mobile-menu ${open ? 'is-open' : ''}`} hidden={!open}>
+      <div
+        id="site-mobile-menu"
+        className={`site-mobile-menu ${open ? 'is-open' : ''}`}
+        hidden={!open}
+      >
         <nav className="site-mobile-menu__nav" aria-label="Primary">
           {nav.map((item) => (
             <Link

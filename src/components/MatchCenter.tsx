@@ -188,7 +188,7 @@ export function MatchCenter({
                           alt=""
                           fill
                           sizes="(max-width: 900px) 100vw, 800px"
-                          style={{ objectFit: 'cover' }}
+                          style={{ objectFit: 'contain' }}
                         />
                       </a>
                       {images.length === 1 && (
