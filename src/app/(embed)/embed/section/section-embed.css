@@ -82,7 +82,11 @@
   position: relative;
   display: block;
   aspect-ratio: 4 / 3;
-  background: var(--navy-900) center / cover no-repeat;
+  background-color: var(--navy-900);
+  background-image: linear-gradient(135deg, #002452, #01468f);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 .secw__play {
@@ -106,31 +110,34 @@
 .secw__feature:hover .secw__play {
   transform: translate(-50%, -50%) scale(1.08);
 }
-/* Gradient + headline overlay — the feature is now the latest article. */
+/* Gradient overlay that bottom-aligns the headline. Keeping the title in normal
+   flow (not absolutely positioned) is what makes -webkit-line-clamp reliable. */
 .secw__feature-overlay {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 22px 24px;
   background: linear-gradient(180deg, rgba(0, 12, 28, 0) 42%, rgba(0, 20, 46, 0.9) 100%);
 }
 .secw__feature .secw__tag {
   z-index: 2;
 }
 .secw__feature-title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
   margin: 0;
-  padding: 22px 24px;
   color: #fff;
   font-size: 26px;
-  line-height: 1.22;
+  /* line-height is set a touch above the bold font's natural line box so the
+     max-height cap below lands exactly on the 2nd line boundary (never mid-line)
+     in every browser; line-clamp adds a … on top where it's supported. */
+  line-height: 1.35;
   font-weight: 800;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  max-height: 2.7em;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .secw__feature:hover .secw__feature-title {
   text-decoration: underline;
@@ -150,7 +157,11 @@
 .secw__card-img {
   position: relative;
   aspect-ratio: 16 / 10;
-  background: var(--band) center / cover no-repeat;
+  background-color: var(--navy-900);
+  background-image: linear-gradient(135deg, #002452, #01468f);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   margin-bottom: 12px;
 }
 .secw__tag {
@@ -240,79 +251,105 @@
   border-radius: 2px;
 }
 
-/* ---- Responsive ---- */
 /* ---- Responsive ladder ---- */
-/* ≤900 (tablets): video full-width on top; latest news + upcoming games share
-   one row below it. Fixtures get the wider share and stay compact. */
+/* Tablets (≤900): the fixed 272px fixtures column no longer fits three-up, so
+   the video becomes a full-width banner on top and news + fixtures sit side by
+   side beneath it — both wide enough to stay comfortable (no truncation). */
 @media (max-width: 900px) {
   .secw__grid {
-    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 288px;
     grid-template-areas:
       'feature feature'
       'news upcoming';
-    gap: 16px;
-    padding: 20px 16px 24px;
+    gap: 22px;
+    padding: 22px 20px 26px;
   }
   .secw__feature {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 21 / 9;
+  }
+  .secw__feature-overlay {
+    padding: 18px 20px;
   }
   .secw__feature-title {
-    font-size: 21px;
-    padding: 16px 18px;
-  }
-  .secw__news {
-    gap: 18px;
+    font-size: 22px;
   }
   .secw__card-title {
-    font-size: 16px;
-  }
-  .secw__card-excerpt {
-    display: none;
-  }
-  /* Compact fixtures so they fit the narrow column. */
-  .secw__panel .upcoming-row {
-    padding: 8px 2px;
-    gap: 3px;
-  }
-  .secw__panel .upcoming-row__team {
-    font-size: 11px;
-  }
-  .secw__panel .upcoming-panel__body {
-    padding: 0 8px;
-  }
-  .secw__crest {
-    width: 16px;
-    height: 16px;
-  }
-  .secw__panel .upcoming-row__time {
-    font-size: 11px;
+    font-size: 17px;
   }
 }
 
-/* ≤630: the video drops into the news column (left); the upcoming-games panel
-   spans the full height alongside — so the video sits in the same column as
-   news and on the same row as the fixtures. */
-@media (max-width: 630px) {
+/* Phones (≤600): one clean column — full-width video, full-width news cards,
+   full-width fixtures. Nothing is cramped, team names show in full. */
+@media (max-width: 600px) {
+  .secw__bar {
+    padding: 16px;
+  }
   .secw__grid {
+    grid-template-columns: 1fr;
     grid-template-areas:
-      'news upcoming'
-      'feature upcoming';
+      'feature'
+      'news'
+      'upcoming';
+    gap: 22px;
+    padding: 16px;
   }
   .secw__feature {
     aspect-ratio: 16 / 9;
   }
+  .secw__feature-overlay {
+    padding: 16px 18px;
+  }
+  .secw__feature-title {
+    font-size: 20px;
+  }
+
+  /* News cards — full width, image + title + excerpt read cleanly. */
+  .secw__news {
+    gap: 24px;
+  }
+  .secw__card-title {
+    font-size: 19px;
+  }
+  .secw__card-excerpt {
+    display: -webkit-box;
+    font-size: 15px;
+  }
+
+  /* Fixtures — comfortable, full-width rows; no more single-letter names. */
+  .secw__panel .upcoming-panel__head {
+    height: 46px;
+    font-size: 14px;
+  }
+  .secw__panel .upcoming-panel__body {
+    padding: 0 16px;
+  }
+  .secw__panel .upcoming-panel__date {
+    font-size: 14px;
+  }
+  .secw__panel .upcoming-row {
+    height: 54px;
+    padding: 12px 6px;
+    gap: 10px;
+  }
+  .secw__panel .upcoming-row__team {
+    font-size: 14px;
+    white-space: normal;
+  }
+  .secw__panel .upcoming-row__time {
+    font-size: 15px;
+  }
+  .secw__crest {
+    width: 26px;
+    height: 26px;
+  }
+  .secw__panel .upcoming-panel__cta {
+    height: 48px;
+    font-size: 14px;
+  }
 }
 
-/* ≤560 (phones): news + upcoming games on one row at the top, video below. */
-@media (max-width: 560px) {
-  .secw__grid {
-    grid-template-areas:
-      'news upcoming'
-      'feature feature';
-  }
-  .secw__feature {
-    aspect-ratio: 3 / 2;
-  }
+/* Narrow phones (≤440): stack the top bar so the long button never overflows. */
+@media (max-width: 440px) {
   .secw__bar {
     flex-direction: column;
     align-items: stretch;

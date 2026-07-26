@@ -12,6 +12,13 @@ import type { SectionData, SectionMatch } from '@/lib/section'
  */
 const POLL_MS = 60_000
 
+/** Trim an overlong headline to a word boundary so it fits ~2 lines on the
+ * feature tile across all screen widths, regardless of line-clamp support. */
+function clampTitle(s: string, max = 58): string {
+  if (s.length <= max) return s
+  return s.slice(0, max).replace(/\s+\S*$/, '').trimEnd() + '…'
+}
+
 function Crest({ url, label }: { url: string | null; label: string }) {
   if (url) {
     // eslint-disable-next-line @next/next/no-img-element
@@ -112,8 +119,9 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
               </span>
             )}
             {feature.category && <span className="secw__tag">{feature.category}</span>}
-            <span className="secw__feature-overlay" />
-            <span className="secw__feature-title">{feature.title}</span>
+            <span className="secw__feature-overlay">
+              <span className="secw__feature-title">{clampTitle(feature.title)}</span>
+            </span>
           </a>
         )}
 

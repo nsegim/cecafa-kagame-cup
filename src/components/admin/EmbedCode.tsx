@@ -25,7 +25,14 @@ export function EmbedCode() {
   const snippet = useMemo(
     () =>
       embedUrl
-        ? `<iframe src="${embedUrl}" width="100%" height="1720" style="border:0;max-width:960px;width:100%" loading="lazy" title="Live Expressions"></iframe>`
+        ? // The iframe reports its content height out via postMessage; the paired
+          // script matches the message to this iframe (by contentWindow) and sets
+          // its height, so the feed shows in full with no inner scrollbar and no
+          // wasted space. The `height="1720"` is only a fallback for the instant
+          // before the script runs (or if a host strips it) — the frame hugs its
+          // real height as soon as the listener fires.
+          `<iframe src="${embedUrl}" width="100%" height="1720" style="border:0;max-width:960px;width:100%" loading="lazy" title="Live Expressions" data-cecafa-embed></iframe>
+<script>(function(){if(window.__cecafaEmbedResize)return;window.__cecafaEmbedResize=1;window.addEventListener("message",function(e){var d=e.data;if(!d||d.type!=="cecafa-embed-height"||!d.height)return;var f=document.querySelectorAll("iframe[data-cecafa-embed]");for(var i=0;i<f.length;i++){if(f[i].contentWindow===e.source){f[i].style.height=d.height+"px";}}});})();</script>`
         : '',
     [embedUrl],
   )
@@ -58,12 +65,13 @@ export function EmbedCode() {
             }}
           >
             Copy this and paste it into the newsletter. It shows only the Live Expressions feed — no
-            site header or footer — and keeps updating itself live.
+            site header or footer — sizes itself to fit the content (no scrollbar), and keeps
+            updating itself live.
           </p>
           <textarea
             readOnly
             value={snippet}
-            rows={3}
+            rows={5}
             onFocus={(e) => e.currentTarget.select()}
             style={{
               width: '100%',

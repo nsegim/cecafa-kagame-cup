@@ -203,21 +203,37 @@ export interface MatchEvent {
   /** Rich text (Lexical) — the body of a 'note' entry, or optional extra detail on any other type. */
   text?: DefaultTypedEditorState | null
   /** Photos an editor attached to this specific entry, in order — shown right here on the feed. */
-  images?: string[]
+  images?: FeedImage[]
 }
 
-function singleMediaUrl(media: number | Media | null | undefined): string | null {
+/** A feed image plus its real pixel size, so it can render at its own aspect ratio. */
+export interface FeedImage {
+  url: string
+  width: number
+  height: number
+}
+
+function mediaToFeedImage(media: number | Media | null | undefined): FeedImage | null {
   if (!media || typeof media === 'number') return null
-  return media.sizes?.hero?.url || media.url || null
+  const hero = media.sizes?.hero
+  if (hero?.url && hero.width && hero.height) {
+    return { url: hero.url, width: hero.width, height: hero.height }
+  }
+  if (media.url && media.width && media.height) {
+    return { url: media.url, width: media.width, height: media.height }
+  }
+  // URL present but dimensions missing — fall back to a neutral 16:9 so it still renders.
+  const url = hero?.url || media.url
+  return url ? { url, width: 1600, height: 900 } : null
 }
 
-/** Resolve a `hasMany` upload value (or a single one) to display URLs, in order. */
-function multiMediaUrls(
+/** Resolve a `hasMany` upload value (or a single one) to sized images, in order. */
+function feedImages(
   media: (number | Media)[] | number | Media | null | undefined,
-): string[] {
+): FeedImage[] {
   if (!media) return []
   const list = Array.isArray(media) ? media : [media]
-  return list.map(singleMediaUrl).filter((url): url is string => Boolean(url))
+  return list.map(mediaToFeedImage).filter((x): x is FeedImage => x !== null)
 }
 
 export interface LineupPlayerEntry {
@@ -329,7 +345,7 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
         teamId,
         side,
         text: c.text ?? undefined,
-        images: multiMediaUrls(c.images),
+        images: feedImages(c.images),
       }
     })
 

@@ -5,6 +5,7 @@ import { TeamCrest } from '@/components/TeamCrest'
 import { LiveMatchProvider } from '@/components/LiveMatchProvider'
 import { LiveScore } from '@/components/LiveScore'
 import { LiveMatchCenter } from '@/components/LiveMatchCenter'
+import { EmbedAutoResize } from '@/components/EmbedAutoResize'
 import { matchSide } from '@/lib/matchLabels'
 import { matchSideStats, type LiveMatchData } from '@/lib/matchStats'
 import { matchTime } from '@/lib/datetime'
@@ -78,6 +79,7 @@ export default async function MatchEmbedPage({ params }: { params: Promise<{ id:
 
   return (
     <LiveMatchProvider matchId={match.id} initial={initialLive} enabled={pollEnabled}>
+      <EmbedAutoResize />
       <div className="embed">
         <div className="embed-hero">
           {metaLabel && <span className="embed-hero__meta">{metaLabel}</span>}

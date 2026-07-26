@@ -1134,26 +1134,21 @@ body > main {
 .commentary__photos {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 12px;
   margin: 20px 25px 16px;
 }
 .commentary__photos .commentary__photo-frame {
-  /* 2 columns (1 × 12px gap); flex-grow makes a partial last row fill up. */
+  /* 2 columns (1 × 12px gap); flex-grow lets a lone item fill the whole width. */
   flex: 1 1 calc((100% - 12px) / 2);
   width: auto;
-  height: 300px;
-}
-/* A photo left alone on the last grid row (odd count) fills the full width, so
-   it gets the taller full-width height like a lone single image. Desktop only —
-   on phones every photo is already one-per-row at 350px. */
-@media (min-width: 641px) {
-  .commentary__photos .commentary__photo-frame:last-child:nth-child(odd) {
-    height: 600px;
-  }
+  height: 340px;
 }
 
 /* The clickable image frame (a <button>) — opens the photo in a lightbox.
-   A single image spans the full width, so it gets the tall 600px height. */
+   Fixed-height stage on a black canvas. The whole image always shows inside it
+   (contain for portraits, cover for landscapes); portraits get a blurred copy
+   of themselves behind, so the leftover room is filled design, never bands. */
 .commentary__photo-frame {
   position: relative;
   display: block;
@@ -1162,15 +1157,32 @@ body > main {
   padding: 0;
   border: 0;
   overflow: hidden;
+  border-radius: 8px;
   cursor: pointer;
-  background: var(--band);
+  background: #000;
 }
 
-.commentary__photo-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Blurred, darkened copy of the same photo filling the frame behind a portrait. */
+.commentary__photo-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(24px) brightness(0.55);
+  transform: scale(1.15);
+}
+
+/* The real photo, on top of the blur, shown whole (never cropped for portraits). */
+.commentary__photo-frame .commentary__photo-img {
+  z-index: 1;
   transition: transform 300ms ease;
+}
+
+@media (max-width: 1024px) {
+  .commentary__photo-frame {
+    height: 400px;
+  }
 }
 
 .commentary__photo-frame:hover img,
@@ -2661,14 +2673,14 @@ body > main {
   .commentary__photos {
     margin: 16px;
   }
-  /* One photo per row on phones, 350px tall — for single images and grids alike. */
+  /* One photo per row on phones, shorter frame. */
   .commentary__photos {
     gap: 12px;
   }
   .commentary__photo-frame,
   .commentary__photos .commentary__photo-frame {
     flex-basis: 100%;
-    height: 350px;
+    height: 300px;
   }
 
   .page-hero__title {

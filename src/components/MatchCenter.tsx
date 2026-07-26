@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
-import type { MatchEvent } from '@/lib/tournament'
+import type { MatchEvent, FeedImage } from '@/lib/tournament'
 import { richTextHasContent } from '@/lib/richText'
 import Image from 'next/image'
 
@@ -201,6 +201,40 @@ function StatRow({ label, home, away }: { label: string; home: number; away: num
   )
 }
 
+/**
+ * A single Live Expressions photo. The whole image is always shown — never
+ * cropped. A portrait is letterboxed inside a fixed-height frame with a blurred,
+ * darkened copy of the same image filling the space behind it (instead of flat
+ * empty bands), so the leftover room reads as design rather than padding. A
+ * landscape fills the frame with `cover`. Orientation is known from the real
+ * pixel dimensions, so there's no image-load guesswork.
+ */
+function PhotoFrame({ image, onOpen }: { image: FeedImage; onOpen: () => void }) {
+  const portrait = image.height > image.width
+  return (
+    <button type="button" className="commentary__photo-frame" onClick={onOpen} aria-label="Fungura ifoto">
+      {portrait && (
+        <span
+          aria-hidden
+          className="commentary__photo-blur"
+          style={{ backgroundImage: `url("${image.url}")` }}
+        />
+      )}
+      <Image
+        src={image.url}
+        alt=""
+        fill
+        sizes="(max-width: 900px) 100vw, 800px"
+        className="commentary__photo-img"
+        style={{
+          objectFit: portrait ? 'contain' : 'cover',
+          objectPosition: portrait ? 'center' : 'top center',
+        }}
+      />
+    </button>
+  )
+}
+
 export function MatchCenter({
   events,
   homeName,
@@ -244,6 +278,7 @@ export function MatchCenter({
               // Photos are shown exactly where the editor attached them — on this
               // entry, in the order they set. One entry can carry several.
               const images = e.images ?? []
+              const imageUrls = images.map((img) => img.url)
               return (
                 <div className="commentary__group" key={i}>
                   <div className="commentary__entry">
@@ -265,20 +300,10 @@ export function MatchCenter({
                   </div>
                   {images.length === 1 && (
                     <figure className="commentary__photo">
-                      <button
-                        type="button"
-                        className="commentary__photo-frame"
-                        onClick={() => setLightbox({ images, index: 0 })}
-                        aria-label="Fungura ifoto"
-                      >
-                        <Image
-                          src={images[0]}
-                          alt=""
-                          fill
-                          sizes="(max-width: 900px) 100vw, 800px"
-                          style={{ objectFit: 'contain' }}
-                        />
-                      </button>
+                      <PhotoFrame
+                        image={images[0]}
+                        onOpen={() => setLightbox({ images: imageUrls, index: 0 })}
+                      />
                       <figcaption>
                         {e.playerName || (e.side === 'home' ? homeName : awayName)}
                         {e.minute != null ? ` · ${e.minute}'` : ''}
@@ -287,22 +312,12 @@ export function MatchCenter({
                   )}
                   {images.length > 1 && (
                     <div className="commentary__photos">
-                      {images.map((photoSrc, j) => (
-                        <button
-                          type="button"
+                      {images.map((photo, j) => (
+                        <PhotoFrame
                           key={j}
-                          className="commentary__photo-frame"
-                          onClick={() => setLightbox({ images, index: j })}
-                          aria-label="Fungura ifoto"
-                        >
-                          <Image
-                            src={photoSrc}
-                            alt=""
-                            fill
-                            sizes="(max-width: 640px) 100vw, 320px"
-                            style={{ objectFit: 'cover' }}
-                          />
-                        </button>
+                          image={photo}
+                          onOpen={() => setLightbox({ images: imageUrls, index: j })}
+                        />
                       ))}
                     </div>
                   )}
