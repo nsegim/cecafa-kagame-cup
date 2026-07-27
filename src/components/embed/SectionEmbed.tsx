@@ -14,7 +14,7 @@ const POLL_MS = 60_000
 
 /** Trim an overlong headline to a word boundary so it fits ~2 lines on the
  * feature tile across all screen widths, regardless of line-clamp support. */
-function clampTitle(s: string, max = 58): string {
+function clampTitle(s: string, max = 200): string {
   if (s.length <= max) return s
   return (
     s
