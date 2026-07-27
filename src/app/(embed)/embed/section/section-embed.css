@@ -10,6 +10,8 @@
   background: var(--white);
   color: var(--ink-900);
   font-family: var(--font-display);
+  padding-left: 15px;
+  padding-top: 20px;
 }
 
 /* ---- Top navy bar ---- */
@@ -64,7 +66,7 @@
   grid-template-columns: minmax(0, 3fr) minmax(0, 1.15fr) 272px;
   grid-template-areas: 'feature news upcoming';
   gap: 24px;
-  padding: 28px 24px 32px;
+  padding: 28px 0px 32px;
   align-items: start;
 }
 .secw__feature {

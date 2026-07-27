@@ -16,7 +16,12 @@ const POLL_MS = 60_000
  * feature tile across all screen widths, regardless of line-clamp support. */
 function clampTitle(s: string, max = 58): string {
   if (s.length <= max) return s
-  return s.slice(0, max).replace(/\s+\S*$/, '').trimEnd() + '…'
+  return (
+    s
+      .slice(0, max)
+      .replace(/\s+\S*$/, '')
+      .trimEnd() + '…'
+  )
 }
 
 function Crest({ url, label }: { url: string | null; label: string }) {
@@ -98,7 +103,7 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
           <img src="/assets/whitLogo.png" alt="CECAFA Kagame Cup" width={72} height={62} />
         </a>
         <a href="/news" target="_blank" rel="noopener noreferrer" className="secw__all-news">
-          VIEW ALL CECAFA NEWS
+          MENYA AMAKURU YOSE YA CECAFA KAGAME CUP
         </a>
       </div>
 
@@ -142,7 +147,7 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
               </div>
               <h3 className="secw__card-title">{a.title}</h3>
               {a.excerpt && <p className="secw__card-excerpt">{a.excerpt}</p>}
-              <span className="secw__card-meta">{a.readingMinutes} min read</span>
+              {/* <span className="secw__card-meta">{a.readingMinutes} min read</span> */}
             </a>
           ))}
         </div>
