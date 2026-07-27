@@ -317,18 +317,18 @@ export interface Match {
    */
   showLiveButton?: boolean | null;
   /**
-   * Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry.
+   * Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry. Once the match is over you can keep posting: use type “After the Match (Post-Match)” for a wrap-up or reaction — those sit above the full-time whistle, newest first.
    */
   commentary?:
     | {
         /**
-         * Match minute, e.g. 62. Entries are shown in minute order on the feed.
+         * Match minute, e.g. 62. Entries are shown in minute order on the feed. Optional for Half Time / Second Half — those show as HT on the feed rather than a minute.
          */
         minute?: number | null;
         /**
          * Determines which icon/graphic this entry shows with on the feed.
          */
-        type?: ('note' | 'goal' | 'yellow' | 'red' | 'substitution' | 'halftime' | 'secondhalf') | null;
+        type?: ('note' | 'goal' | 'yellow' | 'red' | 'substitution' | 'halftime' | 'secondhalf' | 'postmatch') | null;
         /**
          * Which side this happened for.
          */

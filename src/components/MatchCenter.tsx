@@ -121,6 +121,19 @@ function EventIcon({ type }: { type: MatchEvent['type'] }) {
 }
 
 /**
+ * What goes in the minute column. The whistle markers show a label rather than
+ * a number — a half doesn't reliably end on 45 or 90 once stoppage time is
+ * played, so "HT"/"FT" is both shorter and always right. Post-match updates
+ * happen after the clock has stopped, so they carry no minute at all.
+ */
+function eventMinuteLabel(e: MatchEvent): string {
+  if (e.type === 'halftime') return 'HT'
+  if (e.type === 'fulltime') return 'FT'
+  if (e.type === 'postmatch') return ''
+  return e.minute != null ? `${e.minute}'` : ''
+}
+
+/**
  * The auto-generated caption line for an event (GOAL!, cards, subs, whistle
  * markers). Returns `null` for a plain 'note', whose whole content is the
  * editor's rich text — rendered separately below the caption by <RichText>.
@@ -185,6 +198,9 @@ function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.
           <strong>Umukino urarangiye.</strong>
         </>
       )
+    // A post-match update is the editor's own words, like a plain note — the
+    // full-time whistle right below it already marks that the match is over.
+    case 'postmatch':
     case 'note':
     default:
       return null
@@ -279,12 +295,20 @@ export function MatchCenter({
               // entry, in the order they set. One entry can carry several.
               const images = e.images ?? []
               const imageUrls = images.map((img) => img.url)
+              const minuteLabel = eventMinuteLabel(e)
+              // Who/when a single photo is captioned with. Entries that belong
+              // to neither side (a general note, a post-match wrap-up) name no
+              // one, and carry no caption at all without a minute either.
+              const photoCaption = [
+                e.playerName || (e.side === 'home' ? homeName : e.side === 'away' ? awayName : ''),
+                minuteLabel,
+              ]
+                .filter(Boolean)
+                .join(' · ')
               return (
                 <div className="commentary__group" key={i}>
                   <div className="commentary__entry">
-                    <span className="commentary__min">
-                      {e.minute != null ? `${e.minute}'` : ''}
-                    </span>
+                    <span className="commentary__min">{minuteLabel}</span>
                     <EventIcon type={e.type} />
                     <div className="commentary__text">
                       {(() => {
@@ -304,10 +328,7 @@ export function MatchCenter({
                         image={images[0]}
                         onOpen={() => setLightbox({ images: imageUrls, index: 0 })}
                       />
-                      <figcaption>
-                        {e.playerName || (e.side === 'home' ? homeName : awayName)}
-                        {e.minute != null ? ` · ${e.minute}'` : ''}
-                      </figcaption>
+                      {photoCaption && <figcaption>{photoCaption}</figcaption>}
                     </figure>
                   )}
                   {images.length > 1 && (

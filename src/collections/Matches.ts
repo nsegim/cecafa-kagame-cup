@@ -129,13 +129,18 @@ export const COMMENTARY_TYPES = [
   { label: 'Substitution', value: 'substitution' },
   { label: 'Half Time', value: 'halftime' },
   { label: 'Second Half (Resume)', value: 'secondhalf' },
+  { label: 'After the Match (Post-Match)', value: 'postmatch' },
 ] as const
 
 /**
  * Commentary types that belong to one side, so they require a Team. The rest
- * (a general note, or the whole-match markers Half Time / Second Half) don't.
+ * (a general note, or the whole-match markers Half Time / Second Half /
+ * Post-Match) don't.
  */
 const TEAM_COMMENTARY_TYPES = ['goal', 'yellow', 'red', 'substitution']
+
+/** Types whose whole content is the editor's own words, so the text is required. */
+const TEXT_COMMENTARY_TYPES = ['note', 'postmatch']
 
 type CommentarySiblingData = { type?: string; team?: 'home' | 'away' }
 
@@ -168,7 +173,10 @@ function validateCommentaryTeam(value: unknown, { siblingData }: { siblingData?:
 function validateCommentaryText(value: unknown, { siblingData }: { siblingData?: unknown }) {
   // `value` is a Lexical editor state (an object), never an empty string, so
   // emptiness is checked by walking for real text — see richTextHasContent.
-  if ((asCommentarySiblingData(siblingData).type ?? 'note') === 'note' && !richTextHasContent(value)) {
+  if (
+    TEXT_COMMENTARY_TYPES.includes(asCommentarySiblingData(siblingData).type ?? 'note') &&
+    !richTextHasContent(value)
+  ) {
     return 'Enter the update text.'
   }
   return true
@@ -412,7 +420,7 @@ export const Matches: CollectionConfig = {
       labels: { singular: 'Entry', plural: 'Entries' },
       admin: {
         description:
-          'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry.',
+          'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry. Once the match is over you can keep posting: use type “After the Match (Post-Match)” for a wrap-up or reaction — those sit above the full-time whistle, newest first.',
         initCollapsed: true,
       },
       fields: [
@@ -422,7 +430,11 @@ export const Matches: CollectionConfig = {
           min: 0,
           max: 120,
           admin: {
-            description: 'Match minute, e.g. 62. Entries are shown in minute order on the feed.',
+            // Hidden for Post-Match, which by definition has no match minute —
+            // those entries always sort above the full-time whistle instead.
+            condition: (_, s) => s?.type !== 'postmatch',
+            description:
+              'Match minute, e.g. 62. Entries are shown in minute order on the feed. Optional for Half Time / Second Half — those show as HT on the feed rather than a minute.',
           },
         },
         {
@@ -620,13 +632,22 @@ export const Matches: CollectionConfig = {
       ({ doc }) => {
         // Live commentary, scores and status need to appear immediately during a
         // live match — don't make an editor wait out the page's ISR window.
-        revalidatePath(`/matches/${doc.id}`)
-        revalidatePath('/matches')
-        revalidatePath('/')
-        // The header's LIVE button is read from this collection on every page via
-        // the root layout — bust every route's cache, not just the match pages,
-        // so the button appears/disappears immediately site-wide.
-        revalidatePath('/', 'layout')
+        //
+        // Wrapped because `revalidatePath` throws outside a Next.js request
+        // context ("static generation store missing"): a write from a standalone
+        // script — `yarn seed`, a one-off import — has no cache to bust, and
+        // that shouldn't abort the write itself.
+        try {
+          revalidatePath(`/matches/${doc.id}`)
+          revalidatePath('/matches')
+          revalidatePath('/')
+          // The header's LIVE button is read from this collection on every page
+          // via the root layout — bust every route's cache, not just the match
+          // pages, so the button appears/disappears immediately site-wide.
+          revalidatePath('/', 'layout')
+        } catch {
+          // Not running inside a request — nothing to revalidate.
+        }
       },
     ],
   },

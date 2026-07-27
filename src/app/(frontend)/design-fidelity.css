@@ -1095,17 +1095,14 @@ body > main {
   gap: 14px;
 }
 
-.commentary__group:nth-child(2) .commentary__entry {
-  min-height: 158px;
-}
-
-.commentary__group:nth-child(9) .commentary__entry {
-  min-height: 208px;
-}
-
-.commentary__group:nth-child(10) .commentary__entry {
-  min-height: 112px;
-}
+/*
+ * The Figma mock had taller cards in the 2nd, 9th and 10th feed slots because
+ * those specific entries carried a photo, and the heights were transcribed here
+ * by position. The real feed is ordered by match minute and grows all match, so
+ * whichever entry happens to land in one of those slots got an arbitrary block
+ * of empty space under it. Photos size their own frame (.commentary__photo), so
+ * every entry just sizes to its content and the base 80px min-height above.
+ */
 
 .commentary__entry::after {
   content: '';

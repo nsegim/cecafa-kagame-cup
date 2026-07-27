@@ -189,6 +189,8 @@ export type MatchEventType =
   | 'halftime'
   | 'secondhalf'
   | 'fulltime'
+  /** An editor's update posted after the final whistle — a wrap-up, reaction, extra photos. */
+  | 'postmatch'
   | 'note'
 
 export interface MatchEvent {
@@ -204,6 +206,64 @@ export interface MatchEvent {
   text?: DefaultTypedEditorState | null
   /** Photos an editor attached to this specific entry, in order — shown right here on the feed. */
   images?: FeedImage[]
+}
+
+/**
+ * Sentinel positions on the feed's minute axis. A real minute is 0–120, so
+ * these sit safely either side of the run of play.
+ */
+const BEFORE_KICKOFF = -1
+const AFTER_FULL_TIME = 1_000
+/** The break, so a Half Time / Second Half marker lands there even with no minute typed. */
+const HALF_TIME_MINUTE = 45
+
+/**
+ * Where an entry sits on the feed's minute axis. Anything posted after the
+ * final whistle sorts above the whole match; the whistle markers fall back to
+ * the break when an editor didn't type a minute (they'd otherwise drop to the
+ * bottom alongside the pre-match notes).
+ */
+function feedMinute(ev: MatchEvent): number {
+  if (ev.type === 'postmatch') return AFTER_FULL_TIME
+  if (ev.minute != null) return ev.minute
+  if (ev.type === 'halftime' || ev.type === 'secondhalf') return HALF_TIME_MINUTE
+  return BEFORE_KICKOFF
+}
+
+/**
+ * Builds the Live Expressions feed, newest-first.
+ *
+ * Primary key is the position on the minute axis (descending); when entries
+ * share a position — including the pre-match / pre-live entries that have no
+ * minute yet — the more recently posted one (a later row in the commentary
+ * array) shows on top, so the latest update is always at the top even before
+ * kickoff. Kick-off sorts in at minute 0 (just under the first in-match update,
+ * above any pre-match notes). The full-time whistle sorts above everything
+ * played, but *below* anything an editor posts after it, so post-match updates
+ * stay at the very top, newest first.
+ *
+ * `scored` are the automatic goal/card events derived from Player Match Stats;
+ * `notes` are the editor's own commentary rows, in the order they were added.
+ */
+export function orderMatchFeed(
+  scored: MatchEvent[],
+  notes: MatchEvent[],
+  { started, final }: { started: boolean; final: boolean },
+): MatchEvent[] {
+  type Ordered = { ev: MatchEvent; min: number; seq: number }
+  const ordered: Ordered[] = []
+  scored.forEach((ev, i) => ordered.push({ ev, min: feedMinute(ev), seq: -1 - i }))
+  notes.forEach((ev, i) => ordered.push({ ev, min: feedMinute(ev), seq: i }))
+  if (started) {
+    ordered.push({ ev: { minute: 0, type: 'kickoff' }, min: 0, seq: -1_000_000 })
+  }
+  if (final) {
+    ordered.push({ ev: { minute: null, type: 'fulltime' }, min: AFTER_FULL_TIME, seq: -1_000_000 })
+  }
+  // Compare `min` for equality first — two entries can share the same sentinel,
+  // and subtracting two identical non-finite values would give NaN.
+  ordered.sort((a, b) => (a.min === b.min ? b.seq - a.seq : b.min - a.min))
+  return ordered.map((o) => o.ev)
 }
 
 /** A feed image plus its real pixel size, so it can render at its own aspect ratio. */
@@ -393,25 +453,10 @@ export const getMatchDetail = cache(async (
       }
     })
 
-  // Build the feed newest-first. Primary key is the match minute (descending);
-  // when entries share a minute — including the pre-match / pre-live entries
-  // that have no minute yet — the more recently posted one (a later row in the
-  // commentary array) shows on top, so the latest update is always at the top
-  // even before kickoff. Kick-off sorts in at minute 0 (just under the first
-  // in-match update, above any pre-match notes); a final result's full-time
-  // marker sorts to the very top.
-  type Ordered = { ev: MatchEvent; min: number; seq: number }
-  const ordered: Ordered[] = []
-  scored.forEach((ev, i) => ordered.push({ ev, min: ev.minute ?? -1, seq: -1 - i }))
-  notes.forEach((ev, i) => ordered.push({ ev, min: ev.minute ?? -1, seq: i }))
-  if (effectiveMatchStatus(match) !== 'scheduled') {
-    ordered.push({ ev: { minute: 0, type: 'kickoff' }, min: 0, seq: -1_000_000 })
-  }
-  if (match.status === 'final') {
-    ordered.push({ ev: { minute: 90, type: 'fulltime' }, min: Number.POSITIVE_INFINITY, seq: 1_000_000 })
-  }
-  ordered.sort((a, b) => b.min - a.min || b.seq - a.seq)
-  const events: MatchEvent[] = ordered.map((o) => o.ev)
+  const events = orderMatchFeed(scored, notes, {
+    started: effectiveMatchStatus(match) !== 'scheduled',
+    final: match.status === 'final',
+  })
 
   const otherMatches = (allMatchesRes.docs as Match[])
     .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
