@@ -19,7 +19,7 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid match id' }, { status: 400 })
   }
 
-  const detail = await getMatchDetail(numericId)
+  const detail = await getMatchDetail(numericId, { includeOtherMatches: false })
   if (!detail) {
     return NextResponse.json({ error: 'Match not found' }, { status: 404 })
   }

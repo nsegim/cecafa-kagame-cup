@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getMatchDetail, effectiveMatchStatus } from '@/lib/tournament'
+import { getMatchDetail, getAllMatchIds, effectiveMatchStatus } from '@/lib/tournament'
 import { TeamCrest } from '@/components/TeamCrest'
 import { LiveMatchProvider } from '@/components/LiveMatchProvider'
 import { LiveScore } from '@/components/LiveScore'
@@ -12,6 +12,24 @@ import { matchSideStats, type LiveMatchData } from '@/lib/matchStats'
 import { matchDate, matchTime } from '@/lib/datetime'
 
 export const revalidate = 120
+
+/**
+ * Prerender every fixture at build time so this page is served from the ISR
+ * cache instead of being rendered from scratch on every request.
+ *
+ * Without this, a dynamic segment has no cache in front of it at all: each hit
+ * re-ran the full `getMatchDetail` query set, which on a loaded origin pushed
+ * past Cloudflare's 100s limit and returned a 524 instead of the page. The
+ * scoreline still stays current — `revalidate` refreshes the shell, and
+ * <LiveMatchProvider> polls `/matches/[id]/live` for anything in play.
+ *
+ * `dynamicParams` stays on (the default), so a fixture added after the build
+ * is still rendered on demand rather than 404ing.
+ */
+export async function generateStaticParams() {
+  const ids = await getAllMatchIds()
+  return ids.map((id) => ({ id: String(id) }))
+}
 
 const STAGE_LABEL: Record<string, string> = {
   group: 'Group Stage',

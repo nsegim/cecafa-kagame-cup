@@ -1136,6 +1136,31 @@
   text-transform: uppercase;
   text-align: center;
 }
+/* Placeholder blocks for the match page's loading state — same footprint as
+   the hero elements they stand in for, reusing the site's `pulse` keyframe. */
+.skeleton {
+  display: block;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  animation: pulse 1.4s infinite;
+}
+.skeleton--meta {
+  width: 110px;
+  height: 16px;
+}
+.skeleton--crest {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+}
+.skeleton--name {
+  width: 150px;
+  height: 22px;
+}
+.skeleton--score {
+  width: 128px;
+  height: 62px;
+}
 .match-hero__score {
   display: flex;
   flex-direction: column;

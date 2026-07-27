@@ -284,13 +284,43 @@ function resolveLineup(raw: RawLineup | null | undefined): TeamLineup | null {
 }
 
 /**
+ * Every fixture id, for prerendering the match pages at build time.
+ * `depth: 0` keeps this to a single cheap column read — no relations expanded.
+ */
+export const getAllMatchIds = cache(async (): Promise<number[]> => {
+  try {
+    const payload = await getPayloadClient()
+    const res = await payload.find({
+      collection: 'matches',
+      sort: 'matchNumber',
+      limit: 500,
+      depth: 0,
+      pagination: false,
+    })
+    return (res.docs as Match[]).map((m) => m.id)
+  } catch (err) {
+    // A build shouldn't fail outright because the DB blipped — fall back to
+    // rendering match pages on demand.
+    console.error('[matches] failed to list match ids for prerender:', err)
+    return []
+  }
+})
+
+/**
  * Everything the single-match page shows: the fixture, both squads, a
  * commentary feed derived from recorded goals and cards, and other results.
  *
  * Wrapped in `cache()` because both `generateMetadata` and the page body need
  * it for the same request — this de-dupes the Payload round-trip.
+ *
+ * `includeOtherMatches` is off for the `/live` polling endpoint, which only
+ * reads the scoreline and feed — no reason to pull 20 more fixtures every
+ * 15 seconds for a sidebar the poll never touches.
  */
-export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | null> => {
+export const getMatchDetail = cache(async (
+  id: number,
+  { includeOtherMatches = true }: { includeOtherMatches?: boolean } = {},
+): Promise<MatchDetail | null> => {
   const payload = await getPayloadClient()
 
   const match = await payload.findByID({ collection: 'matches', id, depth: 2 }).catch(() => null)
@@ -299,14 +329,28 @@ export const getMatchDetail = cache(async (id: number): Promise<MatchDetail | nu
   const homeTeam = relTeam(match.homeTeam)
   const awayTeam = relTeam(match.awayTeam)
 
+  // A failure here degrades the page (no feed, no sidebar) rather than
+  // throwing it away entirely — the scoreline above is already in hand.
   const [statsRes, allMatchesRes] = await Promise.all([
-    payload.find({
-      collection: 'player-match-stats',
-      where: { match: { equals: id } },
-      limit: 200,
-      depth: 2,
-    }),
-    payload.find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 }),
+    payload
+      .find({
+        collection: 'player-match-stats',
+        where: { match: { equals: id } },
+        limit: 200,
+        depth: 2,
+      })
+      .catch((err) => {
+        console.error(`[match ${id}] stats query failed:`, err)
+        return { docs: [] }
+      }),
+    includeOtherMatches
+      ? payload
+          .find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 })
+          .catch((err) => {
+            console.error(`[match ${id}] other-matches query failed:`, err)
+            return { docs: [] }
+          })
+      : Promise.resolve({ docs: [] }),
   ])
 
   const homeLineup = resolveLineup(match.homeLineup)
