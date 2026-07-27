@@ -24,7 +24,7 @@ type Mode = 'component' | 'iframe'
 
 export function EmbedCode() {
   const { id } = useDocumentInfo()
-  const [mode, setMode] = useState<Mode>('component')
+  const [mode, setMode] = useState<Mode>('iframe')
   const [copied, setCopied] = useState(false)
 
   // Origin is only known in the browser; this is a client component so that's
@@ -84,10 +84,18 @@ export function EmbedCode() {
       ) : (
         <>
           <div style={{ display: 'flex', gap: '0.4rem', margin: '0 0 0.5rem' }}>
-            <button type="button" onClick={() => setMode('component')} style={tabStyle(mode === 'component')}>
+            <button
+              type="button"
+              onClick={() => setMode('component')}
+              style={tabStyle(mode === 'component')}
+            >
               Web component (recommended)
             </button>
-            <button type="button" onClick={() => setMode('iframe')} style={tabStyle(mode === 'iframe')}>
+            <button
+              type="button"
+              onClick={() => setMode('iframe')}
+              style={tabStyle(mode === 'iframe')}
+            >
               iframe
             </button>
           </div>
