@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getMatchDetail, effectiveMatchStatus } from '@/lib/tournament'
+import { getMatchDetail, getAllMatchIds, effectiveMatchStatus } from '@/lib/tournament'
 import { TeamCrest } from '@/components/TeamCrest'
 import { LiveMatchProvider } from '@/components/LiveMatchProvider'
 import { LiveScore } from '@/components/LiveScore'
@@ -15,6 +15,19 @@ import { matchTime } from '@/lib/datetime'
 // which continues to work inside the iframe (it fetches `/matches/{id}/live`
 // against the embed's own origin).
 export const revalidate = 120
+
+/**
+ * Prerender every fixture's frame, for the same reason the full match page
+ * does (see its `generateStaticParams`): `revalidate` alone leaves a dynamic
+ * segment with no cache at all, so each request re-ran the whole query set and
+ * timed out on a loaded origin. An embed is the worst place for that — it
+ * fails inside someone else's newsletter, where a stalled iframe is all the
+ * reader sees.
+ */
+export async function generateStaticParams() {
+  const ids = await getAllMatchIds()
+  return ids.map((id) => ({ id: String(id) }))
+}
 
 const STAGE_LABEL: Record<string, string> = {
   group: 'Group Stage',

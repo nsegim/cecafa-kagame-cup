@@ -68,6 +68,21 @@ body.embed-body {
   line-height: 1.2;
 }
 
+/* The shared `.skeleton--*` placeholders are sized for the full-page hero;
+   scale them to this compact bar's 44px crests for the loading state. */
+.embed-hero .skeleton--crest {
+  width: 44px;
+  height: 44px;
+}
+.embed-hero .skeleton--name {
+  width: 90px;
+  height: 15px;
+}
+.embed-hero .skeleton--score {
+  width: 76px;
+  height: 34px;
+}
+
 /* The reused <LiveScore> renders `.match-hero__score` with 64px numerals meant
    for the full hero — scale it down for the compact bar. */
 .embed-hero .match-hero__score {
