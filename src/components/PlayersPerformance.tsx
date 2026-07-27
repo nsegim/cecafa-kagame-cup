@@ -78,7 +78,8 @@ export function PlayersPerformance({ goals, assists, cleanSheets }: Record<Tab, 
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={3 + statCols.length} className="perf__empty">
-                    Nta makuru y'abakinnyi araboneka. Imikino iratangira kuri uyu wa 24 Nyakanga.
+                    Nta makuru y&apos;abakinnyi araboneka. Imikino iratangira kuri uyu wa 24
+                    Nyakanga.
                   </td>
                 </tr>
               ) : (

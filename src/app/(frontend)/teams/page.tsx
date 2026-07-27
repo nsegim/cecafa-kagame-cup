@@ -1,12 +1,17 @@
+import type { Metadata } from 'next'
 import { getTournamentData } from '@/lib/tournament'
 import { StadiumHero } from '@/components/StadiumHero'
 import { TeamsBoard } from '@/components/TeamsBoard'
 
 export const revalidate = 300
 
-export const metadata = {
-  title: 'Teams — CECAFA Kagame Cup 2026 | IGIHE',
-  description: 'All twelve clubs competing at the CECAFA Kagame Cup 2026, by group.',
+const DESCRIPTION = 'All twelve clubs competing at the CECAFA Kagame Cup 2026, by group.'
+
+export const metadata: Metadata = {
+  title: 'Teams',
+  description: DESCRIPTION,
+  alternates: { canonical: '/teams' },
+  openGraph: { title: 'Teams', description: DESCRIPTION, url: '/teams' },
 }
 
 export default async function TeamsPage() {

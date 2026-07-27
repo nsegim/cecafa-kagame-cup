@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
 
 /**
  * External news links, curated by the newsroom.
@@ -11,6 +12,26 @@ import type { CollectionConfig } from 'payload'
  * The shape returned to the frontend is mapped in `src/lib/news.ts` to the
  * existing `Article` interface, so the news components stay untouched.
  */
+
+/**
+ * Push a published change straight onto the site.
+ *
+ * The pages that show news are on a 300s ISR window, so without this an editor
+ * publishing, reordering or hiding a story saw nothing change for up to five
+ * minutes and understandably published it again. Wrapped in try/catch for the
+ * same reason the Matches hook is: `revalidatePath` throws outside a Next
+ * request context, and a write from `yarn seed` or a one-off import script has
+ * no cache to bust — that must not abort the write itself.
+ */
+function revalidateNews() {
+  try {
+    revalidatePath('/')
+    revalidatePath('/news')
+    revalidatePath('/embed/section')
+  } catch {
+    // Not running inside a request — nothing to revalidate.
+  }
+}
 
 /** Kebab-case a headline into a URL slug (used only for the internal redirect route). */
 function slugify(value: string): string {
@@ -41,6 +62,10 @@ export const Articles: CollectionConfig = {
     },
   },
   defaultSort: '-publishDate',
+  hooks: {
+    afterChange: [revalidateNews],
+    afterDelete: [revalidateNews],
+  },
   fields: [
     {
       name: 'title',

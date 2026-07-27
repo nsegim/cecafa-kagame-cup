@@ -1,4 +1,19 @@
 import type { CollectionConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
+
+/**
+ * Videos surface in the homepage carousel and as the embed widget's feature
+ * tile, so both need busting. Wrapped because `revalidatePath` throws outside a
+ * Next request context (e.g. a seed script), which must not abort the write.
+ */
+function revalidateVideos() {
+  try {
+    revalidatePath('/')
+    revalidatePath('/embed/section')
+  } catch {
+    // Not running inside a request — nothing to revalidate.
+  }
+}
 
 /**
  * The video pool for the homepage Highlights carousel — newest first.
@@ -22,6 +37,10 @@ export const Videos: CollectionConfig = {
     read: () => true,
   },
   defaultSort: '-createdAt',
+  hooks: {
+    afterChange: [revalidateVideos],
+    afterDelete: [revalidateVideos],
+  },
   fields: [
     {
       name: 'title',

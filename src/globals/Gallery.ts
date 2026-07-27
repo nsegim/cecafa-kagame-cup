@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
 
 /**
  * Gallery page presentation setting — the single editable instance, so a
@@ -18,6 +19,19 @@ export const Gallery: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    // Otherwise a new banner takes up to the page's 300s ISR window to appear.
+    // Wrapped: `revalidatePath` throws outside a Next request context.
+    afterChange: [
+      () => {
+        try {
+          revalidatePath('/gallery')
+        } catch {
+          // Not running inside a request — nothing to revalidate.
+        }
+      },
+    ],
   },
   fields: [
     {

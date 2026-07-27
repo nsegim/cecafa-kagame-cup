@@ -1,14 +1,21 @@
+import type { Metadata } from 'next'
 import { getTournamentData } from '@/lib/tournament'
 import { effectiveMatchStatus } from '@/lib/matchStatus'
 import { StadiumHero } from '@/components/StadiumHero'
 import { MatchesTabs, type FeaturedMatch } from '@/components/MatchesTabs'
+import { toMatchRow } from '@/lib/matchView'
 import type { Match } from '@/payload-types'
 
 export const revalidate = 300
 
-export const metadata = {
-  title: 'Results — CECAFA Kagame Cup 2026 | IGIHE',
-  description: 'Fixtures and results from the CECAFA Kagame Cup 2026 in Rwanda.',
+const DESCRIPTION = 'Fixtures and results from the CECAFA Kagame Cup 2026 in Rwanda.'
+
+// The site suffix comes from the root layout's title template.
+export const metadata: Metadata = {
+  title: 'Results',
+  description: DESCRIPTION,
+  alternates: { canonical: '/matches' },
+  openGraph: { title: 'Results', description: DESCRIPTION, url: '/matches' },
 }
 
 function thumbUrl(m: Match): string | null {
@@ -28,20 +35,28 @@ export default async function MatchesPage() {
     .filter((m) => effectiveMatchStatus(m) !== 'scheduled')
     .sort((a, b) => +new Date(b.kickoff) - +new Date(a.kickoff))
 
-  const featuredUpcoming: FeaturedMatch | null = upcoming[0]
-    ? { label: 'UMUKINO UKURIKIRA', match: upcoming[0], imageUrl: thumbUrl(upcoming[0]) }
+  // Narrow to the view shape BEFORE handing anything to <MatchesTabs>, which is
+  // a client component. The full `Match` docs (depth: 2 — teams, crest Media and
+  // all its size variants, lineups, commentary rich text, attached photos) were
+  // otherwise serialised into the page twice: 1.25 MB of payload to render a
+  // list of names and scorelines.
+  const upcomingRows = upcoming.map(toMatchRow)
+  const previousRows = previous.map(toMatchRow)
+
+  const featuredUpcoming: FeaturedMatch | null = upcomingRows[0]
+    ? { label: 'UMUKINO UKURIKIRA', match: upcomingRows[0], imageUrl: thumbUrl(upcoming[0]) }
     : null
 
-  const featuredPrevious: FeaturedMatch | null = previous[0]
-    ? { label: 'UMUKINO UHERUKA', match: previous[0], imageUrl: thumbUrl(previous[0]) }
+  const featuredPrevious: FeaturedMatch | null = previousRows[0]
+    ? { label: 'UMUKINO UHERUKA', match: previousRows[0], imageUrl: thumbUrl(previous[0]) }
     : null
 
   return (
     <>
       <StadiumHero title="UKO IMIKINO YARANGIYE" height={490} />
       <MatchesTabs
-        upcoming={upcoming}
-        previous={previous}
+        upcoming={upcomingRows}
+        previous={previousRows}
         featuredUpcoming={featuredUpcoming}
         featuredPrevious={featuredPrevious}
       />

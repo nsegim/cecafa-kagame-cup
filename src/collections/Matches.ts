@@ -503,7 +503,7 @@ export const Matches: CollectionConfig = {
           validate: validateCommentaryText,
           admin: {
             description:
-              'The update text — supports rich formatting (bold, italics, links, lists, headings) and as many paragraphs as you need. For a goal/card/substitution this is optional extra detail shown under the automatic caption.',
+              'The update text — supports rich formatting (bold, italics, links, lists, headings) and as many paragraphs as you need. Paste a YouTube link on its own line and it plays right here on the feed instead of showing the raw URL. For a goal/card/substitution this is optional extra detail shown under the automatic caption.',
           },
         },
         {

@@ -20,6 +20,8 @@ import {
 } from './standings'
 import { computeBracket, type Bracket } from './bracket'
 import { effectiveMatchStatus } from './matchStatus'
+import { findYouTubeUrls } from './video'
+import { richTextToPlainText } from './richText'
 
 export type { StandingRow } from './standings'
 export { effectiveMatchStatus } from './matchStatus'
@@ -206,6 +208,11 @@ export interface MatchEvent {
   text?: DefaultTypedEditorState | null
   /** Photos an editor attached to this specific entry, in order — shown right here on the feed. */
   images?: FeedImage[]
+  /**
+   * YouTube player URLs for any video the editor linked in this entry's text —
+   * played inline on the feed rather than sending the visitor off-site.
+   */
+  videos?: string[]
 }
 
 /**
@@ -450,6 +457,7 @@ export const getMatchDetail = cache(async (
         side,
         text: c.text ?? undefined,
         images: feedImages(c.images),
+        videos: findYouTubeUrls(richTextToPlainText(c.text)),
       }
     })
 

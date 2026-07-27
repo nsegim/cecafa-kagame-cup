@@ -16,7 +16,6 @@
  * schema (src/collections/Players.ts) only name / team / position / shirtNumber
  * are persisted; the rest are parsed, validated and reported, but NOT stored.
  */
-import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import dotenv from 'dotenv'

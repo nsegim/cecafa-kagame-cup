@@ -16,7 +16,8 @@ export function VideoLightbox({ videoUrl, onClose }: { videoUrl: string; onClose
     }
   }, [onClose])
 
-  const embedUrl = youtubeEmbedUrl(videoUrl)
+  // The visitor just clicked to open this, so start playing straight away.
+  const embedUrl = youtubeEmbedUrl(videoUrl, { autoplay: true })
 
   return (
     <div className="lightbox" role="dialog" aria-modal="true" onClick={onClose}>

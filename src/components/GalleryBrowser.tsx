@@ -1,18 +1,57 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 import Image from 'next/image'
-import { GALLERY_CATEGORIES, type GalleryFilter, type GalleryImage } from '@/data/gallery'
+import {
+  GALLERY_CATEGORIES,
+  isGalleryFilter,
+  type GalleryFilter,
+  type GalleryImage,
+} from '@/data/gallery'
 import { GalleryLightbox } from '@/components/GalleryLightbox'
 
 interface GalleryBrowserProps {
-  initialCategory: GalleryFilter
   allImages: GalleryImage[]
 }
 
-export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserProps) {
-  const [selectedCategory, setSelectedCategory] = useState<GalleryFilter>(initialCategory)
+/** The URL is read once at mount and never pushed to, so there is nothing to subscribe to. */
+const noSubscribe = () => () => {}
+
+function readCategoryFromUrl(): GalleryFilter | null {
+  const requested = new URLSearchParams(window.location.search).get('category')
+  return requested && isGalleryFilter(requested) ? requested : null
+}
+
+/**
+ * The `?category=` deep link, read from the browser rather than from
+ * `searchParams`.
+ *
+ * The gallery page is statically rendered and shared by every visitor, so it
+ * cannot vary on a query string without giving up its cache — reading
+ * `searchParams` there forced the whole route dynamic (`no-store`, ~1.5s per
+ * request straight to the database). This is client filter state; it belongs
+ * here.
+ *
+ * `useSyncExternalStore` rather than a `useEffect` + `setState`: it returns the
+ * server snapshot (`null`) during SSR and hydration, then the real value, with
+ * no hydration mismatch and no cascading render.
+ */
+function useUrlCategory(): GalleryFilter | null {
+  return useSyncExternalStore(
+    noSubscribe,
+    readCategoryFromUrl,
+    () => null, // server: no URL to read
+  )
+}
+
+export function GalleryBrowser({ allImages }: GalleryBrowserProps) {
+  const urlCategory = useUrlCategory()
+  // Null until the visitor picks a folder themselves, at which point their
+  // choice takes over from whatever the incoming link asked for.
+  const [chosenCategory, setChosenCategory] = useState<GalleryFilter | null>(null)
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  const selectedCategory: GalleryFilter = chosenCategory ?? urlCategory ?? 'All'
 
   const images = useMemo(
     () =>
@@ -23,7 +62,7 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
   )
 
   function selectCategory(category: GalleryFilter) {
-    setSelectedCategory(category)
+    setChosenCategory(category)
     setOpenIndex(null)
 
     const url = new URL(window.location.href)
@@ -90,10 +129,6 @@ export function GalleryBrowser({ initialCategory, allImages }: GalleryBrowserPro
             </figure>
           ))}
         </div>
-
-        <button type="button" className="gallery-cta gallery-cta--load">
-          Reba izindi
-        </button>
       </section>
 
       {openIndex !== null && (

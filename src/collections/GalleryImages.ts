@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
 
 /**
  * The Flickr album pool for the site gallery.
@@ -20,6 +21,21 @@ export const GALLERY_CATEGORY_OPTIONS = [
   { label: 'Stadium', value: 'Stadium' },
   { label: 'APR FC', value: 'APR FC' },
 ] as const
+
+/**
+ * Both gallery surfaces read the same list, so any edit here has to bust both:
+ * the /gallery grid and the home-page mosaic (its first nine items). Wrapped
+ * because `revalidatePath` throws outside a Next request context — a write from
+ * a standalone script must not fail on that.
+ */
+function revalidateGallery() {
+  try {
+    revalidatePath('/')
+    revalidatePath('/gallery')
+  } catch {
+    // Not running inside a request — nothing to revalidate.
+  }
+}
 
 /** Requires a well-formed http(s) URL when a value is given; empty is allowed. */
 function validateFlickrAlbumUrl(value: string | null | undefined) {
@@ -49,6 +65,10 @@ export const GalleryImages: CollectionConfig = {
     read: () => true,
   },
   defaultSort: '-createdAt',
+  hooks: {
+    afterChange: [revalidateGallery],
+    afterDelete: [revalidateGallery],
+  },
   fields: [
     {
       name: 'title',

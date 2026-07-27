@@ -1361,6 +1361,30 @@
   color: var(--ink-500);
 }
 
+/*
+ * A YouTube video linked in a commentary entry, played inline. A <span> rather
+ * than a <div> so it stays valid inside the rich text's own <p> elements —
+ * hence the explicit display:block. The 16/9 box keeps the player at the right
+ * shape at any width, so it needs no height set anywhere.
+ */
+.commentary__video {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0.6em 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--navy-900);
+}
+.commentary__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 .matchstats {
   padding-top: 8px;
 }

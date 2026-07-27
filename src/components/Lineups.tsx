@@ -75,9 +75,7 @@ export function Lineups({
         </button>
       </div>
 
-      {starting.length === 0 ? (
-        <p className="lineup__empty"></p>
-      ) : (
+      {starting.length === 0 ? null : (
         <>
           <ol className="lineup__list">
             {starting.map((entry) => (

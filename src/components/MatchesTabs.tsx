@@ -2,15 +2,15 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import type { Match } from '@/payload-types'
+import type { MatchRow } from '@/lib/matchView'
 import { effectiveMatchStatus } from '@/lib/matchStatus'
-import { TeamCrest } from './TeamCrest'
-import { matchSide, VENUE_LABEL } from '@/lib/matchLabels'
+import { CrestView } from './TeamCrest'
+import { VENUE_LABEL } from '@/lib/matchLabels'
 import { matchDate, matchTime, matchDateParts } from '@/lib/datetime'
 
 export interface FeaturedMatch {
   label: string
-  match: Match
+  match: MatchRow
   imageUrl: string | null
 }
 
@@ -37,8 +37,6 @@ function CalendarIcon() {
 function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
   if (!featured) return null
   const { match, label, imageUrl } = featured
-  const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
-  const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
   const played = effectiveMatchStatus(match) !== 'scheduled'
 
   return (
@@ -56,8 +54,8 @@ function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
 
       <div className="match-banner__teams">
         <div className="match-banner__team">
-          <TeamCrest team={home.team} size={70} />
-          <span className="match-banner__name">{home.label}</span>
+          <CrestView side={match.home} size={70} />
+          <span className="match-banner__name">{match.home.label}</span>
         </div>
 
         {played ? (
@@ -71,8 +69,8 @@ function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
         )}
 
         <div className="match-banner__team">
-          <span className="match-banner__name">{away.label}</span>
-          <TeamCrest team={away.team} size={70} />
+          <span className="match-banner__name">{match.away.label}</span>
+          <CrestView side={match.away} size={70} />
         </div>
       </div>
 
@@ -88,9 +86,7 @@ function FeaturedBanner({ featured }: { featured: FeaturedMatch | null }) {
   )
 }
 
-function MatchListRow({ match }: { match: Match }) {
-  const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
-  const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
+function MatchListRow({ match }: { match: MatchRow }) {
   const played = effectiveMatchStatus(match) !== 'scheduled'
   const { day, month, year } = matchDateParts(match.kickoff)
 
@@ -104,8 +100,8 @@ function MatchListRow({ match }: { match: Match }) {
 
       <div className="match-card__body match-row__body">
         <div className="match-card__team">
-          <TeamCrest team={home.team} size={50} />
-          <span className="match-card__name">{home.label}</span>
+          <CrestView side={match.home} size={50} />
+          <span className="match-card__name">{match.home.label}</span>
         </div>
 
         {played ? (
@@ -119,8 +115,8 @@ function MatchListRow({ match }: { match: Match }) {
         )}
 
         <div className="match-card__team match-card__team--away">
-          <TeamCrest team={away.team} size={50} />
-          <span className="match-card__name">{away.label}</span>
+          <CrestView side={match.away} size={50} />
+          <span className="match-card__name">{match.away.label}</span>
         </div>
       </div>
 
@@ -135,14 +131,23 @@ function MatchListRow({ match }: { match: Match }) {
   )
 }
 
+/**
+ * Fixtures and results, split across two tabs.
+ *
+ * Takes <MatchRow> rather than Payload `Match` docs on purpose: this is a
+ * client component, so every prop is serialised into the page twice (SSR HTML
+ * + Flight payload). Passing the raw `depth: 2` docs put 1.25 MB of Media
+ * metadata, lineups and rich text into `/matches` to render a list of names and
+ * scorelines. See `lib/matchView` for the full account.
+ */
 export function MatchesTabs({
   upcoming,
   previous,
   featuredUpcoming,
   featuredPrevious,
 }: {
-  upcoming: Match[]
-  previous: Match[]
+  upcoming: MatchRow[]
+  previous: MatchRow[]
   featuredUpcoming: FeaturedMatch | null
   featuredPrevious: FeaturedMatch | null
 }) {
@@ -155,16 +160,22 @@ export function MatchesTabs({
       <div className="container">
         <div className="matches-tabs" role="tablist" aria-label="Matches">
           <button
+            type="button"
             role="tab"
+            id="matches-tab-upcoming"
             aria-selected={tab === 'upcoming'}
+            aria-controls="matches-panel"
             className={`matches-tabs__tab ${tab === 'upcoming' ? 'is-active' : ''}`}
             onClick={() => setTab('upcoming')}
           >
             Imikino iteganyijwe
           </button>
           <button
+            type="button"
             role="tab"
+            id="matches-tab-previous"
             aria-selected={tab === 'previous'}
+            aria-controls="matches-panel"
             className={`matches-tabs__tab ${tab === 'previous' ? 'is-active' : ''}`}
             onClick={() => setTab('previous')}
           >
@@ -172,18 +183,24 @@ export function MatchesTabs({
           </button>
         </div>
 
-        <div className="matches-label">
-          {tab === 'upcoming' ? 'Imikino iteganyijwe' : 'Imikino iheruka'}
-        </div>
+        <div
+          id="matches-panel"
+          role="tabpanel"
+          aria-labelledby={tab === 'upcoming' ? 'matches-tab-upcoming' : 'matches-tab-previous'}
+        >
+          <div className="matches-label">
+            {tab === 'upcoming' ? 'Imikino iteganyijwe' : 'Imikino iheruka'}
+          </div>
 
-        <FeaturedBanner featured={featured} />
+          <FeaturedBanner featured={featured} />
 
-        <div className="matches-list">
-          {rows.length === 0 ? (
-            <p className="perf__empty">No {tab} matches yet.</p>
-          ) : (
-            rows.map((m) => <MatchListRow key={m.id} match={m} />)
-          )}
+          <div className="matches-list">
+            {rows.length === 0 ? (
+              <p className="perf__empty">No {tab} matches yet.</p>
+            ) : (
+              rows.map((m) => <MatchListRow key={m.id} match={m} />)
+            )}
+          </div>
         </div>
       </div>
     </section>

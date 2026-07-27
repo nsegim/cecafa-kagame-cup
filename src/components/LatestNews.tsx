@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Article } from '@/lib/news'
 import { shortDate } from '@/lib/datetime'
 
@@ -8,10 +9,21 @@ function Card({ article, featured = false }: { article: Article; featured?: bool
       href={`/news/${article.slug}`}
       className={`news-card ${featured ? 'news-card--featured' : ''}`}
     >
-      <div
-        className="news-card__img"
-        style={article.imageUrl ? { backgroundImage: `url(${article.imageUrl})` } : undefined}
-      >
+      {/* next/image rather than a CSS background — see the note in NewsCard. */}
+      <div className="news-card__img">
+        {article.imageUrl && (
+          <Image
+            src={article.imageUrl}
+            alt=""
+            fill
+            sizes={
+              featured
+                ? '(max-width: 900px) 100vw, 50vw'
+                : '(max-width: 600px) 50vw, (max-width: 900px) 33vw, 25vw'
+            }
+            style={{ objectFit: 'cover' }}
+          />
+        )}
         {article.category && <span className="news-card__tag">{article.category}</span>}
         {!article.imageUrl && <span className="news-card__img-fallback">IGIHE</span>}
       </div>

@@ -73,7 +73,9 @@ export function SectionEmbed({ initial }: { initial: SectionData }) {
     let timer: ReturnType<typeof setTimeout>
     const tick = async () => {
       try {
-        const res = await fetch('/embed/section/data', { cache: 'no-store' })
+        // `no-cache` rather than `no-store` so the browser sends a conditional
+        // request — an unchanged widget comes back as an empty 304.
+        const res = await fetch('/embed/section/data', { cache: 'no-cache' })
         if (!cancelled && res.ok) setData((await res.json()) as SectionData)
       } catch {
         // transient network blip — keep the last good data, try again next tick

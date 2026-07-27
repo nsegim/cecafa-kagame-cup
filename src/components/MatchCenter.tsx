@@ -2,10 +2,57 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { MatchEvent, FeedImage } from '@/lib/tournament'
-import { richTextHasContent } from '@/lib/richText'
+import { richTextHasContent, richTextToPlainText } from '@/lib/richText'
+import { findYouTubeUrls } from '@/lib/video'
 import Image from 'next/image'
+
+/**
+ * A YouTube video an editor linked in a commentary entry, played inline on the
+ * feed. Deliberately no autoplay: a match can end up with several of these down
+ * the page, and they must not all start on their own.
+ *
+ * The wrapper is a `<span>` (displayed as a block in CSS), not a `<div>`, so it
+ * stays valid where it renders — inside the rich text's own `<p>` elements.
+ */
+function YouTubeEmbed({ url }: { url: string }) {
+  return (
+    <span className="commentary__video">
+      <iframe
+        src={url}
+        title="Video"
+        loading="lazy"
+        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </span>
+  )
+}
+
+/**
+ * Whether a paragraph is nothing but the video link(s) it carries — the usual
+ * case, an editor pasting a URL on its own line. Those paragraphs are dropped:
+ * the player renders below, and showing the raw URL above its own video is just
+ * noise. A link written into a sentence keeps its text and stays a link.
+ */
+function isBareVideoParagraph(node: unknown): boolean {
+  const text = richTextToPlainText(node)
+  if (findYouTubeUrls(text).length === 0) return false
+  return text.replace(/https?:\/\/[^\s<>"']+/g, '').trim() === ''
+}
+
+const commentaryConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  paragraph: (args) => {
+    if (isBareVideoParagraph(args.node)) return null
+    // A converter is allowed to be a plain node rather than a function, so the
+    // default has to be called only when it actually is one.
+    const fallback = defaultConverters.paragraph
+    return typeof fallback === 'function' ? fallback(args) : fallback
+  },
+})
 
 type Tab = 'live' | 'stats' | 'photos'
 
@@ -317,7 +364,13 @@ export function MatchCenter({
                       })()}
                       {richTextHasContent(e.text) && (
                         <div className="commentary__richtext">
-                          <RichText data={e.text as DefaultTypedEditorState} />
+                          <RichText
+                            data={e.text as DefaultTypedEditorState}
+                            converters={commentaryConverters}
+                          />
+                          {(e.videos ?? []).map((url) => (
+                            <YouTubeEmbed key={url} url={url} />
+                          ))}
                         </div>
                       )}
                     </div>

@@ -10,6 +10,7 @@ import { Lineups } from '@/components/Lineups'
 import { matchSide, VENUE_LABEL } from '@/lib/matchLabels'
 import { matchSideStats, type LiveMatchData } from '@/lib/matchStats'
 import { matchDate, matchTime } from '@/lib/datetime'
+import { absoluteUrl, SITE_NAME, SITE_URL } from '@/lib/site'
 
 export const revalidate = 120
 
@@ -50,13 +51,81 @@ export async function generateMetadata({
   const { match } = detail
   const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
   const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
-  const title = `${home.label} vs ${away.label} — CECAFA Kagame Cup 2026 | IGIHE`
+  const title = `${home.label} vs ${away.label}`
   const played = effectiveMatchStatus(match) !== 'scheduled'
   const description = played
     ? `${home.label} ${match.homeScore ?? 0}-${match.awayScore ?? 0} ${away.label} — ${VENUE_LABEL[match.venue] ?? match.venue}, ${matchDate(match.kickoff)}.`
     : `${home.label} vs ${away.label} — ${matchDate(match.kickoff)} at ${VENUE_LABEL[match.venue] ?? match.venue}, Kigali.`
 
-  return { title, description }
+  // The highlight thumbnail doubles as the social card when one is attached.
+  const thumb = match.highlightThumb
+  const ogImage =
+    thumb && typeof thumb !== 'number' ? (thumb.sizes?.hero?.url ?? thumb.url ?? null) : null
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/matches/${match.id}` },
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url: `/matches/${match.id}`,
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+    twitter: { card: ogImage ? 'summary_large_image' : 'summary', title, description },
+  }
+}
+
+/**
+ * Per-fixture structured data.
+ *
+ * This is what produces a rich fixture result in search — teams, kickoff, venue
+ * and (once played) the scoreline. `superEvent` ties it back to the
+ * tournament-level SportsEvent in the root layout so the 22 games are
+ * understood as one competition.
+ */
+function matchJsonLd(
+  detail: NonNullable<Awaited<ReturnType<typeof getMatchDetail>>>,
+  status: 'scheduled' | 'live' | 'final',
+) {
+  const { match } = detail
+  const home = matchSide(match.homeTeam, match.homeTeamPlaceholder)
+  const away = matchSide(match.awayTeam, match.awayTeamPlaceholder)
+  const played = status !== 'scheduled'
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    name: `${home.label} vs ${away.label}`,
+    sport: 'Football',
+    startDate: match.kickoff,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    url: absoluteUrl(`/matches/${match.id}`),
+    location: {
+      '@type': 'Place',
+      name: VENUE_LABEL[match.venue] ?? match.venue,
+      address: { '@type': 'PostalAddress', addressLocality: 'Kigali', addressCountry: 'RW' },
+    },
+    competitor: [
+      {
+        '@type': 'SportsTeam',
+        name: home.label,
+        ...(played ? { award: `${match.homeScore ?? 0}` } : {}),
+      },
+      {
+        '@type': 'SportsTeam',
+        name: away.label,
+        ...(played ? { award: `${match.awayScore ?? 0}` } : {}),
+      },
+    ],
+    superEvent: {
+      '@type': 'SportsEvent',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  }
 }
 
 export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -84,16 +153,17 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
     homeStats,
     awayStats,
   }
-  // Only poll a match that's live or about to kick off — never a final result
-  // (frozen) or a fixture still days away (pointless load).
-  const KICKOFF_SOON_MS = 30 * 60 * 1000
-  const pollEnabled =
-    displayStatus === 'live' ||
-    (displayStatus === 'scheduled' &&
-      new Date(match.kickoff).getTime() - Date.now() < KICKOFF_SOON_MS)
+  // Whether this fixture is worth polling is decided in the browser, not here:
+  // this page is prerendered, so a `Date.now()` verdict computed at build time
+  // would be frozen into the ISR cache and could keep the feed switched off for
+  // minutes after kickoff. <LiveMatchProvider> makes the call from `kickoff`.
 
   return (
-    <LiveMatchProvider matchId={match.id} initial={initialLive} enabled={pollEnabled}>
+    <LiveMatchProvider matchId={match.id} initial={initialLive} kickoff={match.kickoff}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(matchJsonLd(detail, displayStatus)) }}
+      />
       <section className="match-hero">
         <div className="match-hero__overlay" />
         <div className="match-hero__content">
@@ -122,7 +192,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
 
           <aside className="match-detail__side">
             <div className="sidecard">
-              <div className="sidecard__head">Amakuru y'umukino</div>
+              <div className="sidecard__head">Amakuru y&apos;umukino</div>
               <dl className="matchinfo">
                 <div className="matchinfo__row">
                   <dt>Irushanwa</dt>

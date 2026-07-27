@@ -83,15 +83,13 @@ export default async function MatchEmbedPage({ params }: { params: Promise<{ id:
     homeStats,
     awayStats,
   }
-  // Only poll while the game can still change — live now, or kicking off soon.
-  const KICKOFF_SOON_MS = 30 * 60 * 1000
-  const pollEnabled =
-    displayStatus === 'live' ||
-    (displayStatus === 'scheduled' &&
-      new Date(match.kickoff).getTime() - Date.now() < KICKOFF_SOON_MS)
+  // Whether to poll is decided in the browser — see the note on the full match
+  // page. This frame is prerendered too, so a build-time clock reading would be
+  // cached, and a stalled embed is the worst place for that: it fails inside
+  // someone else's newsletter, where a frozen scoreline is all the reader sees.
 
   return (
-    <LiveMatchProvider matchId={match.id} initial={initialLive} enabled={pollEnabled}>
+    <LiveMatchProvider matchId={match.id} initial={initialLive} kickoff={match.kickoff}>
       <EmbedAutoResize />
       <div className="embed">
         <div className="embed-hero">

@@ -1,11 +1,17 @@
+import type { Metadata } from 'next'
 import { fetchLatestNews } from '@/lib/news'
 import { NewsFeed } from '@/components/NewsFeed'
 
 export const revalidate = 300
 
-export const metadata = {
-  title: 'News — CECAFA Kagame Cup 2026 | IGIHE',
-  description: 'The latest news, analysis and interviews from the CECAFA Kagame Cup 2026 in Rwanda.',
+const DESCRIPTION =
+  'The latest news, analysis and interviews from the CECAFA Kagame Cup 2026 in Rwanda.'
+
+export const metadata: Metadata = {
+  title: 'News',
+  description: DESCRIPTION,
+  alternates: { canonical: '/news' },
+  openGraph: { title: 'News', description: DESCRIPTION, url: '/news' },
 }
 
 export default async function NewsIndexPage() {
