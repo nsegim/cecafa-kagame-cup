@@ -23,6 +23,17 @@ function imageSrc(img: number | Media | null | undefined): string | null {
   return img.sizes?.card?.url || img.sizes?.hero?.url || img.url || null
 }
 
+/**
+ * The original upload — the image exactly as it was added, at its true aspect
+ * ratio and uncropped. Every generated `size` is a fixed-aspect crop, so the
+ * lightbox reads `url` to show the whole photo; the largest crop is only a
+ * last-resort fallback if an original URL somehow isn't present.
+ */
+function fullSrc(img: number | Media | null | undefined): string | null {
+  if (!img || typeof img === 'number') return null
+  return img.url || img.sizes?.hero?.url || img.sizes?.card?.url || null
+}
+
 function heroSrc(img: number | Media | null | undefined): string | null {
   if (!img || typeof img === 'number') return null
   return img.sizes?.hero?.url || img.url || null
@@ -39,6 +50,7 @@ function toView(doc: GalleryImageDoc, id: string): GalleryImage | null {
   return {
     id,
     src,
+    full: fullSrc(doc.image) ?? src,
     alt: imageAlt(doc.image),
     title: doc.title ?? '',
     category: doc.category as GalleryCategory,

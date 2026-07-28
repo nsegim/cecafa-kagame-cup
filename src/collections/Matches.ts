@@ -142,7 +142,11 @@ const TEAM_COMMENTARY_TYPES = ['goal', 'yellow', 'red', 'substitution']
 /** Types whose whole content is the editor's own words, so the text is required. */
 const TEXT_COMMENTARY_TYPES = ['note', 'postmatch']
 
-type CommentarySiblingData = { type?: string; team?: 'home' | 'away' }
+type CommentarySiblingData = {
+  type?: string
+  team?: 'home' | 'away'
+  images?: unknown
+}
 
 function asCommentarySiblingData(siblingData: unknown): CommentarySiblingData {
   return (siblingData as CommentarySiblingData | undefined) ?? {}
@@ -171,13 +175,19 @@ function validateCommentaryTeam(value: unknown, { siblingData }: { siblingData?:
 }
 
 function validateCommentaryText(value: unknown, { siblingData }: { siblingData?: unknown }) {
+  const row = asCommentarySiblingData(siblingData)
+  // A photo can be the whole update — a dressing-room shot at the interval, a
+  // trophy lift after the whistle — so an entry that carries images needs no
+  // words. Only an entry with neither is empty.
+  const hasImages = Array.isArray(row.images) ? row.images.length > 0 : Boolean(row.images)
   // `value` is a Lexical editor state (an object), never an empty string, so
   // emptiness is checked by walking for real text — see richTextHasContent.
   if (
-    TEXT_COMMENTARY_TYPES.includes(asCommentarySiblingData(siblingData).type ?? 'note') &&
-    !richTextHasContent(value)
+    TEXT_COMMENTARY_TYPES.includes(row.type ?? 'note') &&
+    !richTextHasContent(value) &&
+    !hasImages
   ) {
-    return 'Enter the update text.'
+    return 'Enter the update text, or attach a photo.'
   }
   return true
 }
@@ -420,7 +430,7 @@ export const Matches: CollectionConfig = {
       labels: { singular: 'Entry', plural: 'Entries' },
       admin: {
         description:
-          'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry. Once the match is over you can keep posting: use type “After the Match (Post-Match)” for a wrap-up or reaction — those sit above the full-time whistle, newest first.',
+          'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry (an entry can be nothing but photos). Keep posting through half time exactly as you do during play: mark the break with type “Half Time”, then add as many entries as you like — with no minute typed they sit at the break, newest first — and mark the restart with “Second Half”. Once the match is over you can keep posting too: use type “After the Match (Post-Match)” for a wrap-up or reaction — those sit above the full-time whistle, newest first.',
         initCollapsed: true,
       },
       fields: [
@@ -434,7 +444,7 @@ export const Matches: CollectionConfig = {
             // those entries always sort above the full-time whistle instead.
             condition: (_, s) => s?.type !== 'postmatch',
             description:
-              'Match minute, e.g. 62. Entries are shown in minute order on the feed. Optional for Half Time / Second Half — those show as HT on the feed rather than a minute.',
+              'Match minute, e.g. 62. Entries are shown in minute order on the feed. Always optional — an entry with no minute simply lands wherever the match has reached (at the break, if you are posting during half time), above the entries already there.',
           },
         },
         {

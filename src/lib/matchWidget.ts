@@ -14,7 +14,7 @@
  * in the browser.
  */
 import type { MatchDetail, MatchEvent } from './tournament'
-import { effectiveMatchStatus } from './matchStatus'
+import { effectiveMatchStatus, isHalfTimeBreak, withinCoverageWindow } from './matchStatus'
 import { toMatchRow, type SideView } from './matchView'
 import { matchSideStats, type MatchSideStats } from './matchStats'
 import { richTextToPlainText } from './richText'
@@ -41,6 +41,13 @@ export interface MatchWidgetData {
   /** Whether the client should keep polling — live now, or kicking off soon. */
   live: boolean
   status: 'scheduled' | 'live' | 'final'
+  /** At the interval — still live, but the pill reads HT rather than LIVE. */
+  halfTime: boolean
+  /**
+   * Played, but the editor may still be posting after-match updates, so the
+   * widget keeps polling (slowly) rather than freezing on the final whistle.
+   */
+  postMatch: boolean
   /** "Group B", "Semi-final", … */
   metaLabel: string
   /** Local kickoff time, e.g. "18:00" — shown in place of a score before KO. */
@@ -253,6 +260,8 @@ export function buildMatchWidgetData(detail: MatchDetail): MatchWidgetData {
     id: match.id,
     live,
     status,
+    halfTime: status === 'live' && isHalfTimeBreak(events),
+    postMatch: status === 'final' && withinCoverageWindow(match.kickoff),
     metaLabel,
     kickoffLabel: matchTime(match.kickoff),
     home: toWidgetSide(row.home),

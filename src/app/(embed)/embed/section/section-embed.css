@@ -219,6 +219,7 @@
 }
 .secw__panel .upcoming-panel__date {
   font-size: 13px;
+    text-transform: capitalize;
 }
 .secw__panel .upcoming-row {
   height: 46px;
@@ -327,6 +328,7 @@
   }
   .secw__panel .upcoming-panel__date {
     font-size: 14px;
+    text-transform: capitalize;
   }
   .secw__panel .upcoming-row {
     height: 54px;

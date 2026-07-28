@@ -60,6 +60,7 @@
     empty: "Ubusesenguzi bw'umukino buraza umukino nutangira.",
     credit: 'CECAFA Kagame Cup 2026 · Komeza ukurikirane →',
     live: 'LIVE',
+    halfTime: 'HT',
   }
 
   var STYLE = [
@@ -224,7 +225,17 @@
             self._render()
           }
           var d = self._data
-          self._schedule(d && d.live ? POLL_LIVE_MS : d && d.status === 'final' ? null : POLL_IDLE_MS)
+          // A finished match still gets the idle cadence while `postMatch` is
+          // set — the editor keeps posting after-match updates, and the feed
+          // should pick them up rather than freeze on the final whistle. Only
+          // a settled result (postMatch cleared, hours later) stops the polling.
+          self._schedule(
+            d && d.live
+              ? POLL_LIVE_MS
+              : d && d.status === 'final' && !d.postMatch
+                ? null
+                : POLL_IDLE_MS,
+          )
         })
         .catch(function () {
           if (!self._data) self._renderError()
@@ -294,7 +305,15 @@
         score.appendChild(el('span', 'cm-nums', '<span>' + d.homeScore + '</span><span>:</span><span>' + d.awayScore + '</span>'))
       }
       if (d.status === 'live') {
-        score.appendChild(el('span', 'cm-pill cm-pill--live', '<span class="cm-dot"></span>' + STRINGS.live))
+        // At the interval the pill says HT — the match is still live and
+        // updates keep arriving, but it isn't being played right now.
+        score.appendChild(
+          el(
+            'span',
+            'cm-pill cm-pill--live',
+            '<span class="cm-dot"></span>' + (d.halfTime ? STRINGS.halfTime : STRINGS.live),
+          ),
+        )
       } else if (d.status === 'final') {
         score.appendChild(el('span', 'cm-pill', 'FT'))
       } else {

@@ -406,6 +406,7 @@ body > main {
   margin-bottom: 5px;
   font-size: 14px;
   line-height: 19px;
+    text-transform: capitalize;
 }
 
 .upcoming-row {
@@ -1144,8 +1145,8 @@ body > main {
 
 /* The clickable image frame (a <button>) — opens the photo in a lightbox.
    Fixed-height stage on a black canvas. The whole image always shows inside it
-   (contain for portraits, cover for landscapes); portraits get a blurred copy
-   of themselves behind, so the leftover room is filled design, never bands. */
+   (contain, at its real aspect ratio); a blurred copy of the same photo fills
+   the leftover room behind it, so it reads as design, never empty bands. */
 .commentary__photo-frame {
   position: relative;
   display: block;

@@ -265,34 +265,28 @@ function StatRow({ label, home, away }: { label: string; home: number; away: num
 }
 
 /**
- * A single Live Expressions photo. The whole image is always shown — never
- * cropped. A portrait is letterboxed inside a fixed-height frame with a blurred,
- * darkened copy of the same image filling the space behind it (instead of flat
- * empty bands), so the leftover room reads as design rather than padding. A
- * landscape fills the frame with `cover`. Orientation is known from the real
- * pixel dimensions, so there's no image-load guesswork.
+ * A single Live Expressions photo. The whole image is always shown at its real
+ * aspect ratio — never cropped — inside a fixed-height frame. A blurred, darkened
+ * copy of the same photo fills whatever room the aspect ratio leaves behind it
+ * (for landscapes and portraits alike), so it reads as design rather than empty
+ * bands.
  */
 function PhotoFrame({ image, onOpen }: { image: FeedImage; onOpen: () => void }) {
-  const portrait = image.height > image.width
   return (
     <button type="button" className="commentary__photo-frame" onClick={onOpen} aria-label="Fungura ifoto">
-      {portrait && (
-        <span
-          aria-hidden
-          className="commentary__photo-blur"
-          style={{ backgroundImage: `url("${image.url}")` }}
-        />
-      )}
+      <span
+        aria-hidden
+        className="commentary__photo-blur"
+        style={{ backgroundImage: `url("${image.url}")` }}
+      />
       <Image
         src={image.url}
         alt=""
         fill
         sizes="(max-width: 900px) 100vw, 800px"
         className="commentary__photo-img"
-        style={{
-          objectFit: portrait ? 'contain' : 'cover',
-          objectPosition: portrait ? 'center' : 'top center',
-        }}
+        // `contain` shows the whole photo at its real aspect ratio — never cropped.
+        style={{ objectFit: 'contain', objectPosition: 'center' }}
       />
     </button>
   )

@@ -59,8 +59,10 @@ export function GalleryLightbox({ images, index, onClose, onNavigate }: GalleryL
       )}
 
       <div className="gallery-lightbox__frame" onClick={(e) => e.stopPropagation()}>
+        {/* Original upload (image.full), not the cropped grid thumbnail, so the
+            whole photo shows at its real aspect ratio. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image.src} alt={image.alt} />
+        <img src={image.full} alt={image.alt} />
         <div className="gallery-lightbox__footer">
           <span className="gallery-lightbox__caption">
             {image.category} · {index + 1} / {count}

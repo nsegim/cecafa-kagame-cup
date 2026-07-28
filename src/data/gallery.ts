@@ -21,7 +21,13 @@ export type GalleryCategory = Exclude<GalleryFilter, 'All'>
 
 export interface GalleryImage {
   id: string
+  /** Cropped thumbnail for the grid/mosaic tile. */
   src: string
+  /**
+   * The original upload — the image exactly as it was added, at its true aspect
+   * ratio and uncropped. Used by the lightbox so the full photo is visible.
+   */
+  full: string
   alt: string
   title: string
   category: GalleryCategory

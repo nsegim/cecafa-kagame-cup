@@ -19,7 +19,7 @@ import {
   type TeamRef,
 } from './standings'
 import { computeBracket, type Bracket } from './bracket'
-import { effectiveMatchStatus } from './matchStatus'
+import { effectiveMatchStatus, HALF_TIME_MINUTE } from './matchStatus'
 import { findYouTubeUrls } from './video'
 import { richTextToPlainText } from './richText'
 
@@ -176,7 +176,9 @@ function matchPhotoUrls(match: Match): string[] {
       const img = p.image
       if (!img || typeof img === 'number') return null
       const media = img as Media
-      return media.sizes?.hero?.url || media.url || null
+      // Original upload — the photo exactly as it was added, at its true aspect
+      // ratio. `hero` is a fixed 1600×900 crop, so it's only a fallback.
+      return media.url || media.sizes?.hero?.url || null
     })
     .filter((url): url is string => Boolean(url))
     .reverse() // newest-added photos first, so the most recent match images show at the top
@@ -221,8 +223,6 @@ export interface MatchEvent {
  */
 const BEFORE_KICKOFF = -1
 const AFTER_FULL_TIME = 1_000
-/** The break, so a Half Time / Second Half marker lands there even with no minute typed. */
-const HALF_TIME_MINUTE = 45
 
 /**
  * Where an entry sits on the feed's minute axis. Anything posted after the
@@ -238,6 +238,39 @@ function feedMinute(ev: MatchEvent): number {
 }
 
 /**
+ * Where each of the editor's own entries sits on the minute axis, read in the
+ * order they were posted.
+ *
+ * A minute is optional in the admin, and an entry without one has to land where
+ * the match had actually got to when it was written — otherwise an update typed
+ * during the interval (a photo from the tunnel, a coach's remark, a stat) sank
+ * to the very bottom of the feed, below kick-off, as if it had been posted
+ * before the match. So a cursor walks the entries: a typed minute moves it
+ * forward, a Half Time / Second Half marker moves it to the break, and anything
+ * with no minute simply takes wherever the cursor has reached. Entries sharing
+ * a position are separated by post order (newest on top), so an interval update
+ * sits directly above the Half Time whistle and reads in sequence with the rest.
+ *
+ * The cursor only ever moves forward, so filling in a missed earlier incident
+ * after the fact doesn't drag later minute-less entries backwards with it.
+ */
+function notePositions(notes: MatchEvent[]): number[] {
+  let cursor: number | null = null // null until the match has visibly started
+  return notes.map((ev) => {
+    if (ev.type === 'postmatch') return AFTER_FULL_TIME
+    if (ev.type === 'halftime' || ev.type === 'secondhalf') {
+      cursor = Math.max(cursor ?? 0, ev.minute ?? HALF_TIME_MINUTE)
+      return cursor
+    }
+    if (ev.minute != null) {
+      cursor = Math.max(cursor ?? 0, ev.minute)
+      return ev.minute
+    }
+    return cursor ?? BEFORE_KICKOFF
+  })
+}
+
+/**
  * Builds the Live Expressions feed, newest-first.
  *
  * Primary key is the position on the minute axis (descending); when entries
@@ -248,6 +281,11 @@ function feedMinute(ev: MatchEvent): number {
  * above any pre-match notes). The full-time whistle sorts above everything
  * played, but *below* anything an editor posts after it, so post-match updates
  * stay at the very top, newest first.
+ *
+ * Editor entries with no minute of their own follow the run of play instead of
+ * falling to the bottom — see `notePositions`. That's what lets an editor keep
+ * posting through the half-time interval, and after the whistle, with the same
+ * result as during play: the newest update on top.
  *
  * `scored` are the automatic goal/card events derived from Player Match Stats;
  * `notes` are the editor's own commentary rows, in the order they were added.
@@ -260,7 +298,8 @@ export function orderMatchFeed(
   type Ordered = { ev: MatchEvent; min: number; seq: number }
   const ordered: Ordered[] = []
   scored.forEach((ev, i) => ordered.push({ ev, min: feedMinute(ev), seq: -1 - i }))
-  notes.forEach((ev, i) => ordered.push({ ev, min: feedMinute(ev), seq: i }))
+  const positions = notePositions(notes)
+  notes.forEach((ev, i) => ordered.push({ ev, min: positions[i], seq: i }))
   if (started) {
     ordered.push({ ev: { minute: 0, type: 'kickoff' }, min: 0, seq: -1_000_000 })
   }
@@ -282,22 +321,23 @@ export interface FeedImage {
 
 function mediaToFeedImage(media: number | Media | null | undefined): FeedImage | null {
   if (!media || typeof media === 'number') return null
+  // Prefer the original upload with its real pixel size, so the feed shows the
+  // photo exactly as it was added — whole, at its true aspect ratio. The `hero`
+  // size is a fixed 1600×900 (16:9) crop, so it's only a fallback.
+  if (media.url && media.width && media.height) {
+    return { url: media.url, width: media.width, height: media.height }
+  }
   const hero = media.sizes?.hero
   if (hero?.url && hero.width && hero.height) {
     return { url: hero.url, width: hero.width, height: hero.height }
   }
-  if (media.url && media.width && media.height) {
-    return { url: media.url, width: media.width, height: media.height }
-  }
   // URL present but dimensions missing — fall back to a neutral 16:9 so it still renders.
-  const url = hero?.url || media.url
+  const url = media.url || hero?.url
   return url ? { url, width: 1600, height: 900 } : null
 }
 
 /** Resolve a `hasMany` upload value (or a single one) to sized images, in order. */
-function feedImages(
-  media: (number | Media)[] | number | Media | null | undefined,
-): FeedImage[] {
+function feedImages(media: (number | Media)[] | number | Media | null | undefined): FeedImage[] {
   if (!media) return []
   const list = Array.isArray(media) ? media : [media]
   return list.map(mediaToFeedImage).filter((x): x is FeedImage => x !== null)
@@ -326,7 +366,11 @@ export interface MatchDetail {
 }
 
 type RawLineupRow = { player?: number | Player | null; isCaptain?: boolean | null }
-type RawLineup = { coach?: string | null; startingXI?: RawLineupRow[] | null; substitutes?: RawLineupRow[] | null }
+type RawLineup = {
+  coach?: string | null
+  startingXI?: RawLineupRow[] | null
+  substitutes?: RawLineupRow[] | null
+}
 
 /**
  * Resolves a match's stored lineup (player relationships + captain flags)
@@ -341,7 +385,10 @@ function resolveLineup(raw: RawLineup | null | undefined): TeamLineup | null {
       // Player is optional in the CMS now — a row with no player selected yet
       // (stored as null) must be dropped. `typeof null === 'object'`, so guard
       // with a truthy check, not `typeof` alone.
-      .filter((row): row is { player: Player; isCaptain?: boolean | null } => !!row.player && typeof row.player === 'object')
+      .filter(
+        (row): row is { player: Player; isCaptain?: boolean | null } =>
+          !!row.player && typeof row.player === 'object',
+      )
       .map((row) => ({ player: row.player, isCaptain: Boolean(row.isCaptain) }))
 
   const startingXI = toEntries(raw.startingXI)
@@ -384,96 +431,99 @@ export const getAllMatchIds = cache(async (): Promise<number[]> => {
  * reads the scoreline and feed — no reason to pull 20 more fixtures every
  * 15 seconds for a sidebar the poll never touches.
  */
-export const getMatchDetail = cache(async (
-  id: number,
-  { includeOtherMatches = true }: { includeOtherMatches?: boolean } = {},
-): Promise<MatchDetail | null> => {
-  const payload = await getPayloadClient()
+export const getMatchDetail = cache(
+  async (
+    id: number,
+    { includeOtherMatches = true }: { includeOtherMatches?: boolean } = {},
+  ): Promise<MatchDetail | null> => {
+    const payload = await getPayloadClient()
 
-  const match = await payload.findByID({ collection: 'matches', id, depth: 2 }).catch(() => null)
-  if (!match) return null
+    const match = await payload.findByID({ collection: 'matches', id, depth: 2 }).catch(() => null)
+    if (!match) return null
 
-  const homeTeam = relTeam(match.homeTeam)
-  const awayTeam = relTeam(match.awayTeam)
+    const homeTeam = relTeam(match.homeTeam)
+    const awayTeam = relTeam(match.awayTeam)
 
-  // A failure here degrades the page (no feed, no sidebar) rather than
-  // throwing it away entirely — the scoreline above is already in hand.
-  const [statsRes, allMatchesRes] = await Promise.all([
-    payload
-      .find({
-        collection: 'player-match-stats',
-        where: { match: { equals: id } },
-        limit: 200,
-        depth: 2,
+    // A failure here degrades the page (no feed, no sidebar) rather than
+    // throwing it away entirely — the scoreline above is already in hand.
+    const [statsRes, allMatchesRes] = await Promise.all([
+      payload
+        .find({
+          collection: 'player-match-stats',
+          where: { match: { equals: id } },
+          limit: 200,
+          depth: 2,
+        })
+        .catch((err) => {
+          console.error(`[match ${id}] stats query failed:`, err)
+          return { docs: [] }
+        }),
+      includeOtherMatches
+        ? payload
+            .find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 })
+            .catch((err) => {
+              console.error(`[match ${id}] other-matches query failed:`, err)
+              return { docs: [] }
+            })
+        : Promise.resolve({ docs: [] }),
+    ])
+
+    const homeLineup = resolveLineup(match.homeLineup)
+    const awayLineup = resolveLineup(match.awayLineup)
+
+    const scored: MatchEvent[] = []
+    for (const s of statsRes.docs as PlayerMatchStat[]) {
+      if (typeof s.player === 'number') continue
+      const player = s.player as Player
+      const teamId = relId(player.team)
+      const side: 'home' | 'away' | null =
+        teamId === homeTeam?.id ? 'home' : teamId === awayTeam?.id ? 'away' : null
+      const base = { minute: s.minutes ?? null, playerName: player.name, teamId, side }
+      for (let i = 0; i < (s.goals ?? 0); i++) scored.push({ ...base, type: 'goal' })
+      for (let i = 0; i < (s.yellowCards ?? 0); i++) scored.push({ ...base, type: 'yellow' })
+      for (let i = 0; i < (s.redCards ?? 0); i++) scored.push({ ...base, type: 'red' })
+    }
+
+    // Manual live updates an editor posts as the match happens — saves, chances,
+    // substitutions, general commentary. Goals/cards above are automatic. Entries
+    // marked `hidden` stay in the admin for reference but drop out of the feed.
+    const notes: MatchEvent[] = (match.commentary ?? [])
+      .filter((c) => !c.hidden)
+      .map((c) => {
+        const player = c.player && typeof c.player === 'object' ? c.player : null
+        const playerOff = c.playerOff && typeof c.playerOff === 'object' ? c.playerOff : null
+        const playerOn = c.playerOn && typeof c.playerOn === 'object' ? c.playerOn : null
+        const side = c.team ?? null
+        const teamId =
+          side === 'home' ? (homeTeam?.id ?? null) : side === 'away' ? (awayTeam?.id ?? null) : null
+        return {
+          minute: c.minute ?? null,
+          type: (c.type as MatchEventType) ?? 'note',
+          playerName: player?.name,
+          playerOutName: playerOff?.name,
+          playerInName: playerOn?.name,
+          teamId,
+          side,
+          text: c.text ?? undefined,
+          images: feedImages(c.images),
+          videos: findYouTubeUrls(richTextToPlainText(c.text)),
+        }
       })
-      .catch((err) => {
-        console.error(`[match ${id}] stats query failed:`, err)
-        return { docs: [] }
-      }),
-    includeOtherMatches
-      ? payload
-          .find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 })
-          .catch((err) => {
-            console.error(`[match ${id}] other-matches query failed:`, err)
-            return { docs: [] }
-          })
-      : Promise.resolve({ docs: [] }),
-  ])
 
-  const homeLineup = resolveLineup(match.homeLineup)
-  const awayLineup = resolveLineup(match.awayLineup)
-
-  const scored: MatchEvent[] = []
-  for (const s of statsRes.docs as PlayerMatchStat[]) {
-    if (typeof s.player === 'number') continue
-    const player = s.player as Player
-    const teamId = relId(player.team)
-    const side: 'home' | 'away' | null =
-      teamId === homeTeam?.id ? 'home' : teamId === awayTeam?.id ? 'away' : null
-    const base = { minute: s.minutes ?? null, playerName: player.name, teamId, side }
-    for (let i = 0; i < (s.goals ?? 0); i++) scored.push({ ...base, type: 'goal' })
-    for (let i = 0; i < (s.yellowCards ?? 0); i++) scored.push({ ...base, type: 'yellow' })
-    for (let i = 0; i < (s.redCards ?? 0); i++) scored.push({ ...base, type: 'red' })
-  }
-
-  // Manual live updates an editor posts as the match happens — saves, chances,
-  // substitutions, general commentary. Goals/cards above are automatic. Entries
-  // marked `hidden` stay in the admin for reference but drop out of the feed.
-  const notes: MatchEvent[] = (match.commentary ?? [])
-    .filter((c) => !c.hidden)
-    .map((c) => {
-      const player = c.player && typeof c.player === 'object' ? c.player : null
-      const playerOff = c.playerOff && typeof c.playerOff === 'object' ? c.playerOff : null
-      const playerOn = c.playerOn && typeof c.playerOn === 'object' ? c.playerOn : null
-      const side = c.team ?? null
-      const teamId = side === 'home' ? (homeTeam?.id ?? null) : side === 'away' ? (awayTeam?.id ?? null) : null
-      return {
-        minute: c.minute ?? null,
-        type: (c.type as MatchEventType) ?? 'note',
-        playerName: player?.name,
-        playerOutName: playerOff?.name,
-        playerInName: playerOn?.name,
-        teamId,
-        side,
-        text: c.text ?? undefined,
-        images: feedImages(c.images),
-        videos: findYouTubeUrls(richTextToPlainText(c.text)),
-      }
+    const events = orderMatchFeed(scored, notes, {
+      started: effectiveMatchStatus(match) !== 'scheduled',
+      final: match.status === 'final',
     })
 
-  const events = orderMatchFeed(scored, notes, {
-    started: effectiveMatchStatus(match) !== 'scheduled',
-    final: match.status === 'final',
-  })
+    const otherMatches = (allMatchesRes.docs as Match[])
+      .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
+      .slice(0, 4)
 
-  const otherMatches = (allMatchesRes.docs as Match[])
-    .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
-    .slice(0, 4)
+    const photos = matchPhotoUrls(match)
 
-  const photos = matchPhotoUrls(match)
-
-  return { match, homeTeam, awayTeam, homeLineup, awayLineup, events, otherMatches, photos }
-})
+    return { match, homeTeam, awayTeam, homeLineup, awayLineup, events, otherMatches, photos }
+  },
+)
 
 /**
  * The one match, if any, the site-wide header's LIVE button should point at.
@@ -483,27 +533,29 @@ export const getMatchDetail = cache(async (
  * two group matches kicking off together — the earliest fixture (lowest
  * `matchNumber`) wins, so only one button is ever shown.
  */
-export const getActiveLiveMatch = cache(async (): Promise<{ id: number; liveMatchUrl: string } | null> => {
-  try {
-    const payload = await getPayloadClient()
-    // A match already marked Final is never a candidate; everything else
-    // (Scheduled or Live) is checked against the automatic kickoff window.
-    const res = await payload.find({
-      collection: 'matches',
-      where: { status: { not_equals: 'final' } },
-      sort: 'matchNumber',
-      limit: 25,
-      depth: 0,
-    })
-    const match = (res.docs as Match[])
-      .filter((m) => effectiveMatchStatus(m) === 'live')
-      .find((m) => m.showLiveButton !== false)
-    if (!match) return null
-    // Blank Live Match URL defaults to the match's own page. `showLiveButton`
-    // (default on) is the real toggle for hiding the button — not the URL.
-    return { id: match.id, liveMatchUrl: match.liveMatchUrl || `/matches/${match.id}` }
-  } catch (err) {
-    console.error('[live-match] failed to read active live match:', err)
-    return null
-  }
-})
+export const getActiveLiveMatch = cache(
+  async (): Promise<{ id: number; liveMatchUrl: string } | null> => {
+    try {
+      const payload = await getPayloadClient()
+      // A match already marked Final is never a candidate; everything else
+      // (Scheduled or Live) is checked against the automatic kickoff window.
+      const res = await payload.find({
+        collection: 'matches',
+        where: { status: { not_equals: 'final' } },
+        sort: 'matchNumber',
+        limit: 25,
+        depth: 0,
+      })
+      const match = (res.docs as Match[])
+        .filter((m) => effectiveMatchStatus(m) === 'live')
+        .find((m) => m.showLiveButton !== false)
+      if (!match) return null
+      // Blank Live Match URL defaults to the match's own page. `showLiveButton`
+      // (default on) is the real toggle for hiding the button — not the URL.
+      return { id: match.id, liveMatchUrl: match.liveMatchUrl || `/matches/${match.id}` }
+    } catch (err) {
+      console.error('[live-match] failed to read active live match:', err)
+      return null
+    }
+  },
+)
