@@ -52,30 +52,178 @@ export interface TournamentData {
 }
 
 /**
+ * Every fixture with its relations resolved, once per request.
+ *
+ * `depth: 2` is what makes `commentary[].player.team` readable, which both the
+ * standings' fair-play tally and the player leaderboards need. Shared through
+ * `cache()` so the homepage — which builds standings AND leaderboards — issues
+ * one matches query rather than two.
+ */
+const getMatchesWithRelations = cache(async (): Promise<Match[]> => {
+  const payload = await getPayloadClient()
+  const res = await payload.find({
+    collection: 'matches',
+    limit: 100,
+    sort: 'matchNumber',
+    depth: 2,
+  })
+  return res.docs as Match[]
+})
+
+// --- Player tallies ---------------------------------------------------------
+
+export interface PlayerTally {
+  player: Player
+  team: Team | null
+  played: number
+  goals: number
+  assists: number
+  cleanSheets: number
+  yellows: number
+  reds: number
+}
+
+/**
+ * Per-player goals, assists, cards and clean sheets, merged from the two places
+ * an editor can record them.
+ *
+ * WHY THIS IS NOT JUST `player-match-stats`. There are two input paths and
+ * editors use them differently in practice:
+ *
+ *   - Live Commentary is where the match is actually worked. It carries goals
+ *     and cards, and it is already the source of truth for the SCORELINE (see
+ *     `scoreFromGoalCommentary` in the Matches collection). At the time of
+ *     writing it holds every card in the tournament — 13 yellows — and 17 goals.
+ *   - Player Match Stats carries goals, assists and clean sheets, and is filled
+ *     in afterwards. It holds 24 goals and 6 clean sheets, and NO cards at all.
+ *
+ * Reading only Player Match Stats therefore produced two visible faults: the
+ * fair-play tiebreaker (CECAFA criterion 6) scored every team 0 because it
+ * never saw a card, and a match page could show a scoreline built from
+ * commentary goals whose scorers were absent from the top-scorer table.
+ *
+ * MERGE RULE, per match and per metric: if a match has commentary of that kind,
+ * commentary wins for that match; otherwise Player Match Stats is used. Never
+ * both, so the seven matches currently recorded in both places are not counted
+ * twice. Assists and clean sheets exist only in Player Match Stats and are
+ * always taken from there.
+ */
+export function playerTallies(matches: Match[], stats: PlayerMatchStat[]): Map<number, PlayerTally> {
+  const tallies = new Map<number, PlayerTally>()
+
+  /**
+   * `fallbackTeam` is the club the player turned out for in THAT match, taken
+   * from the fixture. It matters because commentary player relationships are
+   * capped at `maxDepth: 1` (they carry a name, not a nested club) — and
+   * because it is the more accurate answer anyway: a player's `team` field is
+   * their current club, which is not necessarily who they played for here.
+   */
+  const rowFor = (player: Player, fallbackTeam: Team | null = null): PlayerTally => {
+    const existing = tallies.get(player.id)
+    if (existing) {
+      if (!existing.team && fallbackTeam) existing.team = fallbackTeam
+      return existing
+    }
+    const own = (typeof player.team === 'number' ? null : player.team) as Team | null
+    const fresh: PlayerTally = {
+      player,
+      team: own ?? fallbackTeam,
+      played: 0,
+      goals: 0,
+      assists: 0,
+      cleanSheets: 0,
+      yellows: 0,
+      reds: 0,
+    }
+    tallies.set(player.id, fresh)
+    return fresh
+  }
+
+  // Which matches have commentary for each metric — these override the stats rows.
+  const commentaryGoalMatches = new Set<number>()
+  const commentaryCardMatches = new Set<number>()
+
+  for (const match of matches) {
+    for (const entry of match.commentary ?? []) {
+      if (entry.hidden) continue
+      if (entry.type === 'goal') commentaryGoalMatches.add(match.id)
+      if (entry.type === 'yellow' || entry.type === 'red') commentaryCardMatches.add(match.id)
+    }
+  }
+
+  for (const match of matches) {
+    const home = (match.homeTeam && typeof match.homeTeam !== 'number' ? match.homeTeam : null) as
+      | Team
+      | null
+    const away = (match.awayTeam && typeof match.awayTeam !== 'number' ? match.awayTeam : null) as
+      | Team
+      | null
+
+    for (const entry of match.commentary ?? []) {
+      // A hidden entry is retracted — it must not reach the standings either.
+      if (entry.hidden) continue
+      const player = entry.player && typeof entry.player === 'object' ? entry.player : null
+      // A goal with no scorer still counts for the team's score, but there is
+      // no player to credit here.
+      if (!player) continue
+      const side = entry.team === 'home' ? home : entry.team === 'away' ? away : null
+      const row = rowFor(player as Player, side)
+      if (entry.type === 'goal') row.goals += 1
+      else if (entry.type === 'yellow') row.yellows += 1
+      else if (entry.type === 'red') row.reds += 1
+    }
+  }
+
+  for (const stat of stats) {
+    if (typeof stat.player === 'number') continue
+    const row = rowFor(stat.player as Player)
+    const matchId = relId(stat.match)
+
+    // Appearances only exist in Player Match Stats.
+    row.played += 1
+    row.assists += stat.assists ?? 0
+    row.cleanSheets += stat.cleanSheet ? 1 : 0
+
+    if (matchId == null || !commentaryGoalMatches.has(matchId)) row.goals += stat.goals ?? 0
+    if (matchId == null || !commentaryCardMatches.has(matchId)) {
+      row.yellows += stat.yellowCards ?? 0
+      row.reds += stat.redCards ?? 0
+    }
+  }
+
+  return tallies
+}
+
+/**
  * One round-trip for the whole competition state. Cached and tagged so a
  * Payload afterChange hook can revalidate it the instant a result is saved.
  */
 export async function getTournamentData(): Promise<TournamentData> {
   const payload = await getPayloadClient()
 
-  const [teamsRes, matchesRes, cardsRes] = await Promise.all([
+  const [teamsRes, matches, stats] = await Promise.all([
     payload.find({ collection: 'teams', limit: 100, sort: 'name' }),
-    payload.find({ collection: 'matches', limit: 100, sort: 'matchNumber', depth: 2 }),
-    payload.find({ collection: 'player-match-stats', limit: 2000, depth: 0 }),
+    getMatchesWithRelations(),
+    getPlayerMatchStats(),
   ])
 
   const teams = teamsRes.docs
-  const matches = matchesRes.docs
 
-  // Fair-play points per team, summed from cards across all matches.
+  // Fair-play points per team (CECAFA tiebreaker 6), summed from every card in
+  // the tournament.
+  //
+  // This previously read `player-match-stats` at `depth: 0`, which returns
+  // `player` as a bare id — so the "is this a number?" guard skipped EVERY row
+  // and the tally was always empty. Even reading it at the right depth would
+  // have scored zero, because editors log cards on the Live Commentary feed and
+  // that collection holds none. `playerTallies` merges both sources; see its
+  // doc comment for the anti-double-count rule.
   const fairPlayByTeam = new Map<number, number>()
-  for (const s of cardsRes.docs as PlayerMatchStat[]) {
-    const player = s.player
-    if (typeof player === 'number') continue // depth 0 gives ids; need team — skip
-    const teamId = relId((player as Player)?.team)
+  for (const tally of playerTallies(matches, stats).values()) {
+    const teamId = tally.team?.id ?? relId((tally.player as Player)?.team)
     if (teamId == null) continue
     const prev = fairPlayByTeam.get(teamId) ?? 0
-    fairPlayByTeam.set(teamId, prev + fairPlayFromCards(s.yellowCards ?? 0, s.redCards ?? 0))
+    fairPlayByTeam.set(teamId, prev + fairPlayFromCards(tally.yellows, tally.reds))
   }
 
   const teamRefs: TeamRef[] = teams.map((t) => ({
@@ -99,6 +247,29 @@ export async function getTournamentData(): Promise<TournamentData> {
   return { teams, matches, tables, bracket, groupStageComplete }
 }
 
+// --- Player match stats -----------------------------------------------------
+
+/**
+ * Every player-match-stat row, with `player` → `team` resolved.
+ *
+ * Shared by the standings' fair-play tally and the homepage leaderboards, which
+ * previously issued two separate full scans of this collection on the same
+ * render of `/`. `cache()` collapses them into one query per request.
+ *
+ * `depth: 2` is required, not incidental: both callers read `player.team`, and
+ * at a shallower depth `player` comes back as a bare id and the aggregation
+ * silently produces nothing.
+ */
+const getPlayerMatchStats = cache(async (): Promise<PlayerMatchStat[]> => {
+  const payload = await getPayloadClient()
+  const res = await payload.find({
+    collection: 'player-match-stats',
+    limit: 5000,
+    depth: 2, // player -> team
+  })
+  return res.docs as PlayerMatchStat[]
+})
+
 // --- Player performance leaderboards ---------------------------------------
 
 export interface LeaderboardRow {
@@ -113,33 +284,23 @@ export interface LeaderboardRow {
 export type LeaderboardMetric = 'goals' | 'assists' | 'cleanSheets'
 
 export async function getLeaderboards(): Promise<Record<LeaderboardMetric, LeaderboardRow[]>> {
-  const payload = await getPayloadClient()
+  const [matches, stats] = await Promise.all([getMatchesWithRelations(), getPlayerMatchStats()])
 
-  const statsRes = await payload.find({
-    collection: 'player-match-stats',
-    limit: 5000,
-    depth: 2, // player -> team
-  })
-
-  const byPlayer = new Map<number, LeaderboardRow>()
-
-  for (const s of statsRes.docs as PlayerMatchStat[]) {
-    if (typeof s.player === 'number') continue
-    const player = s.player as Player
-    const team = (typeof player.team === 'number' ? null : player.team) as Team | null
-
-    const row =
-      byPlayer.get(player.id) ??
-      ({ player, team, played: 0, goals: 0, assists: 0, cleanSheets: 0 } as LeaderboardRow)
-
-    row.played += 1
-    row.goals += s.goals ?? 0
-    row.assists += s.assists ?? 0
-    row.cleanSheets += s.cleanSheet ? 1 : 0
-    byPlayer.set(player.id, row)
-  }
-
-  const all = [...byPlayer.values()]
+  // Same merged tally the standings use, so a scorer credited on the match feed
+  // also appears in the top-scorer table. Reading `player-match-stats` alone
+  // meant a match page could show a scoreline built from commentary goals whose
+  // scorers were nowhere in this table.
+  const all: LeaderboardRow[] = [...playerTallies(matches, stats).values()].map((t) => ({
+    player: t.player,
+    team: t.team,
+    // A player can be credited by commentary without a stats row recording an
+    // appearance; showing "0 played, 2 goals" reads as broken, so a scorer is
+    // treated as having played at least once.
+    played: Math.max(t.played, t.goals > 0 || t.assists > 0 ? 1 : 0),
+    goals: t.goals,
+    assists: t.assists,
+    cleanSheets: t.cleanSheets,
+  }))
   const top = (metric: LeaderboardMetric) =>
     [...all]
       .filter((r) => r[metric] > 0)

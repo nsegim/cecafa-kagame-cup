@@ -24,7 +24,16 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts'],
+    ignores: [
+      '.next/',
+      'src/payload-types.ts',
+      'src/payload-generated-schema.ts',
+      // Static assets served as-is, not application source. `public/embed/*.js`
+      // is a hand-written ES5 web component for third-party pages: it targets
+      // old browsers directly, so `var self = this` is correct there and the
+      // TypeScript-oriented rules only produce noise.
+      'public/',
+    ],
   },
 ]
 

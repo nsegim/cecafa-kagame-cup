@@ -204,13 +204,13 @@ function eventCaption(e: MatchEvent, homeName: string, awayName: string): React.
       return (
         <>
           {e.playerName}
-          {team ? ` (${team})` : ''} ahawe ikarita y'umuhondo.
+          {team ? ` (${team})` : ''} ahawe ikarita y&apos;umuhondo.
         </>
       )
     case 'red':
       return (
         <>
-          <strong>Ikarita y'umutuku.</strong> {e.playerName}
+          <strong>Ikarita y&apos;umutuku.</strong> {e.playerName}
           {team ? ` (${team})` : ''} avuye mu kibuga.
         </>
       )
@@ -329,7 +329,7 @@ export function MatchCenter({
       {tab === 'live' && (
         <div className="commentary">
           {events.length === 0 ? (
-            <p className="perf__empty">Ubusesenguzi bw'umukino buraza umukino nutangira.</p>
+            <p className="perf__empty">Ubusesenguzi bw&apos;umukino buraza umukino nutangira.</p>
           ) : (
             events.map((e, i) => {
               // Photos are shown exactly where the editor attached them — on this

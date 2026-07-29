@@ -47,6 +47,11 @@ function lineupEntryFields(side: 'home' | 'away') {
       name: 'player',
       type: 'relationship' as const,
       relationTo: 'players' as const,
+      // A lineup row renders shirt number, name and position — all on the Player
+      // doc itself. Without this cap, a `depth: 2` read of a match also pulled
+      // each player's club AND their photo (a Media doc with four size variants)
+      // for every one of ~50 rows across the two squads, none of which is shown.
+      maxDepth: 1,
       admin: {
         description:
           'Optional — leave blank if the player isn’t known yet. Rows with no player are ignored on the site.',
@@ -475,6 +480,10 @@ export const Matches: CollectionConfig = {
           label: 'Player',
           type: 'relationship',
           relationTo: 'players',
+          // The feed shows this player's NAME and nothing else; the team comes
+          // from the `team` field beside it. See the lineup `player` field above
+          // for why the nested club/photo population is worth capping.
+          maxDepth: 1,
           validate: validatePlayerForCard,
           filterOptions: commentaryPlayerFilter,
           admin: {
@@ -488,6 +497,7 @@ export const Matches: CollectionConfig = {
           label: 'Player Off',
           type: 'relationship',
           relationTo: 'players',
+          maxDepth: 1, // name only — see `player` above
           validate: validatePlayerOff,
           filterOptions: commentaryPlayerFilter,
           admin: {
@@ -500,6 +510,7 @@ export const Matches: CollectionConfig = {
           label: 'Player On',
           type: 'relationship',
           relationTo: 'players',
+          maxDepth: 1, // name only — see `player` above
           validate: validatePlayerOn,
           filterOptions: commentaryPlayerFilter,
           admin: {
@@ -639,7 +650,7 @@ export const Matches: CollectionConfig = {
       },
     ],
     afterChange: [
-      ({ doc }) => {
+      ({ doc, previousDoc }) => {
         // Live commentary, scores and status need to appear immediately during a
         // live match — don't make an editor wait out the page's ISR window.
         //
@@ -648,13 +659,30 @@ export const Matches: CollectionConfig = {
         // script — `yarn seed`, a one-off import — has no cache to bust, and
         // that shouldn't abort the write itself.
         try {
+          // The pages that actually show this match.
           revalidatePath(`/matches/${doc.id}`)
+          revalidatePath(`/embed/matches/${doc.id}`)
           revalidatePath('/matches')
           revalidatePath('/')
-          // The header's LIVE button is read from this collection on every page
-          // via the root layout — bust every route's cache, not just the match
-          // pages, so the button appears/disappears immediately site-wide.
-          revalidatePath('/', 'layout')
+          revalidatePath('/embed/section')
+
+          // `revalidatePath('/', 'layout')` invalidates EVERY route on the site —
+          // all 22 match pages, all 22 embed frames, /news, /gallery, /teams — and
+          // it used to run on every single commentary save. During a live match
+          // that is a few dozen entries an hour each throwing away the entire
+          // cache, on an origin already prone to stalling.
+          //
+          // The only site-wide thing this collection feeds is the header's LIVE
+          // button (see getActiveLiveMatch), and that can only change when one of
+          // the three fields it reads changes. So do the expensive thing only then.
+          const liveButtonChanged =
+            !previousDoc ||
+            doc.status !== previousDoc.status ||
+            doc.showLiveButton !== previousDoc.showLiveButton ||
+            doc.liveMatchUrl !== previousDoc.liveMatchUrl ||
+            doc.kickoff !== previousDoc.kickoff
+
+          if (liveButtonChanged) revalidatePath('/', 'layout')
         } catch {
           // Not running inside a request — nothing to revalidate.
         }
