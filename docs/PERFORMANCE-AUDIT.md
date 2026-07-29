@@ -1310,12 +1310,35 @@ constant; concurrent editors stop colliding; the arrays paginate instead of
 loading whole. Note this must cover **photos too** — at 269 KB it is the larger
 half, which the first draft of this recommendation missed.
 
-**Not done — timing.** The tournament runs 24 July – 7 August and is live now.
-This is a two-collection schema migration on the flagship live feature, and it
-also has to carry `scoreFromGoalCommentary` (the scoreline is derived from
-commentary goals) and the `filterOptions` player pickers across. Landing that
-mid-tournament risks far more than a slow admin costs. Ready to run on request;
-recommended for 8 August.
+**DONE.** Both arrays are now collections: `match-commentary` and `match-photos`
+(261 and 629 rows migrated). Implementation notes:
+
+- **The migration only inserts.** `matches.commentary` and `matches.photos` are
+  left byte-for-byte intact and both are still read as a per-match FALLBACK, so
+  an unmigrated or half-migrated fixture renders its full feed rather than going
+  blank. Rollback is "stop reading the new collections" — no data to restore.
+- It is **idempotent**: a match that already has rows is skipped, so an
+  interrupted run can just be re-run.
+- Array position became `sequence`, preserving feed order exactly.
+- **Score derivation moved.** It used to run in the match's `beforeValidate` off
+  the array it was saved with; it now lives in `match-commentary`'s `afterChange`
+  (`syncMatchScore`). It had to move rather than be duplicated: the legacy array
+  is frozen at migration time, so deriving from it on any later match save would
+  have quietly rolled the scoreline back, undoing goals scored since.
+- `filterOptions` for the player pickers now resolves the fixture's two sides by
+  looking up `match` (an entry no longer sits inside the match form), falling
+  back to an unfiltered picker on any miss so an editor is never blocked.
+- The bulk photo uploader posts straight to `match-photos` instead of appending
+  rows to the open form — photos land immediately and independently, instead of
+  requiring a full match save (and being lost if the editor navigated away).
+- The legacy array fields are `admin.hidden`, not deleted, and a `contentLinks`
+  UI field links from a match to its filtered entries.
+
+**Follow-up still open:** the *edit-view load* is unchanged (~499 KB) because the
+hidden legacy arrays are still fetched with the document. The **save path** — the
+actual pain — is fixed: adding an entry is one INSERT, not a full-document
+rewrite. Dropping the legacy arrays (and their tables) reclaims the load side;
+do that once a release has passed without the fallback being needed.
 
 ### A-2 — `revalidatePath('/', 'layout')` on every match save — **fixed**
 

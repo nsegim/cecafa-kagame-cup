@@ -431,9 +431,17 @@ export const Matches: CollectionConfig = {
     {
       name: 'commentary',
       type: 'array',
-      label: 'Live Commentary',
+      label: 'Live Commentary (legacy)',
       labels: { singular: 'Entry', plural: 'Entries' },
       admin: {
+        // RETIRED — entries now live in the `match-commentary` collection, which
+        // saves one row at a time instead of rewriting the whole match. This
+        // field is hidden rather than deleted so the original rows stay in the
+        // database as a fallback and a rollback path; the public feed still
+        // reads it for any fixture that has no rows in the new collection.
+        // Remove the field (and its table) once every match is confirmed
+        // migrated and a release has gone by without needing it.
+        hidden: true,
         description:
           'Everything that happens in the match, in order. Goals, cards and substitutions post here with the matching graphic on the Live Expressions feed — no need to duplicate them in Player Match Stats. A photo can optionally be attached to any entry (an entry can be nothing but photos). Keep posting through half time exactly as you do during play: mark the break with type “Half Time”, then add as many entries as you like — with no minute typed they sit at the break, newest first — and mark the restart with “Second Half”. Once the match is over you can keep posting too: use type “After the Match (Post-Match)” for a wrap-up or reaction — those sit above the full-time whistle, newest first.',
         initCollapsed: true,
@@ -549,6 +557,17 @@ export const Matches: CollectionConfig = {
       ],
     },
     {
+      // Live Commentary and Match Photos are their own collections now; these
+      // links jump straight to this fixture's entries. See MatchContentLinks.
+      name: 'contentLinks',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/MatchContentLinks#MatchContentLinks',
+        },
+      },
+    },
+    {
       // Ready-to-paste <iframe> for this match's Live Expressions feed
       // (`/embed/matches/{id}` — content only, no header/footer). Sits right
       // after the Live Commentary it embeds. See components/admin/EmbedCode.
@@ -582,11 +601,14 @@ export const Matches: CollectionConfig = {
     {
       name: 'photos',
       type: 'array',
-      label: 'Match Photos',
+      label: 'Match Photos (legacy)',
       labels: { singular: 'Photo', plural: 'Photos' },
       admin: {
+        // RETIRED — see the `commentary` field above. Photos now live in the
+        // `match-photos` collection; this stays hidden as the fallback source.
+        hidden: true,
         description:
-          'Shown in the Match Photos tab and interspersed through the live commentary feed on the match page. Use “Bulk upload photos” above to add several at once.',
+          'Legacy store. Photos are now managed in the Match Photos collection.',
         initCollapsed: true,
       },
       fields: [
@@ -620,19 +642,16 @@ export const Matches: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
-        // Goals logged in the Live Commentary (the "Live Expressions" feed) drive
-        // the scoreline automatically, so scoring a goal there updates the
-        // scoreboard and standings — an editor never has to also type the numbers.
-        // Turning on `manualScore` opts out: the editor types/corrects the result
-        // by hand and commentary never overrides it. When auto-scoring is on but no
-        // goals are logged, the score also stays as entered.
-        if (data && !data.manualScore) {
-          const derived = scoreFromGoalCommentary(data.commentary)
-          if (derived) {
-            data.homeScore = derived.home
-            data.awayScore = derived.away
-          }
-        }
+        // Goals logged in the Live Commentary drive the scoreline automatically —
+        // but that derivation now lives in the `match-commentary` collection's
+        // afterChange hook (see `syncMatchScore` there), because entries are their
+        // own rows and no longer arrive attached to a match save.
+        //
+        // It MUST NOT also run here. `matches.commentary` is kept only as a
+        // migration fallback and is frozen at the point it was copied; deriving
+        // from it on every match save would quietly roll the scoreline back to
+        // whatever it was at migration time, undoing goals scored since.
+
         // A final result without a scoreline would silently corrupt the standings.
         if (data?.status === 'final') {
           if (typeof data.homeScore !== 'number' || typeof data.awayScore !== 'number') {

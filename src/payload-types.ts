@@ -71,6 +71,8 @@ export interface Config {
     media: Media;
     teams: Team;
     matches: Match;
+    'match-commentary': MatchCommentary;
+    'match-photos': MatchPhoto;
     players: Player;
     'player-match-stats': PlayerMatchStat;
     articles: Article;
@@ -88,6 +90,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     teams: TeamsSelect<false> | TeamsSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
+    'match-commentary': MatchCommentarySelect<false> | MatchCommentarySelect<true>;
+    'match-photos': MatchPhotosSelect<false> | MatchPhotosSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     'player-match-stats': PlayerMatchStatsSelect<false> | PlayerMatchStatsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
@@ -380,7 +384,7 @@ export interface Match {
   highlightUrl?: string | null;
   highlightThumb?: (number | null) | Media;
   /**
-   * Shown in the Match Photos tab and interspersed through the live commentary feed on the match page. Use “Bulk upload photos” above to add several at once.
+   * Legacy store. Photos are now managed in the Match Photos collection.
    */
   photos?:
     | {
@@ -472,6 +476,99 @@ export interface Player {
   position: 'GK' | 'CB' | 'LB' | 'RB' | 'CDM' | 'CM' | 'CAM' | 'LW' | 'RW' | 'ST';
   shirtNumber?: number | null;
   photo?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Everything that happens in a match, in order. Each entry saves on its own, so two people can post to the same match at once without overwriting each other.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-commentary".
+ */
+export interface MatchCommentary {
+  id: number;
+  /**
+   * Which fixture this entry belongs to.
+   */
+  match: number | Match;
+  /**
+   * Auto-generated for the admin list view.
+   */
+  summary?: string | null;
+  /**
+   * Posting order within the match. Entries sharing a minute are shown newest-first by this.
+   */
+  sequence?: number | null;
+  /**
+   * Match minute, e.g. 62. Always optional — an entry with no minute lands wherever the match has reached, above the entries already there.
+   */
+  minute?: number | null;
+  /**
+   * Determines which icon/graphic this entry shows with on the feed.
+   */
+  type: 'note' | 'goal' | 'yellow' | 'red' | 'substitution' | 'halftime' | 'secondhalf' | 'postmatch';
+  /**
+   * Which side this happened for.
+   */
+  team?: ('home' | 'away') | null;
+  /**
+   * Who scored or was booked. Optional for a goal — the goal still counts for the team.
+   */
+  player?: (number | null) | Player;
+  /**
+   * Player being substituted off.
+   */
+  playerOff?: (number | null) | Player;
+  /**
+   * Player coming on.
+   */
+  playerOn?: (number | null) | Player;
+  /**
+   * The update text. Paste a YouTube link on its own line and it plays right here on the feed.
+   */
+  text?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional photos for this update, shown here on the feed in this order.
+   */
+  images?: (number | Media)[] | null;
+  /**
+   * Hide this entry from the public feed without deleting it.
+   */
+  hidden?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Photos shown in a match’s Match Photos tab. Newest-added appear first on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-photos".
+ */
+export interface MatchPhoto {
+  id: number;
+  /**
+   * Which fixture this photo belongs to.
+   */
+  match: number | Match;
+  image: number | Media;
+  /**
+   * Upload order within the match.
+   */
+  sequence?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -671,6 +768,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'matches';
         value: number | Match;
+      } | null)
+    | ({
+        relationTo: 'match-commentary';
+        value: number | MatchCommentary;
+      } | null)
+    | ({
+        relationTo: 'match-photos';
+        value: number | MatchPhoto;
       } | null)
     | ({
         relationTo: 'players';
@@ -919,6 +1024,37 @@ export interface MatchesSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-commentary_select".
+ */
+export interface MatchCommentarySelect<T extends boolean = true> {
+  match?: T;
+  summary?: T;
+  sequence?: T;
+  minute?: T;
+  type?: T;
+  team?: T;
+  player?: T;
+  playerOff?: T;
+  playerOn?: T;
+  text?: T;
+  images?: T;
+  hidden?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-photos_select".
+ */
+export interface MatchPhotosSelect<T extends boolean = true> {
+  match?: T;
+  image?: T;
+  sequence?: T;
   updatedAt?: T;
   createdAt?: T;
 }

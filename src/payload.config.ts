@@ -9,6 +9,8 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Teams } from './collections/Teams'
 import { Matches } from './collections/Matches'
+import { MatchCommentary } from './collections/MatchCommentary'
+import { MatchPhotos } from './collections/MatchPhotos'
 import { Players } from './collections/Players'
 import { PlayerMatchStats } from './collections/PlayerMatchStats'
 import { Subscribers } from './collections/Subscribers'
@@ -36,6 +38,8 @@ export default buildConfig({
     Media,
     Teams,
     Matches,
+    MatchCommentary,
+    MatchPhotos,
     Players,
     PlayerMatchStats,
     Articles,

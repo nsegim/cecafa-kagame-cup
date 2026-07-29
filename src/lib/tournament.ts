@@ -92,6 +92,57 @@ const getMatchesWithRelations = cache(async (): Promise<Match[]> => {
   return res.docs as Match[]
 })
 
+/** Every commentary entry in the tournament, for the standings and leaderboards. */
+const getAllCommentary = cache(async (): Promise<CommentaryRowWithMatch[]> => {
+  try {
+    const payload = await getPayloadClient()
+    const res = await payload.find({
+      collection: 'match-commentary',
+      limit: 5000,
+      depth: 1, // entry -> player (name only; the side comes from `team`)
+      pagination: false,
+      populate: PUBLIC_POPULATE,
+    })
+    return res.docs as CommentaryRowWithMatch[]
+  } catch (err) {
+    console.error('[commentary] failed to read entries:', err)
+    return []
+  }
+})
+
+/**
+ * Commentary per match, taking the `match-commentary` collection where it has
+ * rows and the legacy `matches.commentary` array where it does not.
+ *
+ * The same per-match fallback the feed uses, so goals and cards reach the
+ * standings identically whether or not a fixture has been migrated yet.
+ */
+function commentaryByMatch(
+  matches: Match[],
+  rows: CommentaryRowWithMatch[],
+): Map<number, MatchCommentaryDoc[]> {
+  const migrated = new Map<number, MatchCommentaryDoc[]>()
+  for (const row of rows) {
+    const matchId = relId(row.match as number | { id: number } | null | undefined)
+    if (matchId == null) continue
+    const list = migrated.get(matchId)
+    if (list) list.push(row)
+    else migrated.set(matchId, [row])
+  }
+
+  const resolved = new Map<number, MatchCommentaryDoc[]>()
+  for (const match of matches) {
+    const fromCollection = migrated.get(match.id)
+    resolved.set(
+      match.id,
+      fromCollection && fromCollection.length > 0
+        ? fromCollection
+        : ((match.commentary ?? []) as unknown as MatchCommentaryDoc[]),
+    )
+  }
+  return resolved
+}
+
 // --- Player tallies ---------------------------------------------------------
 
 export interface PlayerTally {
@@ -130,7 +181,11 @@ export interface PlayerTally {
  * twice. Assists and clean sheets exist only in Player Match Stats and are
  * always taken from there.
  */
-export function playerTallies(matches: Match[], stats: PlayerMatchStat[]): Map<number, PlayerTally> {
+export function playerTallies(
+  matches: Match[],
+  stats: PlayerMatchStat[],
+  commentary: Map<number, MatchCommentaryDoc[]>,
+): Map<number, PlayerTally> {
   const tallies = new Map<number, PlayerTally>()
 
   /**
@@ -166,7 +221,7 @@ export function playerTallies(matches: Match[], stats: PlayerMatchStat[]): Map<n
   const commentaryCardMatches = new Set<number>()
 
   for (const match of matches) {
-    for (const entry of match.commentary ?? []) {
+    for (const entry of commentary.get(match.id) ?? []) {
       if (entry.hidden) continue
       if (entry.type === 'goal') commentaryGoalMatches.add(match.id)
       if (entry.type === 'yellow' || entry.type === 'red') commentaryCardMatches.add(match.id)
@@ -181,7 +236,7 @@ export function playerTallies(matches: Match[], stats: PlayerMatchStat[]): Map<n
       | Team
       | null
 
-    for (const entry of match.commentary ?? []) {
+    for (const entry of commentary.get(match.id) ?? []) {
       // A hidden entry is retracted — it must not reach the standings either.
       if (entry.hidden) continue
       const player = entry.player && typeof entry.player === 'object' ? entry.player : null
@@ -223,13 +278,15 @@ export function playerTallies(matches: Match[], stats: PlayerMatchStat[]): Map<n
 export async function getTournamentData(): Promise<TournamentData> {
   const payload = await getPayloadClient()
 
-  const [teamsRes, matches, stats] = await Promise.all([
+  const [teamsRes, matches, stats, commentaryRows] = await Promise.all([
     payload.find({ collection: 'teams', limit: 100, sort: 'name' }),
     getMatchesWithRelations(),
     getPlayerMatchStats(),
+    getAllCommentary(),
   ])
 
   const teams = teamsRes.docs
+  const commentary = commentaryByMatch(matches, commentaryRows)
 
   // Fair-play points per team (CECAFA tiebreaker 6), summed from every card in
   // the tournament.
@@ -241,7 +298,7 @@ export async function getTournamentData(): Promise<TournamentData> {
   // that collection holds none. `playerTallies` merges both sources; see its
   // doc comment for the anti-double-count rule.
   const fairPlayByTeam = new Map<number, number>()
-  for (const tally of playerTallies(matches, stats).values()) {
+  for (const tally of playerTallies(matches, stats, commentary).values()) {
     const teamId = tally.team?.id ?? relId((tally.player as Player)?.team)
     if (teamId == null) continue
     const prev = fairPlayByTeam.get(teamId) ?? 0
@@ -306,13 +363,18 @@ export interface LeaderboardRow {
 export type LeaderboardMetric = 'goals' | 'assists' | 'cleanSheets'
 
 export async function getLeaderboards(): Promise<Record<LeaderboardMetric, LeaderboardRow[]>> {
-  const [matches, stats] = await Promise.all([getMatchesWithRelations(), getPlayerMatchStats()])
+  const [matches, stats, commentaryRows] = await Promise.all([
+    getMatchesWithRelations(),
+    getPlayerMatchStats(),
+    getAllCommentary(),
+  ])
+  const commentary = commentaryByMatch(matches, commentaryRows)
 
   // Same merged tally the standings use, so a scorer credited on the match feed
   // also appears in the top-scorer table. Reading `player-match-stats` alone
   // meant a match page could show a scoreline built from commentary goals whose
   // scorers were nowhere in this table.
-  const all: LeaderboardRow[] = [...playerTallies(matches, stats).values()].map((t) => ({
+  const all: LeaderboardRow[] = [...playerTallies(matches, stats, commentary).values()].map((t) => ({
     player: t.player,
     team: t.team,
     // A player can be credited by commentary without a stats row recording an
@@ -353,8 +415,42 @@ function relTeam(rel: number | Team | null | undefined): Team | null {
   return rel && typeof rel !== 'number' ? rel : null
 }
 
-function matchPhotoUrls(match: Match): string[] {
-  return (match.photos ?? [])
+/** A row carrying an uploaded image — either a `match-photos` doc or a legacy array row. */
+type PhotoRow = { image?: number | Media | null }
+
+/**
+ * A commentary entry, shaped the same whether it came from the
+ * `match-commentary` collection or the legacy `matches.commentary` array — the
+ * two carry identical fields, which is what lets the feed read either.
+ */
+type MatchCommentaryDoc = {
+  minute?: number | null
+  type?: string | null
+  team?: 'home' | 'away' | null
+  player?: number | Player | null
+  playerOff?: number | Player | null
+  playerOn?: number | Player | null
+  text?: DefaultTypedEditorState | null
+  images?: (number | Media)[] | number | Media | null
+  hidden?: boolean | null
+}
+
+/**
+ * A `match-commentary` doc — the same shape plus the fixture it belongs to,
+ * which the legacy array rows didn't need to carry (their parent was implicit).
+ */
+type CommentaryRowWithMatch = MatchCommentaryDoc & {
+  match?: number | Match | null
+}
+
+/**
+ * Photo URLs for the Match Photos tab, newest-added first.
+ *
+ * Takes rows rather than the match so it can serve both the `match-photos`
+ * collection and the legacy `matches.photos` array during the changeover.
+ */
+function photoUrlsFrom(rows: PhotoRow[]): string[] {
+  return rows
     .map((p) => {
       const img = p.image
       if (!img || typeof img === 'number') return null
@@ -631,7 +727,35 @@ export const getMatchDetail = cache(
 
     // A failure here degrades the page (no feed, no sidebar) rather than
     // throwing it away entirely — the scoreline above is already in hand.
-    const [statsRes, allMatchesRes] = await Promise.all([
+    const [commentaryRes, photosRes, statsRes, allMatchesRes] = await Promise.all([
+      payload
+        .find({
+          collection: 'match-commentary',
+          where: { match: { equals: id } },
+          sort: 'sequence',
+          limit: 500,
+          depth: 2,
+          pagination: false,
+          populate: PUBLIC_POPULATE,
+        })
+        .catch((err) => {
+          console.error(`[match ${id}] commentary query failed:`, err)
+          return { docs: [] }
+        }),
+      payload
+        .find({
+          collection: 'match-photos',
+          where: { match: { equals: id } },
+          sort: 'sequence',
+          limit: 500,
+          depth: 2,
+          pagination: false,
+          populate: PUBLIC_POPULATE,
+        })
+        .catch((err) => {
+          console.error(`[match ${id}] photos query failed:`, err)
+          return { docs: [] }
+        }),
       payload
         .find({
           collection: 'player-match-stats',
@@ -679,7 +803,20 @@ export const getMatchDetail = cache(
     // Manual live updates an editor posts as the match happens — saves, chances,
     // substitutions, general commentary. Goals/cards above are automatic. Entries
     // marked `hidden` stay in the admin for reference but drop out of the feed.
-    const notes: MatchEvent[] = (match.commentary ?? [])
+    //
+    // Entries now live in the `match-commentary` collection (see that file for
+    // why). The legacy `matches.commentary` array is still read as a FALLBACK:
+    // the migration only ever inserts and never clears the array, so a fixture
+    // that hasn't been migrated — or one migrated halfway — still renders its
+    // full feed instead of going blank. Once every match has rows, this falls
+    // through to the empty array and costs nothing.
+    const migratedEntries = commentaryRes.docs as MatchCommentaryDoc[]
+    const rawEntries: MatchCommentaryDoc[] =
+      migratedEntries.length > 0
+        ? migratedEntries
+        : ((match.commentary ?? []) as unknown as MatchCommentaryDoc[])
+
+    const notes: MatchEvent[] = rawEntries
       .filter((c) => !c.hidden)
       .map((c) => {
         const player = c.player && typeof c.player === 'object' ? c.player : null
@@ -711,7 +848,12 @@ export const getMatchDetail = cache(
       .filter((m) => m.id !== id && effectiveMatchStatus(m) !== 'scheduled')
       .slice(0, 4)
 
-    const photos = matchPhotoUrls(match)
+    // Same fallback as the commentary feed above — the migration never clears
+    // the legacy array, so an unmigrated fixture still shows all its photos.
+    const migratedPhotos = photosRes.docs as PhotoRow[]
+    const photos = photoUrlsFrom(
+      migratedPhotos.length > 0 ? migratedPhotos : ((match.photos ?? []) as PhotoRow[]),
+    )
 
     return { match, homeTeam, awayTeam, homeLineup, awayLineup, events, otherMatches, photos }
   },

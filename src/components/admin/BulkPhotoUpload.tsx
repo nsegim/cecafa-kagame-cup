@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
-import { Button, toast, useForm } from '@payloadcms/ui'
+import { Button, toast, useDocumentInfo } from '@payloadcms/ui'
 
 /**
  * Admin-only bulk uploader for a match's "Match Photos" (the Live Expressions
@@ -68,7 +68,9 @@ function uploadToMedia(file: File, onProgress: (pct: number) => void): Promise<n
 }
 
 export function BulkPhotoUpload() {
-  const { addFieldRow } = useForm()
+  // Photos attach to the match directly, so we need its id rather than the form.
+  const { id } = useDocumentInfo()
+  const matchId = id
   const inputRef = useRef<HTMLInputElement>(null)
   const [items, setItems] = useState<UploadItem[]>([])
   const [busy, setBusy] = useState(false)
@@ -76,6 +78,11 @@ export function BulkPhotoUpload() {
   const handleFiles = useCallback(
     async (fileList: FileList | null) => {
       if (!fileList || fileList.length === 0) return
+      // A match that has never been saved has no id to attach photos to.
+      if (!matchId) {
+        toast.error('Save the match once before adding photos.')
+        return
+      }
       const files = Array.from(fileList).filter((f) => f.type.startsWith('image/'))
       if (files.length === 0) {
         toast.error('Please choose image files only.')
@@ -112,26 +119,36 @@ export function BulkPhotoUpload() {
         }),
       )
 
-      // Append each successful upload as a new row on the `photos` array.
+      // Attach each successful upload to the match as its own `match-photos`
+      // row. This used to push rows onto the `photos` array in the open form,
+      // which meant the editor then had to save the whole match — re-writing
+      // every commentary entry, photo and relationship row — just to keep them,
+      // and losing the lot if they navigated away first. Each photo now lands
+      // immediately and independently.
       let added = 0
+      let attachFailed = 0
       for (const result of results) {
-        if (result.status === 'fulfilled') {
-          addFieldRow({
-            path: 'photos',
-            schemaPath: 'photos',
-            subFieldState: {
-              image: { value: result.value, initialValue: result.value, valid: true },
-            },
+        if (result.status !== 'fulfilled') continue
+        try {
+          const res = await fetch('/api/match-photos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // send the admin auth cookie
+            body: JSON.stringify({ match: matchId, image: result.value }),
           })
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
           added += 1
+        } catch {
+          attachFailed += 1
         }
       }
 
-      const failed = results.length - added
+      const uploadFailed = results.filter((r) => r.status === 'rejected').length
+      const failed = uploadFailed + attachFailed
       if (added > 0 && failed === 0) {
-        toast.success(`${added} photo${added > 1 ? 's' : ''} added — Save the match to keep them.`)
+        toast.success(`${added} photo${added > 1 ? 's' : ''} added to this match.`)
       } else if (added > 0) {
-        toast.warning(`${added} added, ${failed} failed. Save to keep the successful ones.`)
+        toast.warning(`${added} added, ${failed} failed.`)
       } else {
         toast.error('All uploads failed — nothing was added.')
       }
@@ -139,7 +156,7 @@ export function BulkPhotoUpload() {
       setBusy(false)
       if (inputRef.current) inputRef.current.value = ''
     },
-    [addFieldRow],
+    [matchId],
   )
 
   return (
