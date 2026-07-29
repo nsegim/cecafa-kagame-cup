@@ -55,7 +55,10 @@ export const MatchPhotos: CollectionConfig = {
       relationTo: 'matches',
       required: true,
       index: true,
-      maxDepth: 1,
+      // `maxDepth: 0` — id only. See the same field on MatchCommentary: at
+      // depth 1 this repeated the entire parent match document once per photo
+      // row, turning a 194-photo match into an 11.2 MB read.
+      maxDepth: 0,
       admin: { description: 'Which fixture this photo belongs to.' },
     },
     {

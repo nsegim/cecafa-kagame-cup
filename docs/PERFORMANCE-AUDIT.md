@@ -1334,6 +1334,43 @@ half, which the first draft of this recommendation missed.
 - The legacy array fields are `admin.hidden`, not deleted, and a `contentLinks`
   UI field links from a match to its filtered entries.
 
+**Three bugs were found and fixed during the migration itself** — all three
+failed quietly, which is why they are worth recording:
+
+1. **Wrong database.** The first scripts used `import 'dotenv/config'`, which
+   loads `.env` — the *retired Neon* database — not `.env.local` (production).
+   The confusing interactive schema prompt offering to rename `homepage` and
+   `gallery_home_tiles` was Neon's old schema. A plain `dotenv/config` migrates
+   the wrong database and reports success. Both scripts now use the repo's
+   existing precedence pattern (`.env.local` then `.env`).
+
+2. **Self-deadlock in the score hook.** `syncMatchScore` called `payload.update`
+   without passing `req`, so it opened a SEPARATE transaction that then waited
+   on a lock its own caller was holding. The migration stalled at 45 rows with
+   one connection `idle in transaction` and one `active` on `Lock`. Every nested
+   Payload call inside a hook now passes `req`.
+
+3. **`maxDepth: 1` on the parent relationship.** Each child row populated its
+   entire parent match (~55 KB). One match's 194 photos read as **11.2 MB** and
+   its 58 entries as **3.5 MB** — the parent document repeated once per child.
+   Match pages started timing out at 60s during the build. `maxDepth: 0` on
+   `match` (id only — the caller already knows the fixture) took those to
+   **275 KB** and **213 KB**.
+
+**And one bug in the `populate` optimisation itself:** on an upload, `url` is
+COMPUTED from `filename`, not stored — so selecting `url` without `filename`
+returned null for every document. Callers fell through to `sizes.hero.url`, so
+images that happened to have a hero variant still rendered and the rest silently
+disappeared: **194 match photos rendered as 103**. `filename` is now in
+`PUBLIC_POPULATE` with a comment explaining why it must stay.
+
+**A note on timings.** All origin measurements here run over an SSH tunnel, so
+every query round-trips to a remote host. Production co-locates the app and
+Postgres on loopback, where per-query overhead is orders of magnitude smaller.
+The split trades one large query for several small ones, which the tunnel
+punishes and production will not — treat the absolute seconds as an upper bound,
+and the payload sizes as the real result.
+
 **Follow-up still open:** the *edit-view load* is unchanged (~499 KB) because the
 hidden legacy arrays are still fetched with the document. The **save path** — the
 actual pain — is fixed: adding an entry is one INSERT, not a full-document

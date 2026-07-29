@@ -47,7 +47,13 @@ function relId(rel: number | { id: number } | null | undefined): number | null {
  * shape the admin loads or the Media collection itself.
  */
 const PUBLIC_POPULATE = {
-  media: { alt: true, url: true, width: true, height: true, sizes: true },
+  // `filename` is REQUIRED even though nothing renders it. On an upload, `url`
+  // is COMPUTED from the filename rather than stored, so selecting `url`
+  // without `filename` returns null for every document. That failed quietly:
+  // callers fell through to `sizes.hero.url`, so images that happened to have a
+  // hero variant still rendered and the rest silently vanished — 194 match
+  // photos became 103. Keep `filename` here.
+  media: { alt: true, url: true, filename: true, width: true, height: true, sizes: true },
   players: { name: true, shirtNumber: true, position: true },
   teams: { name: true, shortName: true, country: true, crest: true },
 } as const

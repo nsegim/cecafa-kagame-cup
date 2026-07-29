@@ -212,7 +212,12 @@ export const MatchCommentary: CollectionConfig = {
       relationTo: 'matches',
       required: true,
       index: true,
-      maxDepth: 1,
+      // `maxDepth: 0` — return the id, never the fixture itself. At depth 1 each
+      // entry populated its whole parent match (~55 KB), so reading one match's
+      // 58 entries pulled 3.5 MB, and its 194 photos pulled 11.2 MB — the parent
+      // document repeated once per child row. Nothing reads it: the caller
+      // already knows which match it queried.
+      maxDepth: 0,
       admin: { description: 'Which fixture this entry belongs to.' },
     },
     {
