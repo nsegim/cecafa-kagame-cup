@@ -1260,6 +1260,98 @@ alone should move this to roughly 72–75.**
 
 ---
 
+## 9b. Admin-side audit (second pass)
+
+Measured against a production build with the real database.
+
+| | |
+|---|---|
+| `/admin` login page JS | **838 KB gzip, 17 chunks** (the whole public site is 194 KB) |
+| Match 5 edit document | **499 KB** at `depth: 2` — **55 KB** at `depth: 0` |
+| Match 7 | 51 commentary rows, **169 rows in `matches_rels`** |
+| Across 22 matches | 261 commentary, 629 photo, 613 relationship rows |
+
+### Where the 499 KB actually is
+
+The jump happens entirely between `depth: 0` (55 KB) and `depth: 1` (465 KB) —
+`depth: 2` adds only 2 KB. It is **populated Media documents**, ~1.4 KB each:
+
+```
+269 KB  photos       (194 entries)
+216 KB  commentary   (58 entries) — of which 165 KB is commentary[].images
+  5 KB  homeLineup
+  5 KB  awayLineup
+```
+
+An initial guess that player relationships were the cost was wrong: capping them
+with `maxDepth: 1` saved only 12 KB. Players and lineups are ~1% of the document.
+A populated Media doc carries `caption`, `filesize`, `focalX/Y`, `createdAt`,
+`updatedAt`, plus `mimeType`/`filesize`/`filename` repeated inside each of four
+size variants — none of which anything reads.
+
+### A-1 — Live Commentary and Match Photos are `array` fields, so every save rewrites the whole match
+
+**Severity:** Critical (admin) · **File:** `src/collections/Matches.ts`
+
+Adding one commentary line during a live game: the edit view holds 499 KB, the
+save PATCHes the entire document back, and Payload wipes and re-inserts every
+child row — ~169 relationship rows plus all commentary and photo rows — in one
+transaction. **The cost grows with the match**: entry 58 is far more expensive
+than entry 1, exactly when editors are typing fastest.
+
+**It also loses data.** The admin submits the whole form, so `commentary` is
+replaced wholesale. Two editors on one match — a commentator and a photographer,
+the normal setup — each save an array lacking the other's newest entry. Last
+write wins, silently. That is the reliability complaint.
+
+**Fix:** move `commentary` AND `photos` into their own collections keyed by a
+`match` relationship. Adding an entry becomes one INSERT; save cost becomes
+constant; concurrent editors stop colliding; the arrays paginate instead of
+loading whole. Note this must cover **photos too** — at 269 KB it is the larger
+half, which the first draft of this recommendation missed.
+
+**Not done — timing.** The tournament runs 24 July – 7 August and is live now.
+This is a two-collection schema migration on the flagship live feature, and it
+also has to carry `scoreFromGoalCommentary` (the scoreline is derived from
+commentary goals) and the `filterOptions` player pickers across. Landing that
+mid-tournament risks far more than a slow admin costs. Ready to run on request;
+recommended for 8 August.
+
+### A-2 — `revalidatePath('/', 'layout')` on every match save — **fixed**
+
+Every commentary save invalidated all 58 routes. It now runs only when one of
+the four fields the site-wide LIVE button reads actually changes
+(`status`, `showLiveButton`, `liveMatchUrl`, `kickoff`); otherwise only the
+five pages that show the match are revalidated.
+
+### A-3 — Public reads pulled full Media docs — **fixed**
+
+`getMatchDetail`, `getMatchesWithRelations` and the match-stats query now pass a
+per-query `populate` selecting only the fields the site reads (URLs, dimensions,
+alt, names). `populate` is per-request, so the admin's own document shape and the
+Media collection are untouched. This is what the `/live` endpoint re-read on
+every 15-second poll.
+
+### A-4 — Media is on local disk, not Cloudinary
+
+Observed in the API response: `"url": "/api/media/file/WhatsApp%20Image…jpg"`,
+`"filesize": 995104`. Uploads are landing on the app server's local disk at ~1 MB
+each, not on `res.cloudinary.com`. With 918 Media docs and 194 photos on a single
+match, that is hundreds of MB accumulating on the origin — and it explains the
+`/api/media/**` entry that had to be added back to `images.localPatterns`, and
+the previously-noted orphaned-media 404s. **Worth checking the Cloudinary
+credentials in the production environment** — `cloudinaryEnabled` silently falls
+back to disk when any of the three variables is missing.
+
+### A-5 — Should the CMS be replaced?
+
+No. The 838 KB admin bundle is Payload's floor, but it is a one-time load for a
+handful of staff — irrelevant beside a 499 KB payload on *every save*. The
+problem is the document shape (A-1), and it would follow the schema into any
+other tool.
+
+---
+
 ## 10. Implementation status
 
 A second pass implemented most of the roadmap. Verified with a clean `yarn build`

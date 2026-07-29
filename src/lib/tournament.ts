@@ -31,6 +31,27 @@ function relId(rel: number | { id: number } | null | undefined): number | null {
   return typeof rel === 'number' ? rel : rel.id
 }
 
+/**
+ * Which fields of a populated relation the public site actually reads.
+ *
+ * A populated Media doc weighs ~1.4 KB, and most of it is never looked at:
+ * `caption`, `filesize`, `focalX/Y`, `createdAt/updatedAt`, plus a `mimeType`,
+ * `filesize` and `filename` repeated inside each of the four size variants.
+ * Everything here reads URLs and dimensions and nothing else.
+ *
+ * That adds up: one match's `photos` array alone is 194 entries, and reading it
+ * at plain `depth: 2` returned 465 KB — of which 434 KB was image metadata. The
+ * `/live` endpoint re-read all of it on every 15-second poll to emit a feed.
+ *
+ * `populate` is per-query, so this trims the SITE's reads without touching the
+ * shape the admin loads or the Media collection itself.
+ */
+const PUBLIC_POPULATE = {
+  media: { alt: true, url: true, width: true, height: true, sizes: true },
+  players: { name: true, shirtNumber: true, position: true },
+  teams: { name: true, shortName: true, country: true, crest: true },
+} as const
+
 function toMatchResult(m: Match): MatchResult {
   return {
     group: (m.group ?? null) as GroupId | null,
@@ -66,6 +87,7 @@ const getMatchesWithRelations = cache(async (): Promise<Match[]> => {
     limit: 100,
     sort: 'matchNumber',
     depth: 2,
+    populate: PUBLIC_POPULATE,
   })
   return res.docs as Match[]
 })
@@ -599,7 +621,9 @@ export const getMatchDetail = cache(
   ): Promise<MatchDetail | null> => {
     const payload = await getPayloadClient()
 
-    const match = await payload.findByID({ collection: 'matches', id, depth: 2 }).catch(() => null)
+    const match = await payload
+      .findByID({ collection: 'matches', id, depth: 2, populate: PUBLIC_POPULATE })
+      .catch(() => null)
     if (!match) return null
 
     const homeTeam = relTeam(match.homeTeam)
@@ -614,6 +638,7 @@ export const getMatchDetail = cache(
           where: { match: { equals: id } },
           limit: 200,
           depth: 2,
+          populate: PUBLIC_POPULATE,
         })
         .catch((err) => {
           console.error(`[match ${id}] stats query failed:`, err)
@@ -621,7 +646,13 @@ export const getMatchDetail = cache(
         }),
       includeOtherMatches
         ? payload
-            .find({ collection: 'matches', sort: '-kickoff', limit: 20, depth: 1 })
+            .find({
+              collection: 'matches',
+              sort: '-kickoff',
+              limit: 20,
+              depth: 1,
+              populate: PUBLIC_POPULATE,
+            })
             .catch((err) => {
               console.error(`[match ${id}] other-matches query failed:`, err)
               return { docs: [] }
