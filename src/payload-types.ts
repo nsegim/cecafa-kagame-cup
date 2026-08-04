@@ -147,6 +147,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * Controls what this user can see and do in /dashboard and /admin.
+   */
+  roles: ('super_admin' | 'admin' | 'manager' | 'moderator')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -848,6 +852,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

@@ -1,3 +1,4 @@
+import { Inter } from 'next/font/google'
 import { Raleway } from 'next/font/google'
 
 /**
@@ -22,6 +23,28 @@ export const raleway = Raleway({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-raleway',
+  display: 'swap',
+  fallback: [
+    'system-ui',
+    '-apple-system',
+    'Segoe UI',
+    'Roboto',
+    'Helvetica',
+    'Arial',
+    'sans-serif',
+  ],
+})
+
+/**
+ * Inter — dashboard-only UI typeface. Kept separate from `raleway` (the public
+ * site's display face) because /dashboard is a data-dense operations tool, not
+ * an editorial page — Inter's tighter metrics and true tabular figures read
+ * better in tables, stat cards and forms at small sizes.
+ */
+export const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
   display: 'swap',
   fallback: [
     'system-ui',

@@ -24,7 +24,7 @@ const existingUsers = await payload.count({ collection: 'users' })
 if (existingUsers.totalDocs === 0) {
   await payload.create({
     collection: 'users',
-    data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
+    data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, roles: ['super_admin'] },
   })
   console.log(`  admin created: ${ADMIN_EMAIL}`)
   console.log(

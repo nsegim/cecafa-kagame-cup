@@ -26,6 +26,9 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // /admin access itself is gated on Users' own `access.admin` (see
+    // src/collections/Users.ts) — the custom /dashboard is now the primary
+    // interface, /admin stays live only as a super_admin fallback.
     importMap: {
       baseDir: path.resolve(dirname),
     },
